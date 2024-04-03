@@ -23,7 +23,7 @@
     ],
     "paths": {
       "@spartan-ng/ui-button-helm": [
-        "./components/spartan/ui-button-helm/src/index.ts"
+        "./components/ui-button-helm/src/index.ts"
       ],
       "@spartan-ng/ui-accordion-helm": [
         "./components/ui-accordion-helm/src/index.ts"
