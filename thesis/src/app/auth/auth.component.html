@@ -1,0 +1,100 @@
+<div class="hero min-h-screen bg-base-200">
+  <div class="hero-content flex-col lg:flex-row-reverse">
+    <div class="text-center lg:text-left">
+      <h1 class="text-5xl font-bold">Login now!</h1>
+      <p class="py-6">
+        Provident cupiditate voluptatem et in. Quaerat fugiat ut assumenda
+        excepturi exercitationem quasi. In deleniti eaque aut repudiandae et a
+        id nisi.
+      </p>
+    </div>
+    <div class="card shrink-0 w-full max-w-sm shadow-2xl bg-base-100">
+      <form class="card-body" #authForm="ngForm" (ngSubmit)="onSubmit(authForm)">
+        <div *ngIf="!loginMode" class="form-control">
+          <label class="label">
+            <span class="label-text">Username</span>
+          </label>
+          <!-- Add class on input-error in case field is not valid -->
+          <input
+            type="text"
+            placeholder="username"
+            class="input input-bordered"
+            name="username"
+            ngModel
+            required
+            
+          />
+        </div>
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text">Email</span>
+          </label>
+          <input
+            type="email"
+            placeholder="email"
+            class="input input-bordered"
+            required
+            email
+            ngModel
+            name="email"
+            
+          />
+        </div>
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text">Password</span>
+          </label>
+          <input
+            type="password"
+            placeholder="password"
+            class="input input-bordered"
+            required
+            ngModel
+            minlength="6"
+            name="password"
+          />
+        </div>
+        <div *ngIf="!loginMode" class="form-control">
+          <label class="label">
+            <span class="label-text">Confirm Password</span>
+          </label>
+          <!-- Add validation for password confirmation -->
+          <input
+            type="password"
+            placeholder="password"
+            class="input input-bordered"
+            required
+            ngModel
+            minlength="6"
+            name="confirmPassword"
+          />
+        </div>
+        <label *ngIf="!loginMode" class="label">
+          <input
+            type="checkbox"
+            class="checkbox"
+            required
+            ngModel
+            name="termsAndConditons"
+          />
+          <span class="label-text">I agree to the terms and conditions</span>
+        </label>
+        <div class="label">
+          <span *ngIf="loginMode" class="label-text link link-hover">
+            <a class="label-text-alt link link-hover">Forgot password?</a>
+          </span>
+          <span class="label-text-alt link link-hover">
+            <a (click)="onSwitchMode()" class="label-text-alt link link-hover"
+              >Switch to {{ loginMode ? "Sign Up" : "Login" }} mode</a
+            >
+          </span>
+        </div>
+        <div class="form-control mt-6">
+          <button type="submit" class="btn btn-primary" [disabled]="!authForm.valid">
+            {{ loginMode ? "Login" : "Sign Up" }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
