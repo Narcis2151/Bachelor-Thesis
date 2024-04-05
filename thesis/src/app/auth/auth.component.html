@@ -9,12 +9,15 @@
       </p>
     </div>
     <div class="card shrink-0 w-full max-w-sm shadow-2xl bg-base-100">
-      <form class="card-body" #authForm="ngForm" (ngSubmit)="onSubmit(authForm)">
+      <form
+        class="card-body"
+        #authForm="ngForm"
+        (ngSubmit)="onSubmit(authForm)"
+      >
         <div *ngIf="!loginMode" class="form-control">
           <label class="label">
             <span class="label-text">Username</span>
           </label>
-          <!-- Add class on input-error in case field is not valid -->
           <input
             type="text"
             placeholder="username"
@@ -22,8 +25,14 @@
             name="username"
             ngModel
             required
-            
+            #username="ngModel"
+            [ngClass]="{ 'input-error': username.invalid && username.touched }"
           />
+          <span
+            *ngIf="username.invalid && username.touched"
+            class="label-text text-error"
+            >Username is required</span
+          >
         </div>
         <div class="form-control">
           <label class="label">
@@ -37,8 +46,14 @@
             email
             ngModel
             name="email"
-            
+            #email="ngModel"
+            [ngClass]="{ 'input-error': email.invalid && email.touched }"
           />
+          <span
+            *ngIf="email.invalid && email.touched"
+            class="label-text text-error"
+            >Email is required</span
+          >
         </div>
         <div class="form-control">
           <label class="label">
@@ -52,13 +67,19 @@
             ngModel
             minlength="6"
             name="password"
+            #password="ngModel"
+            [ngClass]="{ 'input-error': password.invalid && password.touched }"
           />
+          <span
+            *ngIf="password.invalid && password.touched"
+            class="label-text text-error"
+            >Password is required</span
+          >
         </div>
         <div *ngIf="!loginMode" class="form-control">
           <label class="label">
             <span class="label-text">Confirm Password</span>
           </label>
-          <!-- Add validation for password confirmation -->
           <input
             type="password"
             placeholder="password"
@@ -67,7 +88,24 @@
             ngModel
             minlength="6"
             name="confirmPassword"
+            #confirmPassword="ngModel"
+            [ngClass]="{
+              'input-error': confirmPassword.invalid && confirmPassword.touched
+            }"
           />
+          <span
+            *ngIf="confirmPassword.invalid && confirmPassword.touched"
+            class="label-text text-error"
+            >Password is required</span
+          >
+          <span
+            *ngIf="
+              confirmPassword.value !== password.value &&
+              confirmPassword.touched
+            "
+            class="label-text text-error"
+            >Passwords do not match</span
+          >
         </div>
         <label *ngIf="!loginMode" class="label">
           <input
@@ -76,6 +114,7 @@
             required
             ngModel
             name="termsAndConditons"
+            #termsAndConditons="ngModel"
           />
           <span class="label-text">I agree to the terms and conditions</span>
         </label>
@@ -90,7 +129,11 @@
           </span>
         </div>
         <div class="form-control mt-6">
-          <button type="submit" class="btn btn-primary" [disabled]="!authForm.valid">
+          <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="!authForm.valid"
+          >
             {{ loginMode ? "Login" : "Sign Up" }}
           </button>
         </div>
