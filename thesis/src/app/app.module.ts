@@ -9,9 +9,10 @@ import { AuthComponent } from './auth/auth.component';
 
 import { HlmButtonDirective } from '../../components/ui-button-helm/src';
 import { LoadingSpinnerComponent } from './common/loading-spinner/loading-spinner.component';
+import { NavigationComponent } from './navigation/navigation.component';
 
 @NgModule({
-  declarations: [AppComponent, AuthComponent, LoadingSpinnerComponent],
+  declarations: [AppComponent, AuthComponent, LoadingSpinnerComponent, NavigationComponent],
   imports: [
     BrowserModule,
     FormsModule,
