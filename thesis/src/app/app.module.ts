@@ -9,9 +9,15 @@ import { AuthComponent } from './auth/auth.component';
 
 import { HlmButtonDirective } from '../../components/ui-button-helm/src';
 import { LoadingSpinnerComponent } from './common/loading-spinner/loading-spinner.component';
+import { NavigationComponent } from './navigation/navigation.component';
+import { CategoryComponent } from './categories/category/category.component';
+import { CategoryListComponent } from './categories/category-list/category-list.component';
+import { CategoryNavigationComponent } from './categories/category-navigation/category-navigation.component';
+import { CategoriesPageComponent } from './categories/pages/categories-page/categories-page.component';
+import { EditCategoryComponent } from './categories/pages/edit-category/edit-category.component';
 
 @NgModule({
-  declarations: [AppComponent, AuthComponent, LoadingSpinnerComponent],
+  declarations: [AppComponent, AuthComponent, LoadingSpinnerComponent, NavigationComponent, CategoryComponent, CategoryListComponent, CategoryNavigationComponent, CategoriesPageComponent, EditCategoryComponent],
   imports: [
     BrowserModule,
     FormsModule,
