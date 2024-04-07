@@ -14,9 +14,10 @@ import { CategoryComponent } from './categories/category/category.component';
 import { CategoryListComponent } from './categories/category-list/category-list.component';
 import { CategoryNavigationComponent } from './categories/category-navigation/category-navigation.component';
 import { CategoriesPageComponent } from './categories/pages/categories-page/categories-page.component';
+import { EditCategoryComponent } from './categories/pages/edit-category/edit-category.component';
 
 @NgModule({
-  declarations: [AppComponent, AuthComponent, LoadingSpinnerComponent, NavigationComponent, CategoryComponent, CategoryListComponent, CategoryNavigationComponent, CategoriesPageComponent],
+  declarations: [AppComponent, AuthComponent, LoadingSpinnerComponent, NavigationComponent, CategoryComponent, CategoryListComponent, CategoryNavigationComponent, CategoriesPageComponent, EditCategoryComponent],
   imports: [
     BrowserModule,
     FormsModule,
