@@ -33,6 +33,9 @@
       ],
       "@spartan-ng/ui-table-helm": [
         "./components/libs/ui/ui-table-helm/src/index.ts"
+      ],
+      "@spartan-ng/ui-tabs-helm": [
+        "./components/ui-tabs-helm/src/index.ts"
       ]
     }
   },
