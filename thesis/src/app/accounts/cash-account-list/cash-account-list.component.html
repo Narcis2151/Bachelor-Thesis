@@ -1,0 +1,24 @@
+<div>
+
+  <hlm-table class="w-full min-w-[400px]">
+    <hlm-caption>Cash Account</hlm-caption>
+    <hlm-trow>
+      <hlm-th class="w-52">Name</hlm-th>
+      <hlm-th class="w-60">Balance</hlm-th>
+    </hlm-trow>
+    @for (cashAccount of cashAccounts; track cashAccount.id) {
+    <hlm-trow>
+      <hlm-td truncate class="w-52 font-medium">{{ invoice.invoice }}</hlm-td>
+      <hlm-td class="w-60">{{ invoice.paymentStatus  }}</hlm-td>
+      <hlm-td class="flex-1">{{ invoice.paymentMethod }}</hlm-td>
+      <hlm-td class="w-40 justify-end">{{ invoice.totalAmount }}</hlm-td>
+    </hlm-trow>
+    }
+    <hlm-trow class="bg-muted/50 hover:bg-muted">
+      <hlm-td truncate class="w-[100px] font-semibold">Total</hlm-td>
+      <hlm-td class="w-40"></hlm-td>
+      <hlm-td class="flex-1"></hlm-td>
+      <hlm-td class="w-40 justify-end">2,500.00 RON</hlm-td>
+    </hlm-trow>
+  </hlm-table>
+</div>
