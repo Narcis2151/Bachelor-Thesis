@@ -7,22 +7,70 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { AuthComponent } from './auth/auth.component';
 
-import { HlmButtonDirective } from '../../components/ui-button-helm/src';
 import { LoadingSpinnerComponent } from './common/loading-spinner/loading-spinner.component';
 import { NavigationComponent } from './navigation/navigation.component';
-import { CategoryComponent } from './categories/category/category.component';
+import { CategoryComponent } from './categories/category-list/category/category.component';
 import { CategoryListComponent } from './categories/category-list/category-list.component';
 import { CategoryNavigationComponent } from './categories/category-navigation/category-navigation.component';
 import { CategoriesPageComponent } from './categories/pages/categories-page/categories-page.component';
-import { EditCategoryComponent } from './categories/pages/edit-category/edit-category.component';
+import { EditCategoryComponent } from './categories/pages/new-category/edit-category.component';
+import { HlmButtonDirective } from '@spartan-ng/ui-button-helm';
+import { HlmCaptionComponent } from '../../components/libs/ui/ui-table-helm/src/lib/hlm-caption.component';
+import { HlmTableComponent } from '../../components/libs/ui/ui-table-helm/src/lib/hlm-table.component';
+import { HlmTdComponent } from '../../components/libs/ui/ui-table-helm/src/lib/hlm-td.component';
+import { HlmThComponent } from '../../components/libs/ui/ui-table-helm/src/lib/hlm-th.component';
+import { HlmTrowComponent } from '../../components/libs/ui/ui-table-helm/src/lib/hlm-trow.component';
+import {
+  HlmCardContentDirective,
+  HlmCardDescriptionDirective,
+  HlmCardDirective,
+  HlmCardFooterDirective,
+  HlmCardHeaderDirective,
+  HlmCardTitleDirective,
+} from '@spartan-ng/ui-card-helm';
+import { HlmInputDirective } from '@spartan-ng/ui-input-helm';
+import { HlmLabelDirective } from '@spartan-ng/ui-label-helm';
+import {
+  HlmTabsComponent,
+  HlmTabsContentDirective,
+  HlmTabsListComponent,
+  HlmTabsTriggerDirective,
+} from '@spartan-ng/ui-tabs-helm';
 
 @NgModule({
-  declarations: [AppComponent, AuthComponent, LoadingSpinnerComponent, NavigationComponent, CategoryComponent, CategoryListComponent, CategoryNavigationComponent, CategoriesPageComponent, EditCategoryComponent],
+  declarations: [
+    AppComponent,
+    AuthComponent,
+    LoadingSpinnerComponent,
+    NavigationComponent,
+    CategoryComponent,
+    CategoryListComponent,
+    CategoryNavigationComponent,
+    CategoriesPageComponent,
+    EditCategoryComponent,
+  ],
   imports: [
+    HlmButtonDirective,
+    HlmTableComponent,
+    HlmTrowComponent,
+    HlmThComponent,
+    HlmTdComponent,
+    HlmCaptionComponent,
+    HlmCardDirective,
+    HlmCardContentDirective,
+    HlmCardDescriptionDirective,
+    HlmCardFooterDirective,
+    HlmCardHeaderDirective,
+    HlmCardTitleDirective,
+    HlmInputDirective,
+    HlmLabelDirective,
+    HlmTabsComponent,
+    HlmTabsContentDirective,
+    HlmTabsListComponent,
+    HlmTabsTriggerDirective,
     BrowserModule,
     FormsModule,
     AppRoutingModule,
-    HlmButtonDirective,
     HttpClientModule,
   ],
   providers: [],

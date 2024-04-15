@@ -1,26 +1,81 @@
-<div class="overflow-x-auto mt-10">
-  <table class="table w-full text-sm text-left text-gray-500 dark:text-gray-400">
-    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-      <tr>
-        <th scope="col" class="px-6 py-3 text-left w-2/12">Category Icon</th>
-        <th scope="col" class="px-6 py-3 text-center w-8/12">Category Name</th>
-        <th scope="col" class="px-6 py-3 text-right w-2/12">Action</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-        <td class="px-6 py-4 text-left w-2/12">
-          <div class="flex items-center">
-            <input type="checkbox" class="checkbox" />
-          </div>
-        </td>
-        <td class="px-6 py-4 text-center w-8/12">
-          Example Category
-        </td>
-        <td class="px-6 py-4 text-right w-2/12">
-          <button class="btn btn-ghost btn-xs">Edit</button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+<div hlmTabsContent="all_categories" class="w-full overflow-x-auto mt-10">
+  <section hlmCard class="border-hidden">
+    <hlm-table
+      class="table w-full text-sm text-left text-gray-500 dark:text-gray-400"
+    >
+      <hlm-th
+        class="text-xs p-0 text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
+      >
+        <hlm-trow class="w-full">
+          <hlm-td class="px-6 py-3 text-center w-2/12 justify-center"
+            >Icon</hlm-td
+          >
+          <hlm-td class="px-6 py-3 text-center w-8/12 justify-center"
+            >Name</hlm-td
+          >
+          <hlm-td class="px-6 py-3 text-center w-2/12 justify-center"
+            >Edit</hlm-td
+          >
+        </hlm-trow>
+      </hlm-th>
+      <app-category
+        *ngFor="let category of categories"
+        [category]="category"
+      ></app-category>
+    </hlm-table>
+  </section>
+</div>
+<div hlmTabsContent="personal_categories" class="w-full overflow-x-auto mt-10">
+  <section hlmCard class="border-hidden">
+    <hlm-table
+      class="table w-full text-sm text-left text-gray-500 dark:text-gray-400"
+    >
+      <hlm-th
+        class="text-xs p-0 text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
+      >
+        <hlm-trow class="w-full">
+          <hlm-td class="px-6 py-3 text-center w-2/12 justify-center"
+            >Icon</hlm-td
+          >
+          <hlm-td class="px-6 py-3 text-center w-8/12 justify-center"
+            >Name</hlm-td
+          >
+          <hlm-td class="px-6 py-3 text-center w-2/12 justify-center"
+            >Edit</hlm-td
+          >
+        </hlm-trow>
+      </hlm-th>
+      <app-category
+        *ngFor="let category of categories"
+        [category]="category"
+      ></app-category>
+    </hlm-table>
+  </section>
+</div>
+<div hlmTabsContent="shared_categories" class="w-full overflow-x-auto mt-10">
+  <section hlmCard class="border-hidden">
+    <hlm-table
+      class="table w-full text-sm text-left text-gray-500 dark:text-gray-400"
+    >
+      <hlm-th
+        class="text-xs p-0 text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
+      >
+        <hlm-trow class="w-full">
+          <hlm-td class="px-6 py-3 text-center w-2/12 justify-center"
+            >Icon</hlm-td
+          >
+          <hlm-td class="px-6 py-3 text-center w-8/12 justify-center"
+            >Name</hlm-td
+          >
+          <hlm-td class="px-6 py-3 text-center w-2/12 justify-center"
+            >Edit</hlm-td
+          >
+        </hlm-trow>
+      </hlm-th>
+      <app-category
+        *ngFor="let category of categories"
+        [category]="category"
+      ></app-category>
+    </hlm-table>
+  </section>
 </div>

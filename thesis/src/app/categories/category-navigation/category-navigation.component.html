@@ -1,23 +1,22 @@
-<div class="flex justify-center mt-32">
-  <div role="tablist" class="tabs w-6/12 flex justify-center">
-    <label for="all_categories" class="tab tab-lg">All Categories</label>
-    <input
-      type="radio"
-      id="all_categories"
-      name="tabs"
-      class="tab hidden"
-      checked
-    />
-
-    <label for="personal_categories" class="tab tab-lg">Personal</label>
-    <input
-      type="radio"
-      id="personal_categories"
-      name="tabs"
-      class="tab hidden"
-    />
-
-    <label for="shared_categories" class="tab tab-lg">Shared</label>
-    <input type="radio" id="shared_categories" name="tabs" class="tab hidden" />
-  </div>
+<div class="flex justify-center items-center w-full overflow-x-auto">
+  <hlm-tabs-list class="tabs w-6/12 flex justify-around">
+    <button
+      hlmTabsTrigger="all_categories"
+      class="text-center justify-center tab tab-lg w-1/3"
+    >
+      All Categories
+    </button>
+    <button
+      hlmTabsTrigger="personal_categories"
+      class="text-center justify-center tab tab-lg w-1/3"
+    >
+      Personal
+    </button>
+    <button
+      hlmTabsTrigger="shared_categories"
+      class="text-center justify-center tab tab-lg w-1/3"
+    >
+      Shared
+    </button>
+  </hlm-tabs-list>
 </div>
