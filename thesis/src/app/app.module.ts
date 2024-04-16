@@ -38,6 +38,7 @@ import {
 } from '@spartan-ng/ui-tabs-helm';
 import { CashAccountListComponent } from './accounts/cash-account-list/cash-account-list.component';
 import { CashAccountComponent } from './accounts/cash-account-list/cash-account/cash-account.component';
+import { AccountsPageComponent } from './accounts/pages/accounts-page/accounts-page.component';
 
 @NgModule({
   declarations: [
@@ -52,6 +53,7 @@ import { CashAccountComponent } from './accounts/cash-account-list/cash-account/
     EditCategoryComponent,
     CashAccountListComponent,
     CashAccountComponent,
+    AccountsPageComponent,
   ],
   imports: [
     HlmButtonDirective,
