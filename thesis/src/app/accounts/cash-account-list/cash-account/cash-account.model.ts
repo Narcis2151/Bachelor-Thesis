@@ -6,6 +6,7 @@ type CashAccount = {
   balance: number;
   currency: Currency;
   balanceUpdatedAt: Date;
+  isEditing?: boolean;
 };
 
 export default CashAccount;

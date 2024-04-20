@@ -11,5 +11,5 @@ import { cashAccounts } from './cash-account-list';
 export class CashAccountListComponent {
   constructor() {}
 
-  cashAccounts: CashAccount[] = cashAccounts
+  cashAccounts: CashAccount[] = cashAccounts;
 }
