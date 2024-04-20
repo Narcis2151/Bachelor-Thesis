@@ -43,11 +43,13 @@ import {
   lucideMoreHorizontal,
 } from '@ng-icons/lucide';
 
-// import { BrnMenuTriggerDirective } from '@spartan-ng/ui-menu-brain';
+
+import { BrnMenuTriggerDirective } from '@spartan-ng/ui-menu-brain';
 import { CashAccountListComponent } from './accounts/cash-account-list/cash-account-list.component';
 import { CashAccountComponent } from './accounts/cash-account-list/cash-account/cash-account.component';
 import { AccountsPageComponent } from './accounts/pages/accounts-page/accounts-page.component';
-import { TransactionsComponent } from './transactions/transactions.component';
+import { CashTransactionsListComponent } from './transactions/cash-transactions-list/cash-transactions-list.component';
+import { CashTransactionComponent } from './transactions/cash-transactions-list/cash-transaction/cash-transaction.component';
 
 @NgModule({
   declarations: [
@@ -62,7 +64,8 @@ import { TransactionsComponent } from './transactions/transactions.component';
     CashAccountListComponent,
     CashAccountComponent,
     AccountsPageComponent,
-    TransactionsComponent,
+    CashTransactionsListComponent,
+    CashTransactionComponent,
   ],
   imports: [
     HlmButtonDirective,
@@ -79,6 +82,7 @@ import { TransactionsComponent } from './transactions/transactions.component';
     HlmCardTitleDirective,
     HlmInputDirective,
     HlmLabelDirective,
+    BrnMenuTriggerDirective,
     HlmTabsComponent,
     HlmTabsContentDirective,
     HlmTabsListComponent,

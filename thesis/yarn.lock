@@ -2306,10 +2306,17 @@
   dependencies:
     tslib "^2.3.0"
 
-"@spartan-ng/ui-core@^0.0.1-alpha.343":
+"@spartan-ng/ui-checkbox-brain@0.0.1-alpha.343":
   version "0.0.1-alpha.343"
-  resolved "https://registry.npmjs.org/@spartan-ng/ui-core/-/ui-core-0.0.1-alpha.343.tgz"
-  integrity sha512-THXj0hHQlsVZbfy/gLS3hVanrmejZI2dNLDK2hclHwI9Q+4NT+gPmMq0B1dFB2qC1p76pGM4aI6WvfwuGyy49g==
+  resolved "https://registry.yarnpkg.com/@spartan-ng/ui-checkbox-brain/-/ui-checkbox-brain-0.0.1-alpha.343.tgz#87859158f6fdf64f0a5ba6c2c5ce6e027dd1a9e6"
+  integrity sha512-Nnvk4QQhDwEiSUtY7ZzAQyeFxnrhvQ3JkvIiwLUmQMPupR0B0YMkbhqKFZFmprEJv5jZfRO0qMPHOxAGA/1rgQ==
+  dependencies:
+    tslib "^2.3.0"
+
+"@spartan-ng/ui-core@^0.0.1-alpha.344":
+  version "0.0.1-alpha.344"
+  resolved "https://registry.yarnpkg.com/@spartan-ng/ui-core/-/ui-core-0.0.1-alpha.344.tgz#d00374fe1b40e8bc552937abdd93c0c5e583b90a"
+  integrity sha512-1HMtDo9aCXSeBhbsgPB4mcOIhzG2DBSTA5GWLn5dKB6bM6ilKGO6XyyypAGlH36zReki3EHdLXjIBGuCuXdzIw==
   dependencies:
     tslib "^2.3.0"
 
@@ -2317,6 +2324,20 @@
   version "0.0.1-alpha.343"
   resolved "https://registry.yarnpkg.com/@spartan-ng/ui-label-brain/-/ui-label-brain-0.0.1-alpha.343.tgz#382850a37238c16aa609cd5824151ab10198efc9"
   integrity sha512-oA8ss5DBeWUPJRO+xmuS6sbxnhK6m3VVPNxCPGb4520LIGcVyKMxUybuVtnBWJ8Ct57068EvQbPRh89zv9CeLQ==
+  dependencies:
+    tslib "^2.3.0"
+
+"@spartan-ng/ui-menu-brain@0.0.1-alpha.343":
+  version "0.0.1-alpha.343"
+  resolved "https://registry.yarnpkg.com/@spartan-ng/ui-menu-brain/-/ui-menu-brain-0.0.1-alpha.343.tgz#ceea09fe8b8f6a44f9ed76523012570bdae01007"
+  integrity sha512-/Ehhz97ZjERp5izQxtmPz8e+P90cbglO11QyIjf0ZVlKHBiMQdesIF/I7phicUjk/fE3iYkh333QnR4tqnFotg==
+  dependencies:
+    tslib "^2.3.0"
+
+"@spartan-ng/ui-select-brain@0.0.1-alpha.343":
+  version "0.0.1-alpha.343"
+  resolved "https://registry.yarnpkg.com/@spartan-ng/ui-select-brain/-/ui-select-brain-0.0.1-alpha.343.tgz#eafde4f95be2542b4a2de7e02670dd6ea6251095"
+  integrity sha512-14Dp/Ox14dGA8Ax4orxR7d4DOMzsnGU66SMwD+ChD+yFFws0wmF5DyWdVdk79NvviMI6BN7Ns7zBYKYjfUSOcg==
   dependencies:
     tslib "^2.3.0"
 
@@ -7403,9 +7424,9 @@ run-parallel@^1.1.9:
   dependencies:
     queue-microtask "^1.2.2"
 
-rxjs@7.8.1, rxjs@^7.8.0, rxjs@^7.8.1, rxjs@~7.8.0:
+rxjs@7.8.1, rxjs@^7.8.0, rxjs@^7.8.1:
   version "7.8.1"
-  resolved "https://registry.npmjs.org/rxjs/-/rxjs-7.8.1.tgz"
+  resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-7.8.1.tgz#6f6f3d99ea8044291efd92e7c7fcf562c4057543"
   integrity sha512-AA3TVj+0A2iuIoQkWEK/tqFjBq2j+6PO6Y0zJcvzLAFhEFIO3HL0vls9hWLncZbAAbK0mar7oZ4V079I/qPMxg==
   dependencies:
     tslib "^2.1.0"
