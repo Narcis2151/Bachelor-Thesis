@@ -1,0 +1,29 @@
+<div class="w-full overflow-x-auto">
+  <hlm-table
+    class="w-full min-w-[400px] text-sm text-left text-gray-500 dark:text-gray-400"
+  >
+    <hlm-th
+      class="text-xs p-0 text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
+    >
+      <hlm-trow class="w-full">
+        <hlm-th class="px-6 py-3 text-center justify-center w-1/12">Type</hlm-th>
+        <hlm-th class="px-6 py-3 text-start justify-start w-7/12">Name</hlm-th>
+        <hlm-th class="px-6 py-3 text-center justify-center w-2/12">Balance</hlm-th>
+        <hlm-th class="px-6 py-3 text-center justify-center w-2/12">
+          <button hlmBtn class="justify-center w-8/12 rounded-sm text-gray-200 hover:text-gray-400">New</button>
+        </hlm-th>
+      </hlm-trow>
+    </hlm-th>
+
+    <!-- Rows for accounts -->
+    <app-cash-account *ngFor="let cashAccount of cashAccounts" [cashAccount]="cashAccount"></app-cash-account>
+
+    <!-- Adjusted Total Balance Row -->
+    <hlm-trow colspan="4" class="text-center flex bg-muted/50 hover:bg-muted w-full">
+      <hlm-td class="w-1/12 px-6 py-4"></hlm-td>
+      <hlm-td class="w-7/12 px-6 py-4 justify-start text-start font-semibold">Total Balance</hlm-td>
+      <hlm-td class="w-2/12 px-6 py-4 justify-center text-center font-semibold">2,500.00 RON</hlm-td>
+      <hlm-td class="w-2/12 px-6 py-4"></hlm-td>
+    </hlm-trow>
+  </hlm-table>
+</div>

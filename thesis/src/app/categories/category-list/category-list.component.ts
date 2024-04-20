@@ -5,7 +5,7 @@ import {
   HlmTdComponent,
   HlmThComponent,
   HlmTrowComponent,
-} from '@spartan-ng/ui-table-helm';
+} from '../../../../components/libs/ui/ui-table-helm/src';
 
 import Category from './category/category.model';
 import { categories } from './categories-list';

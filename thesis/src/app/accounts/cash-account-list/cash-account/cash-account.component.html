@@ -1,0 +1,43 @@
+<hlm-trow>
+  <hlm-td class="px-6 py-4 text-center justify-center w-1/12">
+    <div class="w-full h-full">
+      <svg viewBox="0 0 90 112.5" width="40px" h="40px" xmlns="http://www.w3.org/2000/svg">
+        <g transform="matrix(1.0162279605865479, 0, 0, 1.0278929471969604, -1.2657499313354492, -0.5505840182304382)">
+          <g>
+            <circle cx="57" cy="48" r="2.001" />
+            <path
+              d="M73.026,40H72v-9.498C72,27.606,69.587,25,66.691,25H61v-0.009c0-2.896-2.231-5.252-5.127-5.252L18.238,25.25    C15.377,25.292,13,27.632,13,30.502v34.016C13,67.413,15.606,70,18.502,70h0.073h1.568h46.548C69.587,70,72,67.413,72,64.518V56    h1.026C75.921,56,78,53.708,78,50.812v-5.494C78,42.423,75.921,40,73.026,40z M55.941,21.489C57.703,21.526,59,23.22,59,24.991V25    H30.555L55.941,21.489z M70,64.748C70,66.544,68.544,68,66.748,68H18.252C16.456,68,15,66.544,15,64.748V30.252    C15,28.456,16.456,27,18.252,27h48.496C68.544,27,70,28.456,70,30.252V40H55.53C52.634,40,50,42.423,50,45.319v5.494    C50,53.708,52.634,56,55.53,56H70V64.748z M76,50.748C76,52.544,74.544,54,72.748,54H55.252C53.456,54,52,52.544,52,50.748v-5.496    C52,43.456,53.456,42,55.252,42h17.496C74.544,42,76,43.456,76,45.252V50.748z" />
+          </g>
+        </g>
+      </svg>
+    </div>
+  </hlm-td>
+  <hlm-td class="px-6 py-4 text-start flex justify-start w-7/12 items-center">
+    <ng-container *ngIf="cashAccount.isEditing; else viewMode">
+      <form #accountForm="ngForm" class="flex items-center w-full space-x-2">
+        <input hlmInput type="text" [(ngModel)]="cashAccount.name" name="accountName" #accountName="ngModel" required
+          class="w-auto flex-1" />
+        <button (click)="saveAccount(cashAccount, cashAccount.name)" [disabled]="!accountForm.valid"
+          class="p-1 rounded-full text-gray-400 hover:text-gray-600">
+          Save
+        </button>
+      </form>
+    </ng-container>
+    <ng-template #viewMode>
+      {{ cashAccount.name }}
+      <button (click)="toggleEdit(cashAccount)"
+        class="text-end ml-auto p-1 rounded-full text-gray-400 hover:text-gray-600">
+        Edit
+      </button>
+    </ng-template>
+  </hlm-td>
+
+  <hlm-td class="px-6 py-4 text-center justify-center w-2/12">
+    {{ cashAccount.balance + " " + cashAccount.currency }}
+  </hlm-td>
+  <hlm-td class="px-6 py-4 text-center justify-center w-2/12">
+    <button hlmBtn variant="ghost" class="h-6 w-6 p-0.5" align="end">
+      <hlm-icon class="h-4 w-4" name="lucideMoreHorizontal" />
+    </button>
+  </hlm-td>
+</hlm-trow>

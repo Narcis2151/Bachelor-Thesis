@@ -30,12 +30,21 @@ import {
 } from '@spartan-ng/ui-card-helm';
 import { HlmInputDirective } from '@spartan-ng/ui-input-helm';
 import { HlmLabelDirective } from '@spartan-ng/ui-label-helm';
+import { HlmIconComponent, provideIcons } from '@spartan-ng/ui-icon-helm';
 import {
   HlmTabsComponent,
   HlmTabsContentDirective,
   HlmTabsListComponent,
   HlmTabsTriggerDirective,
 } from '@spartan-ng/ui-tabs-helm';
+
+
+import { lucideArrowUpDown, lucideChevronDown, lucideMoreHorizontal } from '@ng-icons/lucide';
+
+// import { BrnMenuTriggerDirective } from '@spartan-ng/ui-menu-brain';
+import { CashAccountListComponent } from './accounts/cash-account-list/cash-account-list.component';
+import { CashAccountComponent } from './accounts/cash-account-list/cash-account/cash-account.component';
+import { AccountsPageComponent } from './accounts/pages/accounts-page/accounts-page.component';
 
 @NgModule({
   declarations: [
@@ -48,6 +57,9 @@ import {
     CategoryNavigationComponent,
     CategoriesPageComponent,
     EditCategoryComponent,
+    CashAccountListComponent,
+    CashAccountComponent,
+    AccountsPageComponent,
   ],
   imports: [
     HlmButtonDirective,
@@ -72,8 +84,9 @@ import {
     FormsModule,
     AppRoutingModule,
     HttpClientModule,
+    HlmIconComponent,
   ],
-  providers: [],
+  providers: [provideIcons({ lucideChevronDown, lucideMoreHorizontal, lucideArrowUpDown })],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
