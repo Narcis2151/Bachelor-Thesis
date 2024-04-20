@@ -13,7 +13,6 @@ import { CategoryComponent } from './categories/category-list/category/category.
 import { CategoryListComponent } from './categories/category-list/category-list.component';
 import { CategoryNavigationComponent } from './categories/category-navigation/category-navigation.component';
 import { CategoriesPageComponent } from './categories/pages/categories-page/categories-page.component';
-import { EditCategoryComponent } from './categories/pages/new-category/edit-category.component';
 import { HlmButtonDirective } from '@spartan-ng/ui-button-helm';
 import { HlmCaptionComponent } from '../../components/libs/ui/ui-table-helm/src/lib/hlm-caption.component';
 import { HlmTableComponent } from '../../components/libs/ui/ui-table-helm/src/lib/hlm-table.component';
@@ -38,8 +37,11 @@ import {
   HlmTabsTriggerDirective,
 } from '@spartan-ng/ui-tabs-helm';
 
-
-import { lucideArrowUpDown, lucideChevronDown, lucideMoreHorizontal } from '@ng-icons/lucide';
+import {
+  lucideArrowUpDown,
+  lucideChevronDown,
+  lucideMoreHorizontal,
+} from '@ng-icons/lucide';
 
 // import { BrnMenuTriggerDirective } from '@spartan-ng/ui-menu-brain';
 import { CashAccountListComponent } from './accounts/cash-account-list/cash-account-list.component';
@@ -56,7 +58,6 @@ import { AccountsPageComponent } from './accounts/pages/accounts-page/accounts-p
     CategoryListComponent,
     CategoryNavigationComponent,
     CategoriesPageComponent,
-    EditCategoryComponent,
     CashAccountListComponent,
     CashAccountComponent,
     AccountsPageComponent,
@@ -86,7 +87,13 @@ import { AccountsPageComponent } from './accounts/pages/accounts-page/accounts-p
     HttpClientModule,
     HlmIconComponent,
   ],
-  providers: [provideIcons({ lucideChevronDown, lucideMoreHorizontal, lucideArrowUpDown })],
+  providers: [
+    provideIcons({
+      lucideChevronDown,
+      lucideMoreHorizontal,
+      lucideArrowUpDown,
+    }),
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

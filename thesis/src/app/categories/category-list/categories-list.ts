@@ -5,15 +5,18 @@ export const categories: Category[] = [
     id: 1,
     name: 'Home',
     icon: 'home',
+    isShared: true,
   },
   {
     id: 2,
-    name: 'Work',
-    icon: 'briefcase',
+    name: 'Groceries',
+    icon: 'food',
+    isShared: false,
   },
   {
     id: 3,
-    name: 'Personal',
-    icon: 'person',
+    name: 'Childcare',
+    icon: 'child',
+    isShared: false,
   },
 ];
