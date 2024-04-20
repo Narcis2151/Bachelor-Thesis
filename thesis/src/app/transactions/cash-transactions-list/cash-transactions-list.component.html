@@ -1,93 +1,40 @@
 <div class="flex flex-col justify-between gap-4 sm:flex-row">
-  <input
-    hlmInput
-    class="w-full md:w-80"
-    placeholder="Filter emails..."
-    [ngModel]="_emailFilter()"
-    (ngModelChange)="_rawFilterInput.set($event)"
-  />
-
-  <button hlmBtn variant="outline" align="end" [brnMenuTriggerFor]="menu">
-    Columns
-    <hlm-icon name="lucideChevronDown" class="ml-2" size="sm" />
+  <input hlmInput class="w-full md:w-80" placeholder="Filter transactions..." [ngModel]="_transactionsFilter()"
+    (ngModelChange)="_rawFilterInput.set($event)" />
+  <button hlmBtn class="justify-center rounded-sm text-gray-200 hover:text-gray-400">
+    New
   </button>
-  <ng-template #menu>
-    <hlm-menu class="w-32">
-      @for (column of _brnColumnManager.allColumns; track column.name) {
-      <button
-        hlmMenuItemCheckbox
-        [disabled]="_brnColumnManager.isColumnDisabled(column.name)"
-        [checked]="_brnColumnManager.isColumnVisible(column.name)"
-        (triggered)="_brnColumnManager.toggleVisibility(column.name)"
-      >
-        <hlm-menu-item-check />
-        <span>{{ column.label }}</span>
-      </button>
-      }
-    </hlm-menu>
-  </ng-template>
 </div>
 
-<brn-table
-  hlm
-  stickyHeader
-  class="border-border mt-4 block h-[335px] overflow-auto rounded-md border"
-  [dataSource]="_filteredSortedPaginatedPayments()"
-  [displayedColumns]="_allDisplayedColumns()"
-  [trackBy]="_trackBy"
->
-  <brn-column-def name="select" class="w-12">
-    <hlm-th *brnHeaderDef>
-      <hlm-checkbox
-        [checked]="_checkboxState()"
-        (changed)="handleHeaderCheckboxChange()"
-      />
-    </hlm-th>
-    <hlm-td *brnCellDef="let element">
-      <hlm-checkbox
-        [checked]="_isPaymentSelected(element)"
-        (changed)="togglePayment(element)"
-      />
-    </hlm-td>
-  </brn-column-def>
-  <brn-column-def name="status" class="w-32 sm:w-40">
-    <hlm-th truncate *brnHeaderDef>Status</hlm-th>
-    <hlm-td truncate *brnCellDef="let element">
+<brn-table hlm stickyHeader class="w-full border-border mt-10 block h-[335px] overflow-auto"
+  [dataSource]="_filteredSortedPaginatedCashTransactions()" [displayedColumns]="_allDisplayedColumns()" [trackBy]="_trackBy">
+  <brn-column-def name="status" class="w-2/12 justify-center">
+    <hlm-th truncate *brnHeaderDef class="text-center">Category</hlm-th>
+    <hlm-td truncate *brnCellDef="let element" class="justify-center text-center">
       {{ element.status | titlecase }}
     </hlm-td>
   </brn-column-def>
-  <brn-column-def name="email" class="w-60 lg:flex-1">
+  <brn-column-def name="beneficiary" class="w-6/12">
     <hlm-th *brnHeaderDef>
-      <button
-        hlmBtn
-        size="sm"
-        variant="ghost"
-        (click)="handleEmailSortChange()"
-      >
-        Email
+      <button hlmBtn size="sm" variant="ghost" (click)="handleBeneficiarySortChange()">
+        Beneficiary
         <hlm-icon class="ml-3" size="sm" name="lucideArrowUpDown" />
       </button>
     </hlm-th>
     <hlm-td truncate *brnCellDef="let element">
-      {{ element.email }}
+      {{ element.beneficiary }}
     </hlm-td>
   </brn-column-def>
-  <brn-column-def name="amount" class="w-20 justify-end">
+  <brn-column-def name="amount" class="w-2/12 justify-center">
     <hlm-th *brnHeaderDef>Amount</hlm-th>
     <hlm-td class="font-medium tabular-nums" *brnCellDef="let element">
       $ {{ element.amount | number : '1.2-2' }}
     </hlm-td>
   </brn-column-def>
-  <brn-column-def name="actions" class="w-16">
+  <brn-column-def name="actions" class="w-2/12 justify-center">
     <hlm-th *brnHeaderDef></hlm-th>
     <hlm-td *brnCellDef="let element">
-      <button
-        hlmBtn
-        variant="ghost"
-        class="h-6 w-6 p-0.5"
-        align="end"
-        [brnMenuTriggerFor]="menu"
-      >
+      <button hlmBtn variant="ghost" class="h-6 w-6 p-0.5" align="end" [brnMenuTriggerFor]="menu">
         <hlm-icon class="h-4 w-4" name="lucideMoreHorizontal" />
       </button>
 
@@ -96,43 +43,31 @@
           <hlm-menu-label>Actions</hlm-menu-label>
           <hlm-menu-separator />
           <hlm-menu-group>
-            <button hlmMenuItem>Copy payment ID</button>
+            <button hlmMenuItem>Edit</button>
           </hlm-menu-group>
           <hlm-menu-separator />
           <hlm-menu-group>
-            <button hlmMenuItem>View customer</button>
-            <button hlmMenuItem>View payment details</button>
+            <button hlmMenuItem>Delete</button>
           </hlm-menu-group>
         </hlm-menu>
       </ng-template>
     </hlm-td>
   </brn-column-def>
-  <div
-    class="text-muted-foreground flex items-center justify-center p-20"
-    brnNoDataRow
-  >
+  <div class="text-muted-foreground flex items-center justify-center p-20" brnNoDataRow>
     No data
   </div>
 </brn-table>
-<div
-  class="mt-4 flex flex-col justify-between sm:flex-row sm:items-center"
-  *brnPaginator="
+
+<div class="mt-4 flex flex-col justify-between sm:flex-row sm:items-center" *brnPaginator="
     let ctx;
     totalElements: _totalElements();
     pageSize: _pageSize();
     onStateChange: _onStateChange
-  "
->
-  <span class="text-muted-foreground text-sm"
-    >{{ _selected().length }} of {{ _totalElements() }} row(s)
-    selected</span
-  >
+  ">
+  <!-- <span class="text-muted-foreground text-sm">{{ _selected().length }} of {{ _totalElements() }} row(s)
+    selected</span> -->
   <div class="mt-2 flex sm:mt-0">
-    <brn-select
-      class="inline-block"
-      placeholder="{{ _availablePageSizes[0] }}"
-      [(ngModel)]="_pageSize"
-    >
+    <brn-select class="inline-block" placeholder="{{ _availablePageSizes[0] }}" [(ngModel)]="_pageSize">
       <hlm-select-trigger class="w-15 mr-1 inline-flex h-9">
         <hlm-select-value />
       </hlm-select-trigger>
@@ -146,22 +81,10 @@
     </brn-select>
 
     <div class="flex space-x-1">
-      <button
-        size="sm"
-        variant="outline"
-        hlmBtn
-        [disabled]="!ctx.decrementable()"
-        (click)="ctx.decrement()"
-      >
+      <button size="sm" variant="outline" hlmBtn [disabled]="!ctx.decrementable()" (click)="ctx.decrement()">
         Previous
       </button>
-      <button
-        size="sm"
-        variant="outline"
-        hlmBtn
-        [disabled]="!ctx.incrementable()"
-        (click)="ctx.increment()"
-      >
+      <button size="sm" variant="outline" hlmBtn [disabled]="!ctx.incrementable()" (click)="ctx.increment()">
         Next
       </button>
     </div>
