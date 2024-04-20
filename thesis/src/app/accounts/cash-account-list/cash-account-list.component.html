@@ -3,32 +3,17 @@
     <hlm-caption>Cash Accounts</hlm-caption>
     <hlm-th class="text-xs p-0 text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
       <hlm-trow class="w-full">
-        <hlm-th class="px-6 py-3 text-center w-2/12 justify-center">Icon</hlm-th>
-        <hlm-th class="px-6 py-3 text-center w-6/12 justify-center">Name</hlm-th>
+        <hlm-th class="px-6 py-3 text-center w-1/12 justify-center">Icon</hlm-th>
+        <hlm-th class="px-6 py-3 text-start w-7/12 justify-start">Name</hlm-th>
         <hlm-th class="px-6 py-3 text-center w-2/12 justify-center">Balance</hlm-th>
         <hlm-th class="px-6 py-3 text-center w-2/12 justify-center">Menu</hlm-th>
       </hlm-trow>
     </hlm-th>
 
-    <!-- <hlm-trow *ngFor="let cashAccount of cashAccounts">
-      <hlm-td class="flex items-center space-x-2">
-        <img src="/path/to/wallet-icon.svg" alt="Wallet Icon" class="w-6 h-6"> 
-        <span>{{ cashAccount.name }}</span>
-        <button class="ml-auto p-1 rounded-full text-gray-400 hover:text-gray-600">
-          <i class="fa fa-pencil" aria-hidden="true"></i>
-        </button>
-      </hlm-td>
-      <hlm-td>{{ cashAccount.balance + ' ' + cashAccount.currency }}</hlm-td>
-      <hlm-td>
-        <button class="p-1 rounded-full text-gray-400 hover:text-gray-600">
-          <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
-        </button>
-      </hlm-td>
-    </hlm-trow> -->
     <app-cash-account *ngFor="let cashAccount of cashAccounts" [cashAccount]="cashAccount"></app-cash-account>
 
-    <hlm-trow class="bg-muted/50 hover:bg-muted">
-      <hlm-td colspan="3" class="font-semibold">Total Balance</hlm-td>
+    <hlm-trow class=" text-center w-full bg-muted/50 hover:bg-muted">
+      <hlm-td colspan="4" class="font-semibold">Total Balance</hlm-td>
       <hlm-td class="justify-end">2,500.00 RON</hlm-td>
     </hlm-trow>
   </hlm-table>
