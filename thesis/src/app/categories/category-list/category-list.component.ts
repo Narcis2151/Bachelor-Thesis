@@ -1,11 +1,4 @@
 import { Component } from '@angular/core';
-import {
-  HlmCaptionComponent,
-  HlmTableComponent,
-  HlmTdComponent,
-  HlmThComponent,
-  HlmTrowComponent,
-} from '../../../../components/libs/ui/ui-table-helm/src';
 
 import Category from './category/category.model';
 import { categories } from './categories-list';
@@ -16,8 +9,15 @@ import { categories } from './categories-list';
   styleUrl: './category-list.component.scss',
 })
 export class CategoryListComponent {
-  categories: Category[] = categories;
+  allCategories: Category[] = categories;
+
+  personalCategories: Category[] = categories.filter(
+    (category) => !category.isShared
+  );
+
+  sharedCategories: Category[] = categories.filter(
+    (category) => category.isShared
+  );
 
   constructor() {}
-
 }

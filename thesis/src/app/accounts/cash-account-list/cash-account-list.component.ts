@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import CashAccount from '../cash-account-list/cash-account/cash-account.model';
 
+import CashAccount from '../cash-account-list/cash-account/cash-account.model';
 import { cashAccounts } from './cash-account-list';
 
 @Component({
