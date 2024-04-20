@@ -47,6 +47,7 @@ import {
 import { CashAccountListComponent } from './accounts/cash-account-list/cash-account-list.component';
 import { CashAccountComponent } from './accounts/cash-account-list/cash-account/cash-account.component';
 import { AccountsPageComponent } from './accounts/pages/accounts-page/accounts-page.component';
+import { TransactionsComponent } from './transactions/transactions.component';
 
 @NgModule({
   declarations: [
@@ -61,6 +62,7 @@ import { AccountsPageComponent } from './accounts/pages/accounts-page/accounts-p
     CashAccountListComponent,
     CashAccountComponent,
     AccountsPageComponent,
+    TransactionsComponent,
   ],
   imports: [
     HlmButtonDirective,
