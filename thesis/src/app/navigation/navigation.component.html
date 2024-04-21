@@ -11,13 +11,13 @@
           <a>Home</a>
           <ul class="p-2">
             <li><a>Dashboard</a></li>
-            <li><a>Transactions</a></li>
+            <li><a routerLink="/transactions" routerLinkActive="active">Transactions</a></li>
             <li><a>Budgets</a></li>
           </ul>
         </li>
         <li><a>Payments</a></li>
-        <li><a>Categories</a></li>
-        <li><a>Accounts</a></li>
+        <li><a routerLink="/categories" routerLinkActive="active">Categories</a></li>
+        <li><a routerLink="/accounts" routerLinkActive="active">Accounts</a></li>
         <li>
           <a>Settings</a>
           <ul class="p-2">
@@ -34,16 +34,19 @@
       <li>
         <details>
           <summary>Home</summary>
-          <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 z-[1000] p-2 shadow bg-base-100 rounded-box w-52">
-            <li><a>Dashboard</a></li>
-            <li><a>Transactions</a></li>
-            <li><a>Budgets</a></li>
-          </ul>
+          <!-- <div *ngIf="dropdowns.home" class="dropdown-content"> -->
+            <ul tabindex="0"
+              class="menu menu-sm dropdown-content mt-3 z-[1000] p-2 shadow bg-base-100 rounded-box w-52">
+              <li><a>Dashboard</a></li>
+              <li><a routerLink="/transactions" routerLinkActive="active">Transactions</a></li>
+              <li><a>Budgets</a></li>
+            </ul>
+          <!-- </div> -->
         </details>
       </li>
       <li><a>Payments</a></li>
-      <li><a>Categories</a></li>
-      <li><a>Accounts</a></li>
+      <li><a routerLink="/categories" routerLinkActive="active">Categories</a></li>
+      <li><a routerLink="/accounts" routerLinkActive="active">Accounts</a></li>
       <li>
         <details>
           <summary>Settings</summary>

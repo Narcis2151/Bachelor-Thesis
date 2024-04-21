@@ -43,10 +43,29 @@ import {
   lucideMoreHorizontal,
 } from '@ng-icons/lucide';
 
-// import { BrnMenuTriggerDirective } from '@spartan-ng/ui-menu-brain';
+import { HlmButtonModule } from '@spartan-ng/ui-button-helm';
+import {
+  HlmCheckboxCheckIconComponent,
+  HlmCheckboxComponent,
+} from '@spartan-ng/ui-checkbox-helm';
+import { BrnMenuTriggerDirective } from '@spartan-ng/ui-menu-brain';
+import { HlmMenuModule } from '@spartan-ng/ui-menu-helm';
+import {
+  BrnTableModule,
+  PaginatorState,
+  useBrnColumnManager,
+} from '@spartan-ng/ui-table-brain';
+import { HlmTableModule } from '@spartan-ng/ui-table-helm';
+import { BrnSelectModule } from '@spartan-ng/ui-select-brain';
+import { HlmSelectModule } from '@spartan-ng/ui-select-helm';
+import { hlmMuted } from '@spartan-ng/ui-typography-helm';
 import { CashAccountListComponent } from './accounts/cash-account-list/cash-account-list.component';
 import { CashAccountComponent } from './accounts/cash-account-list/cash-account/cash-account.component';
 import { AccountsPageComponent } from './accounts/pages/accounts-page/accounts-page.component';
+import { CashTransactionComponent } from './transactions/cash-transactions-list/cash-transaction/cash-transaction.component';
+import { DecimalPipe, TitleCasePipe } from '@angular/common';
+import { CashTransactionsListComponent } from './transactions/cash-transactions-list/cash-transactions-list.component';
+import { TransactionsPageComponent } from './transactions/pages/transactions-page/transactions-page.component';
 
 @NgModule({
   declarations: [
@@ -61,6 +80,9 @@ import { AccountsPageComponent } from './accounts/pages/accounts-page/accounts-p
     CashAccountListComponent,
     CashAccountComponent,
     AccountsPageComponent,
+    CashTransactionsListComponent,
+    CashTransactionComponent,
+    TransactionsPageComponent,
   ],
   imports: [
     HlmButtonDirective,
@@ -77,15 +99,33 @@ import { AccountsPageComponent } from './accounts/pages/accounts-page/accounts-p
     HlmCardTitleDirective,
     HlmInputDirective,
     HlmLabelDirective,
+    BrnMenuTriggerDirective,
     HlmTabsComponent,
     HlmTabsContentDirective,
     HlmTabsListComponent,
     HlmTabsTriggerDirective,
+    HlmCheckboxCheckIconComponent,
+    HlmCheckboxComponent,
+    TitleCasePipe,
+    DecimalPipe,
     BrowserModule,
     FormsModule,
     AppRoutingModule,
     HttpClientModule,
     HlmIconComponent,
+    BrnMenuTriggerDirective,
+    HlmMenuModule,
+    BrnTableModule,
+    HlmTableModule,
+    HlmButtonModule,
+    DecimalPipe,
+    TitleCasePipe,
+    HlmIconComponent,
+    HlmInputDirective,
+    HlmCheckboxCheckIconComponent,
+    HlmCheckboxComponent,
+    BrnSelectModule,
+    HlmSelectModule,
   ],
   providers: [
     provideIcons({
