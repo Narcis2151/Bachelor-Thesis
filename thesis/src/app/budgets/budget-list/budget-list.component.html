@@ -1,1 +1,105 @@
-<p>budget-list works!</p>
+<div class="flex flex-col justify-between gap-4 sm:flex-row">
+  <input hlmInput class="w-full md:w-80" placeholder="Filter transactions..." [ngModel]="_transactionsFilter()"
+    (ngModelChange)="_rawFilterInput.set($event)" />
+  <button hlmBtn class="justify-center rounded-sm text-gray-200 hover:text-gray-400">
+    New
+  </button>
+</div>
+
+<brn-table hlm stickyHeader class="w-full border-border mt-10 block h-[335px] overflow-auto"
+  [dataSource]="_filteredSortedPaginatedCashTransactions()" [displayedColumns]="_allDisplayedColumns()"
+  [trackBy]="_trackBy">
+  <brn-column-def name="category" class="w-2/12 justify-center">
+    <hlm-th truncate *brnHeaderDef class="text-center">Category</hlm-th>
+    <hlm-td truncate *brnCellDef="let element" class="justify-center text-center">
+      {{ element.category.name | titlecase }}
+    </hlm-td>
+  </brn-column-def>
+  <brn-column-def name="postingDate" class="w-2/12 justify-center text-center">
+    <hlm-th *brnHeaderDef>
+      <button hlmBtn class="p-0" size="sm" variant="ghost" (click)="handleDateSortChange()">
+        Date
+        <hlm-icon class="ml-3" size="sm" name="lucideArrowUpDown" />
+      </button>
+    </hlm-th>
+    <hlm-td truncate *brnCellDef="let element">
+      {{ element.postingDate | date}}
+    </hlm-td>
+  </brn-column-def>
+  <brn-column-def name="beneficiary" class="w-2/12">
+    <hlm-th *brnHeaderDef>Date</hlm-th>
+    <hlm-td truncate *brnCellDef="let element">
+      {{ element.beneficiary | titlecase}}
+    </hlm-td>
+  </brn-column-def>
+  <brn-column-def name="details" class="w-2/12">
+    <hlm-th *brnHeaderDef>Details</hlm-th>
+    <hlm-td truncate *brnCellDef="let element">
+      {{ element.details | titlecase }}
+    </hlm-td>
+  </brn-column-def>
+  <brn-column-def name="amount" class="w-2/12 justify-center">
+    <hlm-th *brnHeaderDef>Amount</hlm-th>
+    <hlm-td class="text-start font-medium tabular-nums" *brnCellDef="let element"
+      [ngClass]="element.type === 'income' ? 'text-green-400' : ''">
+      {{ element.amount | number : '1.2-2' }} {{ element.currency }}
+    </hlm-td>
+  </brn-column-def>
+  <brn-column-def name="actions" class="w-2/12 justify-center">
+    <hlm-th *brnHeaderDef></hlm-th>
+    <hlm-td *brnCellDef="let element">
+      <button hlmBtn variant="ghost" class="h-6 w-6 p-0.5" align="end" [brnMenuTriggerFor]="menu">
+        <hlm-icon class="h-4 w-4" name="lucideMoreHorizontal" />
+      </button>
+
+      <ng-template #menu>
+        <hlm-menu>
+          <hlm-menu-label>Actions</hlm-menu-label>
+          <hlm-menu-separator />
+          <hlm-menu-group>
+            <button hlmMenuItem>Edit</button>
+          </hlm-menu-group>
+          <hlm-menu-separator />
+          <hlm-menu-group>
+            <button hlmMenuItem>Delete</button>
+          </hlm-menu-group>
+        </hlm-menu>
+      </ng-template>
+    </hlm-td>
+  </brn-column-def>
+  <div class="text-muted-foreground flex items-center justify-center p-20" brnNoDataRow>
+    No data
+  </div>
+</brn-table>
+
+<div class="mt-4 flex flex-col justify-between sm:flex-row sm:items-center" *brnPaginator="
+    let ctx;
+    totalElements: _totalElements();
+    pageSize: _pageSize();
+    onStateChange: _onStateChange
+  ">
+
+  <div class="mt-2 flex sm:mt-0">
+    <brn-select class="inline-block" placeholder="{{ _availablePageSizes[0] }}" [(ngModel)]="_pageSize">
+      <hlm-select-trigger class="w-15 mr-1 inline-flex h-9">
+        <hlm-select-value />
+      </hlm-select-trigger>
+      <hlm-select-content>
+        @for (size of _availablePageSizes; track size) {
+        <hlm-option [value]="size">
+          {{ size === 10000 ? 'All' : size }}
+        </hlm-option>
+        }
+      </hlm-select-content>
+    </brn-select>
+
+    <div class="flex space-x-1">
+      <button size="sm" variant="outline" hlmBtn [disabled]="!ctx.decrementable()" (click)="ctx.decrement()">
+        Previous
+      </button>
+      <button size="sm" variant="outline" hlmBtn [disabled]="!ctx.incrementable()" (click)="ctx.increment()">
+        Next
+      </button>
+    </div>
+  </div>
+</div>

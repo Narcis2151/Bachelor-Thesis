@@ -5,8 +5,7 @@ import {
   effect,
   signal,
 } from '@angular/core';
-import { SelectionModel } from '@angular/cdk/collections';
-import { debounceTime, map } from 'rxjs';
+import { debounceTime } from 'rxjs';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import {
   PaginatorState,
