@@ -66,6 +66,9 @@ import { CashTransactionComponent } from './transactions/cash-transactions-list/
 import { DecimalPipe, TitleCasePipe } from '@angular/common';
 import { CashTransactionsListComponent } from './transactions/cash-transactions-list/cash-transactions-list.component';
 import { TransactionsPageComponent } from './transactions/pages/transactions-page/transactions-page.component';
+import { BudgetListComponent } from './budgets/budget-list/budget-list.component';
+import { BudgetComponent } from './budgets/budget-list/budget/budget.component';
+import { BudgetsPageComponent } from './budgets/pages/budgets-page/budgets-page.component';
 
 @NgModule({
   declarations: [
@@ -83,6 +86,9 @@ import { TransactionsPageComponent } from './transactions/pages/transactions-pag
     CashTransactionsListComponent,
     CashTransactionComponent,
     TransactionsPageComponent,
+    BudgetListComponent,
+    BudgetComponent,
+    BudgetsPageComponent,
   ],
   imports: [
     HlmButtonDirective,
