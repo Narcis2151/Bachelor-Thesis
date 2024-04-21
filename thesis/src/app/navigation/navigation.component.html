@@ -33,15 +33,15 @@
     <ul class="menu menu-horizontal px-1 flex justify-items-center">
       <li>
         <details>
-          <button (click)="toggleDropdown('home')" class="dropdown-toggle">Home</button>
-          <div *ngIf="dropdowns.home" class="dropdown-content">
+          <summary>Home</summary>
+          <!-- <div *ngIf="dropdowns.home" class="dropdown-content"> -->
             <ul tabindex="0"
               class="menu menu-sm dropdown-content mt-3 z-[1000] p-2 shadow bg-base-100 rounded-box w-52">
               <li><a>Dashboard</a></li>
               <li><a routerLink="/transactions" routerLinkActive="active">Transactions</a></li>
               <li><a>Budgets</a></li>
             </ul>
-          </div>
+          <!-- </div> -->
         </details>
       </li>
       <li><a>Payments</a></li>
