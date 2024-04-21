@@ -6,12 +6,14 @@ type Budget = {
     id: string;
     name: string;
     icon: string;
+    isShared: boolean;
   }
-  amount: number;
+  amountAvailable: number;
   currency: Currency;
   amountSpent: number;
   startDate: Date;
   endDate: Date;
+  resetDate?: Date;
   active: boolean;
 };
 
