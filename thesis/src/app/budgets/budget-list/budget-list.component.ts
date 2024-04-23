@@ -22,6 +22,7 @@ import Budget from './budget/budget.model';
 })
 export class BudgetListComponent {
   protected budgets: Budget[] = BudgetData;
+  date: Date = new Date();
 
   protected readonly _rawFilterInput = signal('');
   protected readonly _budgetsFilter = signal('');

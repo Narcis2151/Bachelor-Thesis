@@ -59,6 +59,9 @@ import {
   BrnProgressIndicatorComponent,
 } from '@spartan-ng/ui-progress-brain';
 import { HlmProgressIndicatorDirective } from '../../components/ui-progress-helm/src/lib/hlm-progress-indicator.directive';
+
+import { CalendarModule } from 'primeng/calendar';
+
 import { CashAccountListComponent } from './accounts/cash-account-list/cash-account-list.component';
 import { CashAccountComponent } from './accounts/cash-account-list/cash-account/cash-account.component';
 import { AccountsPageComponent } from './accounts/pages/accounts-page/accounts-page.component';
@@ -115,6 +118,7 @@ import { BudgetsPageComponent } from './budgets/pages/budgets-page/budgets-page.
     HlmTabsTriggerDirective,
     HlmCheckboxCheckIconComponent,
     HlmCheckboxComponent,
+    CalendarModule,
     TitleCasePipe,
     DecimalPipe,
     BrowserModule,

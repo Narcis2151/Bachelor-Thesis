@@ -1,4 +1,7 @@
 <div class="flex flex-col justify-between gap-4 sm:flex-row">
+  <div class="card flex justify-content-center bg-blue-700 rounded-lg">
+    <p-calendar [(ngModel)]="date" view="month" dateFormat="mm/yy" ></p-calendar>
+  </div>
   <input hlmInput class="w-full md:w-80" placeholder="Filter budgets..." [ngModel]="_budgetsFilter()"
     (ngModelChange)="_rawFilterInput.set($event)" />
   <button hlmBtn class="justify-center rounded-sm text-gray-200 hover:text-gray-400">
