@@ -5,6 +5,7 @@ import { CategoriesPageComponent } from './categories/pages/categories-page/cate
 import { AccountsPageComponent } from './accounts/pages/accounts-page/accounts-page.component';
 import { TransactionsPageComponent } from './transactions/pages/transactions-page/transactions-page.component';
 import { BudgetsPageComponent } from './budgets/pages/budgets-page/budgets-page.component';
+import { BudgetComponent } from './budgets/budget-list/budget/budget.component';
 
 const routes: Routes = [
   { path: 'auth', component: AuthComponent },
@@ -13,6 +14,7 @@ const routes: Routes = [
   { path: 'transactions', component: TransactionsPageComponent },
   { path: 'budgets', component: BudgetsPageComponent },
   // { path: '', redirectTo: '/transactions', pathMatch: 'full' },
+  { path: 'budget', component: BudgetComponent },
 ];
 
 @NgModule({

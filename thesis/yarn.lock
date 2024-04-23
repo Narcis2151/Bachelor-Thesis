@@ -2334,6 +2334,13 @@
   dependencies:
     tslib "^2.3.0"
 
+"@spartan-ng/ui-progress-brain@0.0.1-alpha.343":
+  version "0.0.1-alpha.343"
+  resolved "https://registry.yarnpkg.com/@spartan-ng/ui-progress-brain/-/ui-progress-brain-0.0.1-alpha.343.tgz#7cbc3bc0a8c9da6f737eb51b4756d1d2ddd5d8cb"
+  integrity sha512-Z6xoeBqpD2LjAgMi+mhkxoQQG1cEyiUP+9eYHVpuzzClNE/hneqAg/weq6kq3unhls2DIPnsEjY35TY4KSptwQ==
+  dependencies:
+    tslib "^2.3.0"
+
 "@spartan-ng/ui-select-brain@0.0.1-alpha.343":
   version "0.0.1-alpha.343"
   resolved "https://registry.yarnpkg.com/@spartan-ng/ui-select-brain/-/ui-select-brain-0.0.1-alpha.343.tgz#eafde4f95be2542b4a2de7e02670dd6ea6251095"

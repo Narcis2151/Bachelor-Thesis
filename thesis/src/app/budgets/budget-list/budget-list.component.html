@@ -7,9 +7,8 @@
 </div>
 
 <brn-table hlm stickyHeader class="w-full border-border mt-10 block h-[335px] overflow-auto"
-  [dataSource]="_filteredSortedPaginatedBudgets()" [displayedColumns]="_allDisplayedColumns()"
-  [trackBy]="_trackBy">
-  <brn-column-def name="category" class="w-2/12 justify-center">
+  [dataSource]="_filteredSortedPaginatedBudgets()" [displayedColumns]="_allDisplayedColumns()" [trackBy]="_trackBy">
+  <brn-column-def name="category" class="w-1/12 justify-center">
     <hlm-th truncate *brnHeaderDef class="text-center">Category</hlm-th>
     <hlm-td truncate *brnCellDef="let element" class="justify-center text-center">
       {{ element.category.name | titlecase }}
@@ -26,6 +25,14 @@
       {{ element.resetDate | date}}
     </hlm-td>
   </brn-column-def>
+  <brn-column-def name="progress" class="w-2/12 justify-center">
+    <hlm-th *brnHeaderDef>Progress</hlm-th>
+    <hlm-td class="text-center justify-center font-medium tabular-nums" *brnCellDef="let element">
+      <brn-progress hlmProgressIndicator class='text-center justify-center w-full h-full' aria-labelledby="loading" [value]="element.progress">
+        <!-- <hlm-progress-indicator/> -->
+      </brn-progress>
+    </hlm-td>
+  </brn-column-def>
   <brn-column-def name="amountAvailable" class="w-2/12 justify-center">
     <hlm-th *brnHeaderDef>Available Amount</hlm-th>
     <hlm-td class="text-start font-medium tabular-nums" *brnCellDef="let element">
@@ -38,8 +45,14 @@
       {{ element.amountSpent | number : '1.2-2' }} {{ element.currency }}
     </hlm-td>
   </brn-column-def>
-  
-  <brn-column-def name="actions" class="w-2/12 justify-center">
+  <brn-column-def name="isShared" class="w-2/12 justify-center">
+    <hlm-th *brnHeaderDef>Is Shared</hlm-th>
+    <hlm-td class="text-start font-medium tabular-nums" *brnCellDef="let element">
+      {{ element.category.isShared ? 'Yes' : 'No'}}
+    </hlm-td>
+  </brn-column-def>
+
+  <brn-column-def name="actions" class="w-1/12 justify-center">
     <hlm-th *brnHeaderDef></hlm-th>
     <hlm-td *brnCellDef="let element">
       <button hlmBtn variant="ghost" class="h-6 w-6 p-0.5" align="end" [brnMenuTriggerFor]="menu">

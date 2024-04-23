@@ -50,15 +50,15 @@ import {
 } from '@spartan-ng/ui-checkbox-helm';
 import { BrnMenuTriggerDirective } from '@spartan-ng/ui-menu-brain';
 import { HlmMenuModule } from '@spartan-ng/ui-menu-helm';
-import {
-  BrnTableModule,
-  PaginatorState,
-  useBrnColumnManager,
-} from '@spartan-ng/ui-table-brain';
+import { BrnTableModule } from '@spartan-ng/ui-table-brain';
 import { HlmTableModule } from '@spartan-ng/ui-table-helm';
 import { BrnSelectModule } from '@spartan-ng/ui-select-brain';
 import { HlmSelectModule } from '@spartan-ng/ui-select-helm';
-import { hlmMuted } from '@spartan-ng/ui-typography-helm';
+import {
+  BrnProgressComponent,
+  BrnProgressIndicatorComponent,
+} from '@spartan-ng/ui-progress-brain';
+import { HlmProgressIndicatorDirective } from '../../components/ui-progress-helm/src/lib/hlm-progress-indicator.directive';
 import { CashAccountListComponent } from './accounts/cash-account-list/cash-account-list.component';
 import { CashAccountComponent } from './accounts/cash-account-list/cash-account/cash-account.component';
 import { AccountsPageComponent } from './accounts/pages/accounts-page/accounts-page.component';
@@ -91,6 +91,9 @@ import { BudgetsPageComponent } from './budgets/pages/budgets-page/budgets-page.
     BudgetsPageComponent,
   ],
   imports: [
+    BrnProgressComponent,
+    BrnProgressIndicatorComponent,
+    HlmProgressIndicatorDirective,
     HlmButtonDirective,
     HlmTableComponent,
     HlmTrowComponent,

@@ -36,8 +36,10 @@ export class BudgetListComponent {
   protected readonly _brnColumnManager = useBrnColumnManager({
     category: { visible: true, label: 'category' },
     resetDate: { visible: true, label: 'resetDate' },
+    progress: { visible: true, label: 'progress' },
     amountAvailable: { visible: true, label: 'amountAvailable' },
     amountSpent: { visible: true, label: 'amountSpent' },
+    isShared: { visible: true, label: 'isShared' },
     currency: { visible: false },
   });
   protected readonly _allDisplayedColumns = computed(() => [
