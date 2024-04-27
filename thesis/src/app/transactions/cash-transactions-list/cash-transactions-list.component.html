@@ -9,43 +9,43 @@
 <brn-table hlm stickyHeader class="w-full border-border mt-10 block h-[335px] overflow-auto"
   [dataSource]="_filteredSortedPaginatedCashTransactions()" [displayedColumns]="_allDisplayedColumns()"
   [trackBy]="_trackBy">
-  <brn-column-def name="category" class="w-2/12 justify-center">
-    <hlm-th truncate *brnHeaderDef class="text-center">Category</hlm-th>
-    <hlm-td truncate *brnCellDef="let element" class="justify-center text-center">
+  <brn-column-def name="category" class="w-3/12 md:w-2/12 justify-center">
+    <hlm-th *brnHeaderDef truncate class="text-center">Category</hlm-th>
+    <hlm-td *brnCellDef="let element" truncate class="justify-center text-center">
       {{ element.category.name | titlecase }}
     </hlm-td>
   </brn-column-def>
-  <brn-column-def name="postingDate" class="w-2/12 justify-center text-center">
+  <brn-column-def name="postingDate" class="max-sm:hidden w-2/12 justify-center text-center">
     <hlm-th *brnHeaderDef>
       <button hlmBtn class="p-0" size="sm" variant="ghost" (click)="handleDateSortChange()">
         Date
         <hlm-icon class="ml-3" size="sm" name="lucideArrowUpDown" />
       </button>
     </hlm-th>
-    <hlm-td truncate *brnCellDef="let element">
+    <hlm-td *brnCellDef="let element">
       {{ element.postingDate | date}}
     </hlm-td>
   </brn-column-def>
-  <brn-column-def name="beneficiary" class="w-2/12">
-    <hlm-th *brnHeaderDef>Beneficiary/Sender</hlm-th>
+  <brn-column-def name="beneficiary" class="w-5/12 sm:w-3/12 md:w-2/12">
+    <hlm-th *brnHeaderDef truncate class="collapse">Beneficiary/Sender</hlm-th>
     <hlm-td truncate *brnCellDef="let element">
       {{ element.beneficiary | titlecase}}
     </hlm-td>
   </brn-column-def>
-  <brn-column-def name="details" class="w-2/12">
+  <brn-column-def name="details" class="max-md:hidden md:w-3/12">
     <hlm-th *brnHeaderDef>Details</hlm-th>
-    <hlm-td truncate *brnCellDef="let element">
+    <hlm-td *brnCellDef="let element">
       {{ element.details | titlecase }}
     </hlm-td>
   </brn-column-def>
-  <brn-column-def name="amount" class="w-2/12 justify-center">
+  <brn-column-def name="amount" class="w-3/12 md:w-2/12 justify-center">
     <hlm-th *brnHeaderDef>Amount</hlm-th>
     <hlm-td class="text-start font-medium tabular-nums" *brnCellDef="let element"
       [ngClass]="element.type === 'income' ? 'text-green-400' : ''">
       {{ element.amount | number : '1.2-2' }} {{ element.currency }}
     </hlm-td>
   </brn-column-def>
-  <brn-column-def name="actions" class="w-2/12 justify-center">
+  <brn-column-def name="actions" class="w-1/12 justify-center">
     <hlm-th *brnHeaderDef></hlm-th>
     <hlm-td *brnCellDef="let element">
       <button hlmBtn variant="ghost" class="h-6 w-6 p-0.5" align="end" [brnMenuTriggerFor]="menu">
