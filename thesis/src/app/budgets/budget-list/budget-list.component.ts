@@ -14,6 +14,9 @@ import {
 
 import BudgetData from './budget-list';
 import Budget from './budget/budget.model';
+import Currency from '../../../../shared/account-currency';
+import Category from '../../categories/category-list/category/category.model';
+import { categories } from '../../categories/category-list/categories-list';
 
 @Component({
   selector: 'app-budget-list',
@@ -21,7 +24,80 @@ import Budget from './budget/budget.model';
   styleUrl: './budget-list.component.scss',
 })
 export class BudgetListComponent {
-  protected budgets: Budget[] = BudgetData;
+  protected budgets: Budget[] = BudgetData.filter((b) => b.active);
+  protected selectedBudget!: Budget;
+  protected readonly currencies = Object.values(Currency);
+  protected availableCategories: Category[] = categories.filter(
+    (c) => !this.budgets.some((b) => b.category.id === c.id)
+  );
+  protected newBudget: Budget = {
+    id: '',
+    category: categories[0],
+    startDate: new Date(),
+    progress: 0,
+    amountAvailable: 0,
+    amountSpent: 0,
+    currency: Currency.RON,
+    active: true,
+  };
+
+  protected addBudget() {
+    this.newBudget.id = this.generateUniqueId();
+    this.newBudget.startDate = new Date(this.newBudget.startDate);
+    const oneMonthLater = new Date(this.newBudget.startDate);
+    oneMonthLater.setMonth(oneMonthLater.getMonth() + 1);
+    this.newBudget.resetDate = oneMonthLater;
+    this.budgets.push({ ...this.newBudget });
+    this._Budgets.set([...this.budgets]);
+    console.log('New budget added:', this.newBudget);
+    this.resetNewBudget();
+  }
+
+  protected resetNewBudget() {
+    this.newBudget = {
+      id: '',
+      category: categories[0],
+      startDate: new Date(),
+      resetDate: new Date(),
+      progress: 0,
+      amountAvailable: 0,
+      amountSpent: 0,
+      currency: Currency.RON,
+      active: true,
+    };
+  }
+
+  private generateUniqueId(): string {
+    return Math.random().toString(36).substr(2, 9);
+  }
+
+  protected selectBudget(budget: Budget) {
+    this.selectedBudget = { ...budget };
+  }
+
+  protected saveBudget() {
+    if (this.selectedBudget) {
+      const index = this.budgets.findIndex(
+        (t) => t.id === this.selectedBudget!.id
+      );
+      if (index > -1) {
+        this.budgets[index] = { ...this.selectedBudget };
+        this._Budgets.set([...this.budgets]);
+      }
+    }
+  }
+
+  protected deleteBudget() {
+    if (this.selectedBudget) {
+      const index = this.budgets.findIndex(
+        (t) => t.id === this.selectedBudget!.id
+      );
+      if (index > -1) {
+        this.budgets.splice(index, 1);
+        this._Budgets.set([...this.budgets]);
+      }
+    }
+  }
 
   protected readonly _rawFilterInput = signal('');
   protected readonly _budgetsFilter = signal('');
