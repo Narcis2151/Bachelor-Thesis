@@ -28,16 +28,14 @@ export class BudgetListComponent {
   private readonly _debouncedFilter = toSignal(
     toObservable(this._rawFilterInput).pipe(debounceTime(300))
   );
-
-  private readonly _displayedIndices = signal({ start: 0, end: 0 });
-  protected readonly _availablePageSizes = [5, 10, 20, 10000];
-  protected readonly _pageSize = signal(this._availablePageSizes[0]);
+  protected readonly _pageSize = signal(10000);
 
   protected readonly _brnColumnManager = useBrnColumnManager({
     category: { visible: true, label: 'category' },
     resetDate: { visible: true, label: 'resetDate' },
     progress: { visible: true, label: 'progress' },
     amountAvailable: { visible: true, label: 'amountAvailable' },
+    amountSpent: { visible: false, label: 'amountSpent' },
     isShared: { visible: true, label: 'isShared' },
     currency: { visible: false },
   });
@@ -54,7 +52,6 @@ export class BudgetListComponent {
         (u) =>
           u.category.name.toLowerCase().includes(filter) ||
           u.amountAvailable.toString().includes(filter) ||
-          u.amountSpent.toString().includes(filter) ||
           u.currency.toString().includes(filter)
       );
     }
@@ -63,11 +60,9 @@ export class BudgetListComponent {
   private readonly _dateSort = signal<'ASC' | 'DESC' | null>(null);
   protected readonly _filteredSortedPaginatedBudgets = computed(() => {
     const sort = this._dateSort();
-    const start = this._displayedIndices().start;
-    const end = this._displayedIndices().end + 1;
     const Budgets = this._filteredBudgets();
     if (!sort) {
-      return Budgets.slice(start, end);
+      return Budgets.slice(0, this._pageSize());
     }
     return [...Budgets]
       .sort(
@@ -75,7 +70,7 @@ export class BudgetListComponent {
           (sort === 'ASC' ? 1 : -1) *
           (Number(p1.resetDate) - Number(p2.resetDate))
       )
-      .slice(start, end);
+      .slice(0, this._pageSize());
   });
 
   protected readonly _trackBy: TrackByFunction<Budget> = (
@@ -85,11 +80,6 @@ export class BudgetListComponent {
   protected readonly _totalElements = computed(
     () => this._filteredBudgets().length
   );
-  protected readonly _onStateChange = ({
-    startIndex,
-    endIndex,
-  }: PaginatorState) =>
-    this._displayedIndices.set({ start: startIndex, end: endIndex });
 
   constructor() {
     effect(() => this._budgetsFilter.set(this._debouncedFilter() ?? ''), {

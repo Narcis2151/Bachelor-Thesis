@@ -6,7 +6,7 @@
   </button>
 </div>
 
-<brn-table hlm stickyHeader class="w-full border-border mt-10 block h-[335px] overflow-auto"
+<brn-table hlm stickyHeader class="w-full border-border mt-10 block h-8/12 overflow-auto"
   [dataSource]="_filteredSortedPaginatedBudgets()" [displayedColumns]="_allDisplayedColumns()" [trackBy]="_trackBy">
   <brn-column-def name="category" class="w-3/12 md:w-2/12 justify-center">
     <hlm-th truncate *brnHeaderDef class="text-center">Category</hlm-th>
@@ -27,15 +27,19 @@
   </brn-column-def>
   <brn-column-def name="progress" class="w-5/12 sm:w-4/12 justify-start text-start">
     <hlm-th *brnHeaderDef>Progress</hlm-th>
-    <hlm-td class="text-start justify-start font-medium tabular-nums w-5/12 md:w-4/12 h-full px-4" *brnCellDef="let element">
-      <div class="relative w-full overflow-x-scroll">
-        <brn-progress
-          hlmProgressIndicator
-          class="w-full h-4 align-middle"
-          aria-labelledby="loading"
-          [value]="element.progress"
-        >
+    <hlm-td class="text-start justify-start font-medium tabular-nums h-full px-4" *brnCellDef="let element">
+      <div class="relative flex text-start justify-start w-full h-full overflow-visible group">
+        <brn-progress hlmProgressIndicator aria-labelledby="loading" class="w-full bg-base-200 h-6 flex justify-start text-start " [value]="100">
+          <div class="bg-primary h-6 rounded-full text-white text-xs flex items-start justify-start"
+            [ngStyle]="{ 'width': element.amountSpent / element.amountAvailable * 100 + '%' }">
+          </div>
         </brn-progress>
+        <div class="absolute h-full justify-start inset-0 bg-gray-100 text-center text-gray-700 
+          rounded-badge p-0 opacity-0 group-hover:opacity-100 transition-opacity w-full 
+          sm:w-auto sm:max-w-sm text-xs whitespace-normal">
+          Spent: {{ element.amountSpent | number : '1.2-2' }} {{ element.currency }},
+          Remaining: {{ element.amountAvailable - element.amountSpent | number : '1.2-2' }} {{ element.currency }}
+        </div>
       </div>
     </hlm-td>
   </brn-column-def>
@@ -78,35 +82,3 @@
     No data
   </div>
 </brn-table>
-
-<div class="mt-4 flex flex-col justify-between sm:flex-row sm:items-center" *brnPaginator="
-    let ctx;
-    totalElements: _totalElements();
-    pageSize: _pageSize();
-    onStateChange: _onStateChange
-  ">
-
-  <div class="mt-2 flex sm:mt-0">
-    <brn-select class="inline-block" placeholder="{{ _availablePageSizes[0] }}" [(ngModel)]="_pageSize">
-      <hlm-select-trigger class="w-15 mr-1 inline-flex h-9">
-        <hlm-select-value />
-      </hlm-select-trigger>
-      <hlm-select-content>
-        @for (size of _availablePageSizes; track size) {
-        <hlm-option [value]="size">
-          {{ size === 10000 ? 'All' : size }}
-        </hlm-option>
-        }
-      </hlm-select-content>
-    </brn-select>
-
-    <div class="flex space-x-1">
-      <button size="sm" variant="outline" hlmBtn [disabled]="!ctx.decrementable()" (click)="ctx.decrement()">
-        Previous
-      </button>
-      <button size="sm" variant="outline" hlmBtn [disabled]="!ctx.incrementable()" (click)="ctx.increment()">
-        Next
-      </button>
-    </div>
-  </div>
-</div>

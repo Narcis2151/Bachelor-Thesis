@@ -21,15 +21,12 @@ export class HlmProgressIndicatorDirective implements DoCheck {
 
 	constructor() {
 		effect(() => {
-			// using renderer directly as hostbinding is one change detection cycle behind
-			const currentValue = this._value();
-			this._renderer.setStyle(this._element.nativeElement, 'transform', `translateX(-${100 - (currentValue || 100)}%)`);
-			if (!currentValue) {
-				this._renderer.addClass(this._element.nativeElement, 'animate-indeterminate');
-			} else {
-				this._renderer.removeClass(this._element.nativeElement, 'animate-indeterminate');
-			}
-		});
+      const currentValue = this._value();
+      const widthPercentage = currentValue ? `${currentValue}%` : '0%';
+
+      this._renderer.setStyle(this._element.nativeElement, 'width', widthPercentage);
+      this._renderer.setStyle(this._element.nativeElement, 'border-radius', '9999px');
+    });
 	}
 
 	ngDoCheck(): void {
