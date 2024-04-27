@@ -14,6 +14,7 @@ import {
 
 import CashTransaction from './cash-transaction/cash-transaction.model';
 import CashTransactions from './cash-transaction-list';
+import Currency from '../../../../shared/account-currency';
 
 @Component({
   selector: 'app-cash-transactions-list',
@@ -22,7 +23,23 @@ import CashTransactions from './cash-transaction-list';
 })
 export class CashTransactionsListComponent {
   protected cashTransactions: CashTransaction[] = CashTransactions;
+  protected selectedCashTransaction!: CashTransaction;
+  protected currencies = Object.values(Currency);
 
+  protected selectTransaction(transaction: CashTransaction) {
+    this.selectedCashTransaction = { ...transaction };
+  }
+
+  saveTransaction() {
+    if (this.selectedCashTransaction) {
+      const index = this.cashTransactions.findIndex((t) => t.id === this.selectedCashTransaction!.id);
+      if (index > -1) {
+        this.cashTransactions[index] = { ...this.selectedCashTransaction }; 
+        console.log('Transaction updated:', this.selectedCashTransaction);
+        this._CashTransactions.set([...this.cashTransactions]);
+      }
+    }
+  }
   protected readonly _rawFilterInput = signal('');
   protected readonly _transactionsFilter = signal('');
   private readonly _debouncedFilter = toSignal(

@@ -1,10 +1,27 @@
 <div class="flex flex-col justify-between gap-4 sm:flex-row">
   <input hlmInput class="w-full md:w-80" placeholder="Filter transactions..." [ngModel]="_transactionsFilter()"
     (ngModelChange)="_rawFilterInput.set($event)" />
-  <button hlmBtn class="justify-center rounded-sm text-gray-200 hover:text-gray-400">
+  <button hlmBtn brnDialogTrigger [brnDialogTriggerFor]="newDialog"
+    class="justify-center rounded-sm text-white hover:text-gray-400">
     New
   </button>
 </div>
+
+<hlm-dialog #newDialog>
+  <hlm-dialog-content *brnDialogContent="let ctx">
+    <hlm-dialog-header>
+      <h3 brnDialogTitle hlm>Print this page</h3>
+      <p brnDialogDescription hlm>
+        Are you sure you want to print this page? Only print if absolutely necessary! The less we print, the
+        less paper we need, the better it is for our environment!
+      </p>
+    </hlm-dialog-header>
+    <hlm-dialog-footer>
+      <button hlmBtn variant="ghost" (click)="ctx.close()">Cancel</button>
+      <button hlmBtn class="text-white hover:text-gray-400">Print</button>
+    </hlm-dialog-footer>
+  </hlm-dialog-content>
+</hlm-dialog>
 
 <brn-table hlm stickyHeader class="w-full border-border mt-10 block h-[335px] overflow-auto"
   [dataSource]="_filteredSortedPaginatedCashTransactions()" [displayedColumns]="_allDisplayedColumns()"
@@ -57,11 +74,13 @@
           <hlm-menu-label>Actions</hlm-menu-label>
           <hlm-menu-separator />
           <hlm-menu-group>
-            <button hlmMenuItem>Edit</button>
+            <button brnDialogTrigger [brnDialogTriggerFor]="editDialog" (click)="selectTransaction(element)">
+              Edit
+            </button>
           </hlm-menu-group>
           <hlm-menu-separator />
           <hlm-menu-group>
-            <button hlmMenuItem>Delete</button>
+            <button brnDialogTrigger>Delete</button>
           </hlm-menu-group>
         </hlm-menu>
       </ng-template>
@@ -71,6 +90,76 @@
     No data
   </div>
 </brn-table>
+
+<hlm-dialog #editDialog>
+  <hlm-dialog-content class="sm:max-w-[425px]" *brnDialogContent="let ctx">
+    <hlm-dialog-header>
+      <h3 hlmDialogTitle>Edit Transaction</h3>
+      <p hlmDialogDescription>Modify the transaction details and click save to apply changes.</p>
+    </hlm-dialog-header>
+
+    <div class="py-4 grid gap-4">
+      <div class="items-center grid grid-cols-4 gap-4">
+        <label hlmLabel for="beneficiary" class="text-right">Beneficiary</label>
+        <input hlmInput id="beneficiary" [(ngModel)]="selectedCashTransaction.beneficiary" class="col-span-3" />
+      </div>
+
+      <div class="items-center grid grid-cols-4 gap-4">
+        <label hlmLabel for="details" class="text-right">Details</label>
+        <input hlmInput id="details" [(ngModel)]="selectedCashTransaction.details" class="col-span-3" />
+      </div>
+
+      <div class="items-center grid grid-cols-4 gap-4">
+        <label hlmLabel for="postingDate" class="text-right">Posting Date</label>
+        <input type="date" hlmInput id="postingDate" [(ngModel)]="selectedCashTransaction.postingDate"
+          class="col-span-3" />
+      </div>
+
+      <!-- Amount Field -->
+      <div class="items-center grid grid-cols-4 gap-4">
+        <label hlmLabel for="amount" class="text-right">Amount</label>
+        <input type="number" hlmInput id="amount" [(ngModel)]="selectedCashTransaction.amount" class="col-span-3" />
+      </div>
+
+      <!-- Currency Field -->
+      <div class="items-center grid grid-cols-4 gap-4">
+        <label hlmLabel for="currency" class="text-right">Currency</label>
+        <brn-select id="currency" [(ngModel)]="selectedCashTransaction.currency" class="col-span-3">
+          <hlm-select-trigger class="w-full">
+            <hlm-select-value />
+          </hlm-select-trigger>
+          <hlm-select-content>
+            <hlm-option *ngFor="let currency of currencies" [value]="currency">
+              {{ currency }}
+            </hlm-option>
+          </hlm-select-content>
+        </brn-select>
+      </div>
+
+      <!-- Type Field (Income or Expense) -->
+      <div class="items-center grid grid-cols-4 gap-4">
+        <label hlmLabel for="type" class="text-right">Type</label>
+        <brn-select id="type" [(ngModel)]="selectedCashTransaction.type" class="col-span-3">
+          <hlm-select-trigger class="w-full">
+            <hlm-select-value />
+          </hlm-select-trigger>
+          <hlm-select-content>
+            <hlm-option value="income">Income</hlm-option>
+            <hlm-option value="expense">Expense</hlm-option>
+          </hlm-select-content>
+        </brn-select>
+      </div>
+    </div>
+
+    <hlm-dialog-footer>
+      <button hlmBtn variant="ghost" (click)="ctx.close()">Cancel</button>
+      <button hlmBtn class="text-white hover:text-gray-400" (click)="saveTransaction(); ctx.close()">
+        Save changes
+      </button>
+    </hlm-dialog-footer>
+  </hlm-dialog-content>
+</hlm-dialog>
+
 
 <div class="mt-4 flex flex-col justify-between sm:flex-row sm:items-center" *brnPaginator="
     let ctx;
