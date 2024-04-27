@@ -12,19 +12,20 @@ import {
   useBrnColumnManager,
 } from '@spartan-ng/ui-table-brain';
 
-import CashTransaction from './cash-transaction/cash-transaction.model';
-import CashTransactions from './cash-transaction-list';
+import BudgetData from './budget-list';
+import Budget from './budget/budget.model';
 
 @Component({
-  selector: 'app-cash-transactions-list',
-  templateUrl: './cash-transactions-list.component.html',
-  styleUrl: './cash-transactions-list.component.scss',
+  selector: 'app-budget-list',
+  templateUrl: './budget-list.component.html',
+  styleUrl: './budget-list.component.scss',
 })
-export class CashTransactionsListComponent {
-  protected cashTransactions: CashTransaction[] = CashTransactions;
+export class BudgetListComponent {
+  protected budgets: Budget[] = BudgetData;
+  date: Date = new Date();
 
   protected readonly _rawFilterInput = signal('');
-  protected readonly _transactionsFilter = signal('');
+  protected readonly _budgetsFilter = signal('');
   private readonly _debouncedFilter = toSignal(
     toObservable(this._rawFilterInput).pipe(debounceTime(300))
   );
@@ -34,58 +35,57 @@ export class CashTransactionsListComponent {
   protected readonly _pageSize = signal(this._availablePageSizes[0]);
 
   protected readonly _brnColumnManager = useBrnColumnManager({
-    category: { visible: true, label: 'Category' },
-    postingDate: { visible: true, label: 'Posting Date' },
-    beneficiary: { visible: true, label: 'Beneficiary' },
-    details: { visible: true, label: 'Details' },
-    amount: { visible: true, label: 'Amount' },
-    currency: { visible: false, label: 'Currency' },
-    type: { visible: false },
+    category: { visible: true, label: 'category' },
+    resetDate: { visible: true, label: 'resetDate' },
+    progress: { visible: true, label: 'progress' },
+    amountAvailable: { visible: true, label: 'amountAvailable' },
+    amountSpent: { visible: true, label: 'amountSpent' },
+    isShared: { visible: true, label: 'isShared' },
+    currency: { visible: false },
   });
   protected readonly _allDisplayedColumns = computed(() => [
     ...this._brnColumnManager.displayedColumns(),
     'actions',
   ]);
 
-  private readonly _CashTransactions = signal(this.cashTransactions);
-  private readonly _filteredCashTransactions = computed(() => {
-    const filter = this._transactionsFilter()?.trim()?.toLowerCase();
+  private readonly _Budgets = signal(this.budgets);
+  private readonly _filteredBudgets = computed(() => {
+    const filter = this._budgetsFilter()?.trim()?.toLowerCase();
     if (filter && filter.length > 0) {
-      return this._CashTransactions().filter(
+      return this._Budgets().filter(
         (u) =>
-          u.beneficiary.toLowerCase().includes(filter) ||
-          u.details.toLowerCase().includes(filter) ||
           u.category.name.toLowerCase().includes(filter) ||
-          u.amount.toString().includes(filter) ||
+          u.amountAvailable.toString().includes(filter) ||
+          u.amountSpent.toString().includes(filter) ||
           u.currency.toString().includes(filter)
       );
     }
-    return this._CashTransactions();
+    return this._Budgets();
   });
   private readonly _dateSort = signal<'ASC' | 'DESC' | null>(null);
-  protected readonly _filteredSortedPaginatedCashTransactions = computed(() => {
+  protected readonly _filteredSortedPaginatedBudgets = computed(() => {
     const sort = this._dateSort();
     const start = this._displayedIndices().start;
     const end = this._displayedIndices().end + 1;
-    const CashTransactions = this._filteredCashTransactions();
+    const Budgets = this._filteredBudgets();
     if (!sort) {
-      return CashTransactions.slice(start, end);
+      return Budgets.slice(start, end);
     }
-    return [...CashTransactions]
+    return [...Budgets]
       .sort(
         (p1, p2) =>
           (sort === 'ASC' ? 1 : -1) *
-          (Number(p1.postingDate) - Number(p2.postingDate))
+          (Number(p1.resetDate) - Number(p2.resetDate))
       )
       .slice(start, end);
   });
 
-  protected readonly _trackBy: TrackByFunction<CashTransaction> = (
+  protected readonly _trackBy: TrackByFunction<Budget> = (
     _: number,
-    p: CashTransaction
+    p: Budget
   ) => p.id;
   protected readonly _totalElements = computed(
-    () => this._filteredCashTransactions().length
+    () => this._filteredBudgets().length
   );
   protected readonly _onStateChange = ({
     startIndex,
@@ -94,7 +94,7 @@ export class CashTransactionsListComponent {
     this._displayedIndices.set({ start: startIndex, end: endIndex });
 
   constructor() {
-    effect(() => this._transactionsFilter.set(this._debouncedFilter() ?? ''), {
+    effect(() => this._budgetsFilter.set(this._debouncedFilter() ?? ''), {
       allowSignalWrites: true,
     });
   }

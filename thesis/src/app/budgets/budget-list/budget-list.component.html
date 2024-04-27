@@ -1,5 +1,8 @@
 <div class="flex flex-col justify-between gap-4 sm:flex-row">
-  <input hlmInput class="w-full md:w-80" placeholder="Filter transactions..." [ngModel]="_transactionsFilter()"
+  <div class="card flex justify-content-center bg-blue-700 rounded-lg">
+    <p-calendar [(ngModel)]="date" view="month" dateFormat="mm/yy" ></p-calendar>
+  </div>
+  <input hlmInput class="w-full md:w-80" placeholder="Filter budgets..." [ngModel]="_budgetsFilter()"
     (ngModelChange)="_rawFilterInput.set($event)" />
   <button hlmBtn class="justify-center rounded-sm text-gray-200 hover:text-gray-400">
     New
@@ -7,45 +10,58 @@
 </div>
 
 <brn-table hlm stickyHeader class="w-full border-border mt-10 block h-[335px] overflow-auto"
-  [dataSource]="_filteredSortedPaginatedCashTransactions()" [displayedColumns]="_allDisplayedColumns()"
-  [trackBy]="_trackBy">
-  <brn-column-def name="category" class="w-2/12 justify-center">
+  [dataSource]="_filteredSortedPaginatedBudgets()" [displayedColumns]="_allDisplayedColumns()" [trackBy]="_trackBy">
+  <brn-column-def name="category" class="w-1/12 justify-center">
     <hlm-th truncate *brnHeaderDef class="text-center">Category</hlm-th>
     <hlm-td truncate *brnCellDef="let element" class="justify-center text-center">
       {{ element.category.name | titlecase }}
     </hlm-td>
   </brn-column-def>
-  <brn-column-def name="postingDate" class="w-2/12 justify-center text-center">
+  <brn-column-def name="resetDate" class="w-2/12 justify-center text-center">
     <hlm-th *brnHeaderDef>
       <button hlmBtn class="p-0" size="sm" variant="ghost" (click)="handleDateSortChange()">
-        Date
+        Reset Date
         <hlm-icon class="ml-3" size="sm" name="lucideArrowUpDown" />
       </button>
     </hlm-th>
     <hlm-td truncate *brnCellDef="let element">
-      {{ element.postingDate | date}}
+      {{ element.resetDate | date}}
     </hlm-td>
   </brn-column-def>
-  <brn-column-def name="beneficiary" class="w-2/12">
-    <hlm-th *brnHeaderDef>Beneficiary/Sender</hlm-th>
-    <hlm-td truncate *brnCellDef="let element">
-      {{ element.beneficiary | titlecase}}
+  <brn-column-def name="progress" class="w-2/12 justify-center">
+    <hlm-th *brnHeaderDef>Progress</hlm-th>
+    <hlm-td class="text-center justify-center font-medium tabular-nums w-2/12 h-full px-4" *brnCellDef="let element">
+      <div class="relative w-full overflow-x-scroll">
+        <brn-progress
+          hlmProgressIndicator
+          class="w-full h-4 align-middle"
+          aria-labelledby="loading"
+          [value]="element.progress"
+        >
+        </brn-progress>
+      </div>
     </hlm-td>
   </brn-column-def>
-  <brn-column-def name="details" class="w-2/12">
-    <hlm-th *brnHeaderDef>Details</hlm-th>
-    <hlm-td truncate *brnCellDef="let element">
-      {{ element.details | titlecase }}
+  <brn-column-def name="amountAvailable" class="w-2/12 justify-center">
+    <hlm-th *brnHeaderDef>Available Amount</hlm-th>
+    <hlm-td class="text-start font-medium tabular-nums" *brnCellDef="let element">
+      {{ element.amountAvailable | number : '1.2-2'}} {{ element.currency }}
     </hlm-td>
   </brn-column-def>
-  <brn-column-def name="amount" class="w-2/12 justify-center">
-    <hlm-th *brnHeaderDef>Amount</hlm-th>
-    <hlm-td class="text-start font-medium tabular-nums" *brnCellDef="let element"
-      [ngClass]="element.type === 'income' ? 'text-green-400' : ''">
-      {{ element.amount | number : '1.2-2' }} {{ element.currency }}
+  <brn-column-def name="amountSpent" class="w-2/12 justify-center">
+    <hlm-th *brnHeaderDef>Spent Amount</hlm-th>
+    <hlm-td class="text-start font-medium tabular-nums" *brnCellDef="let element">
+      {{ element.amountSpent | number : '1.2-2' }} {{ element.currency }}
     </hlm-td>
   </brn-column-def>
-  <brn-column-def name="actions" class="w-2/12 justify-center">
+  <brn-column-def name="isShared" class="w-2/12 justify-center">
+    <hlm-th *brnHeaderDef>Is Shared</hlm-th>
+    <hlm-td class="text-start font-medium tabular-nums" *brnCellDef="let element">
+      {{ element.category.isShared ? 'Yes' : 'No'}}
+    </hlm-td>
+  </brn-column-def>
+
+  <brn-column-def name="actions" class="w-1/12 justify-center">
     <hlm-th *brnHeaderDef></hlm-th>
     <hlm-td *brnCellDef="let element">
       <button hlmBtn variant="ghost" class="h-6 w-6 p-0.5" align="end" [brnMenuTriggerFor]="menu">
