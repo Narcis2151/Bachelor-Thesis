@@ -1,19 +1,15 @@
 import Currency from "../../../../../shared/account-currency";
+import Category from "../../../categories/category-list/category/category.model";  
 
 type Budget = {
   id: string;
-  category: {
-    id: string;
-    name: string;
-    icon: string;
-    isShared: boolean;
-  }
+  category: Category;
   amountAvailable: number;
   currency: Currency;
   amountSpent: number;
   progress: number;
   startDate: Date;
-  endDate: Date;
+  endDate?: Date;
   resetDate?: Date;
   active: boolean;
 };

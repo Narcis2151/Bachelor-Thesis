@@ -22,7 +22,6 @@ import Budget from './budget/budget.model';
 })
 export class BudgetListComponent {
   protected budgets: Budget[] = BudgetData;
-  date: Date = new Date();
 
   protected readonly _rawFilterInput = signal('');
   protected readonly _budgetsFilter = signal('');
@@ -39,7 +38,6 @@ export class BudgetListComponent {
     resetDate: { visible: true, label: 'resetDate' },
     progress: { visible: true, label: 'progress' },
     amountAvailable: { visible: true, label: 'amountAvailable' },
-    amountSpent: { visible: true, label: 'amountSpent' },
     isShared: { visible: true, label: 'isShared' },
     currency: { visible: false },
   });

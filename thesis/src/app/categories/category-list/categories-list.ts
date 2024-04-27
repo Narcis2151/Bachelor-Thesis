@@ -4,19 +4,49 @@ export const categories: Category[] = [
   {
     id: "1",
     name: 'Home',
-    icon: 'home',
+    icon: 'house',
     isShared: true,
   },
   {
     id: "2",
-    name: 'Groceries',
+    name: 'Food',
     icon: 'food',
     isShared: false,
   },
   {
     id: "3",
-    name: 'Childcare',
-    icon: 'child',
+    name: 'Shopping',
+    icon: 'shopping_cart',
+    isShared: false,
+  },
+  {
+    id: "4",
+    name: 'Transport',
+    icon: 'directions_car',
+    isShared: false,
+  },
+  {
+    id: "5",
+    name: 'Health',
+    icon: 'local_hospital',
+    isShared: true,
+  },
+  {
+    id: "6",
+    name: 'Entertainment',
+    icon: 'movie',
+    isShared: false,
+  },
+  {
+    id: "7",
+    name: 'Education',
+    icon: 'school',
+    isShared: false,
+  },
+  {
+    id: "8",
+    name: 'Other',
+    icon: 'more_horiz',
     isShared: false,
   },
 ];

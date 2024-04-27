@@ -1,36 +1,33 @@
 <div class="flex flex-col justify-between gap-4 sm:flex-row">
-  <div class="card flex justify-content-center bg-blue-700 rounded-lg">
-    <p-calendar [(ngModel)]="date" view="month" dateFormat="mm/yy" ></p-calendar>
-  </div>
   <input hlmInput class="w-full md:w-80" placeholder="Filter budgets..." [ngModel]="_budgetsFilter()"
     (ngModelChange)="_rawFilterInput.set($event)" />
-  <button hlmBtn class="justify-center rounded-sm text-gray-200 hover:text-gray-400">
+  <button hlmBtn class="justify-center rounded-sm text-white hover:text-gray-400">
     New
   </button>
 </div>
 
 <brn-table hlm stickyHeader class="w-full border-border mt-10 block h-[335px] overflow-auto"
   [dataSource]="_filteredSortedPaginatedBudgets()" [displayedColumns]="_allDisplayedColumns()" [trackBy]="_trackBy">
-  <brn-column-def name="category" class="w-1/12 justify-center">
+  <brn-column-def name="category" class="w-3/12 md:w-2/12 justify-center">
     <hlm-th truncate *brnHeaderDef class="text-center">Category</hlm-th>
     <hlm-td truncate *brnCellDef="let element" class="justify-center text-center">
       {{ element.category.name | titlecase }}
     </hlm-td>
   </brn-column-def>
-  <brn-column-def name="resetDate" class="w-2/12 justify-center text-center">
-    <hlm-th *brnHeaderDef>
+  <brn-column-def name="resetDate" class="max-md:hidden w-2/12 justify-start text-start">
+    <hlm-th *brnHeaderDef truncate>
       <button hlmBtn class="p-0" size="sm" variant="ghost" (click)="handleDateSortChange()">
         Reset Date
-        <hlm-icon class="ml-3" size="sm" name="lucideArrowUpDown" />
+        <hlm-icon class="ml-2" size="sm" name="lucideArrowUpDown" />
       </button>
     </hlm-th>
-    <hlm-td truncate *brnCellDef="let element">
+    <hlm-td *brnCellDef="let element">
       {{ element.resetDate | date}}
     </hlm-td>
   </brn-column-def>
-  <brn-column-def name="progress" class="w-2/12 justify-center">
+  <brn-column-def name="progress" class="w-5/12 sm:w-4/12 justify-start text-start">
     <hlm-th *brnHeaderDef>Progress</hlm-th>
-    <hlm-td class="text-center justify-center font-medium tabular-nums w-2/12 h-full px-4" *brnCellDef="let element">
+    <hlm-td class="text-start justify-start font-medium tabular-nums w-5/12 md:w-4/12 h-full px-4" *brnCellDef="let element">
       <div class="relative w-full overflow-x-scroll">
         <brn-progress
           hlmProgressIndicator
@@ -42,20 +39,14 @@
       </div>
     </hlm-td>
   </brn-column-def>
-  <brn-column-def name="amountAvailable" class="w-2/12 justify-center">
+  <brn-column-def name="amountAvailable" class="w-3/12 md:w-2/12 justify-start text-start">
     <hlm-th *brnHeaderDef>Available Amount</hlm-th>
     <hlm-td class="text-start font-medium tabular-nums" *brnCellDef="let element">
       {{ element.amountAvailable | number : '1.2-2'}} {{ element.currency }}
     </hlm-td>
   </brn-column-def>
-  <brn-column-def name="amountSpent" class="w-2/12 justify-center">
-    <hlm-th *brnHeaderDef>Spent Amount</hlm-th>
-    <hlm-td class="text-start font-medium tabular-nums" *brnCellDef="let element">
-      {{ element.amountSpent | number : '1.2-2' }} {{ element.currency }}
-    </hlm-td>
-  </brn-column-def>
-  <brn-column-def name="isShared" class="w-2/12 justify-center">
-    <hlm-th *brnHeaderDef>Is Shared</hlm-th>
+  <brn-column-def name="isShared" class="max-sm:hidden w-1/12 justify-center">
+    <hlm-th *brnHeaderDef>Shared</hlm-th>
     <hlm-td class="text-start font-medium tabular-nums" *brnCellDef="let element">
       {{ element.category.isShared ? 'Yes' : 'No'}}
     </hlm-td>
