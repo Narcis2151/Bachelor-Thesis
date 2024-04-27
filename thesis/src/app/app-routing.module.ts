@@ -13,7 +13,6 @@ const routes: Routes = [
   { path: 'accounts', component: AccountsPageComponent },
   { path: 'transactions', component: TransactionsPageComponent },
   { path: 'budgets', component: BudgetsPageComponent },
-  { path: 'budget', component: BudgetComponent },
   { path: '**', redirectTo: '/transactions', pathMatch: 'full' },
 ];
 
