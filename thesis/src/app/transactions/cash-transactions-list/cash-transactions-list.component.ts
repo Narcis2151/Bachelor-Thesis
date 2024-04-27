@@ -40,12 +40,23 @@ export class CashTransactionsListComponent {
     status: 'success',
   };
 
+  protected updateTransactionCategory(category: Category) {
+    if (this.selectedCashTransaction) {
+      const index = this.cashTransactions.findIndex(
+        (t) => t.id === this.selectedCashTransaction!.id
+      );
+      if (index > -1) {
+        this.cashTransactions[index].category = category;
+        this._CashTransactions.set([...this.cashTransactions]);
+      }
+    }
+  }
   protected addTransaction() {
     this.newTransaction.id = this.generateUniqueId();
     this.newTransaction.postingDate = new Date(this.newTransaction.postingDate);
     this.cashTransactions.push({ ...this.newTransaction });
     this._CashTransactions.set([...this.cashTransactions]);
-    console.log('New transaction added:', this.newTransaction)
+    console.log('New transaction added:', this.newTransaction);
     this.resetNewTransaction();
   }
 
@@ -70,12 +81,14 @@ export class CashTransactionsListComponent {
   protected selectTransaction(transaction: CashTransaction) {
     this.selectedCashTransaction = { ...transaction };
   }
-  
+
   protected saveTransaction() {
     if (this.selectedCashTransaction) {
-      const index = this.cashTransactions.findIndex((t) => t.id === this.selectedCashTransaction!.id);
+      const index = this.cashTransactions.findIndex(
+        (t) => t.id === this.selectedCashTransaction!.id
+      );
       if (index > -1) {
-        this.cashTransactions[index] = { ...this.selectedCashTransaction }; 
+        this.cashTransactions[index] = { ...this.selectedCashTransaction };
         this._CashTransactions.set([...this.cashTransactions]);
       }
     }
@@ -83,14 +96,16 @@ export class CashTransactionsListComponent {
 
   protected deleteTransaction() {
     if (this.selectedCashTransaction) {
-      const index = this.cashTransactions.findIndex((t) => t.id === this.selectedCashTransaction!.id);
+      const index = this.cashTransactions.findIndex(
+        (t) => t.id === this.selectedCashTransaction!.id
+      );
       if (index > -1) {
         this.cashTransactions.splice(index, 1);
         this._CashTransactions.set([...this.cashTransactions]);
       }
     }
   }
-  
+
   protected readonly _rawFilterInput = signal('');
   protected readonly _transactionsFilter = signal('');
   private readonly _debouncedFilter = toSignal(

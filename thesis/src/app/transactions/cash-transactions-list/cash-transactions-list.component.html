@@ -91,8 +91,25 @@
   [trackBy]="_trackBy">
   <brn-column-def name="category" class="w-3/12 md:w-2/12 justify-center">
     <hlm-th *brnHeaderDef truncate class="text-center">Category</hlm-th>
-    <hlm-td *brnCellDef="let element" truncate class="justify-center text-center">
+    <hlm-td *brnCellDef="let element" truncate [brnMenuTriggerFor]="menu" (click)="selectTransaction(element)" class="
+      justify-center text-center">
       {{ element.category.name | titlecase }}
+
+      <ng-template #menu>
+        <hlm-menu class="w-56">
+          <hlm-menu-label>Category</hlm-menu-label>
+          <hlm-menu-group>
+            @for (category of categories; track category) {
+            <button hlmMenuItemRadio [checked]="category.name === element.category.name"
+              (triggered)="updateTransactionCategory(category)">
+              <hlm-menu-item-radio />
+              <span>{{ category.name }}</span>
+            </button>
+            }
+          </hlm-menu-group>
+        </hlm-menu>
+      </ng-template>
+
     </hlm-td>
   </brn-column-def>
   <brn-column-def name="postingDate" class="max-sm:hidden w-2/12 justify-center text-center">
