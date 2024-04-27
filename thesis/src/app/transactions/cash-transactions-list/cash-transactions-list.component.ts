@@ -15,6 +15,8 @@ import {
 import CashTransaction from './cash-transaction/cash-transaction.model';
 import CashTransactions from './cash-transaction-list';
 import Currency from '../../../../shared/account-currency';
+import Category from '../../categories/category-list/category/category.model';
+import { categories } from '../../categories/category-list/categories-list';
 
 @Component({
   selector: 'app-cash-transactions-list',
@@ -24,7 +26,46 @@ import Currency from '../../../../shared/account-currency';
 export class CashTransactionsListComponent {
   protected cashTransactions: CashTransaction[] = CashTransactions;
   protected selectedCashTransaction!: CashTransaction;
-  protected currencies = Object.values(Currency);
+  protected readonly currencies = Object.values(Currency);
+  protected categories: Category[] = categories;
+  protected newTransaction: CashTransaction = {
+    id: '',
+    category: categories[0],
+    postingDate: new Date(),
+    beneficiary: '',
+    details: '',
+    amount: 0,
+    type: 'expense',
+    currency: Currency.RON,
+    status: 'success',
+  };
+
+  protected addTransaction() {
+    this.newTransaction.id = this.generateUniqueId();
+    this.newTransaction.postingDate = new Date(this.newTransaction.postingDate);
+    this.cashTransactions.push({ ...this.newTransaction });
+    this._CashTransactions.set([...this.cashTransactions]);
+    console.log('New transaction added:', this.newTransaction)
+    this.resetNewTransaction();
+  }
+
+  private resetNewTransaction() {
+    this.newTransaction = {
+      id: '',
+      category: categories[0],
+      postingDate: new Date(),
+      beneficiary: '',
+      details: '',
+      amount: 0,
+      type: 'income',
+      currency: Currency.RON,
+      status: 'success',
+    };
+  }
+
+  private generateUniqueId(): string {
+    return `id-${Math.random().toString(36).substr(2, 9)}`;
+  }
 
   protected selectTransaction(transaction: CashTransaction) {
     this.selectedCashTransaction = { ...transaction };
