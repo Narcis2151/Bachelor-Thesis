@@ -38,6 +38,23 @@ import {
   HlmDialogHeaderComponent,
   HlmDialogTitleDirective,
 } from '@spartan-ng/ui-dialog-helm';
+
+import {
+  BrnAlertDialogContentDirective,
+  BrnAlertDialogTriggerDirective,
+} from '@spartan-ng/ui-alertdialog-brain';
+import {
+  HlmAlertDialogActionButtonDirective,
+  HlmAlertDialogCancelButtonDirective,
+  HlmAlertDialogComponent,
+  HlmAlertDialogContentComponent,
+  HlmAlertDialogDescriptionDirective,
+  HlmAlertDialogFooterComponent,
+  HlmAlertDialogHeaderComponent,
+  HlmAlertDialogOverlayDirective,
+  HlmAlertDialogTitleDirective,
+} from '@spartan-ng/ui-alertdialog-helm';
+
 import { HlmIconComponent, provideIcons } from '@spartan-ng/ui-icon-helm';
 import {
   HlmTabsComponent,
@@ -103,6 +120,17 @@ import { BudgetsPageComponent } from './budgets/pages/budgets-page/budgets-page.
     BudgetsPageComponent,
   ],
   imports: [
+    BrnAlertDialogTriggerDirective,
+    BrnAlertDialogContentDirective,
+    HlmAlertDialogComponent,
+    HlmAlertDialogOverlayDirective,
+    HlmAlertDialogHeaderComponent,
+    HlmAlertDialogFooterComponent,
+    HlmAlertDialogTitleDirective,
+    HlmAlertDialogDescriptionDirective,
+    HlmAlertDialogCancelButtonDirective,
+    HlmAlertDialogActionButtonDirective,
+    HlmAlertDialogContentComponent,
     BrnDialogTriggerDirective,
     BrnDialogContentDirective,
     HlmDialogComponent,

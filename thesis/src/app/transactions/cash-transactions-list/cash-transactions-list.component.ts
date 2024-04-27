@@ -29,17 +29,27 @@ export class CashTransactionsListComponent {
   protected selectTransaction(transaction: CashTransaction) {
     this.selectedCashTransaction = { ...transaction };
   }
-
-  saveTransaction() {
+  
+  protected saveTransaction() {
     if (this.selectedCashTransaction) {
       const index = this.cashTransactions.findIndex((t) => t.id === this.selectedCashTransaction!.id);
       if (index > -1) {
         this.cashTransactions[index] = { ...this.selectedCashTransaction }; 
-        console.log('Transaction updated:', this.selectedCashTransaction);
         this._CashTransactions.set([...this.cashTransactions]);
       }
     }
   }
+
+  protected deleteTransaction() {
+    if (this.selectedCashTransaction) {
+      const index = this.cashTransactions.findIndex((t) => t.id === this.selectedCashTransaction!.id);
+      if (index > -1) {
+        this.cashTransactions.splice(index, 1);
+        this._CashTransactions.set([...this.cashTransactions]);
+      }
+    }
+  }
+  
   protected readonly _rawFilterInput = signal('');
   protected readonly _transactionsFilter = signal('');
   private readonly _debouncedFilter = toSignal(

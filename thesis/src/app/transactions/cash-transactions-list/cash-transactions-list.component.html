@@ -80,7 +80,8 @@
           </hlm-menu-group>
           <hlm-menu-separator />
           <hlm-menu-group>
-            <button brnDialogTrigger>Delete</button>
+            <button brnDialogTrigger [brnDialogTriggerFor]="deleteDialog"
+              (click)="selectTransaction(element)">Delete</button>
           </hlm-menu-group>
         </hlm-menu>
       </ng-template>
@@ -160,6 +161,20 @@
   </hlm-dialog-content>
 </hlm-dialog>
 
+<hlm-dialog #deleteDialog>
+  <hlm-dialog-content *brnAlertDialogContent="let ctx">
+    <hlm-dialog-header>
+      <h3 hlmAlertDialogTitle>Are you absolutely sure?</h3>
+      <p hlmAlertDialogDescription>
+        This action cannot be undone. This will permanently delete your transaction.
+      </p>
+    </hlm-dialog-header>
+    <hlm-dialog-footer>
+      <button hlmBtn variant="ghost"  (click)="ctx.close()">Cancel</button>
+      <button hlmBtn variant="destructive" (click)="deleteTransaction(); ctx.close()">Delete transaction</button>
+    </hlm-dialog-footer>
+  </hlm-dialog-content>
+</hlm-dialog>
 
 <div class="mt-4 flex flex-col justify-between sm:flex-row sm:items-center" *brnPaginator="
     let ctx;
