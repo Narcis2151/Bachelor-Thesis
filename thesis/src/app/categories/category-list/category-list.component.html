@@ -28,18 +28,9 @@
           </div>
 
           <div class="items-center grid grid-cols-4 gap-4">
-            <label hlmLabel for="icon" class="text-right">Is Shared</label>
-            <hlm-select id="isShared" [(ngModel)]="newCategory.isShared" class="col-span-3">
-              <hlm-select-trigger class="w-full">
-                <hlm-select-value />
-              </hlm-select-trigger>
-              <hlm-select-content>
-                <hlm-option [value]="true">Yes</hlm-option>
-                <hlm-option [value]="false">No</hlm-option>
-              </hlm-select-content>
-            </hlm-select>
-          </div>  
-    
+            <label hlmLabel class="text-right">Shared</label>
+            <input type="checkbox" [(ngModel)]="newCategory.isShared" class="col-span-3 toggle toggle-primary" checked="false"/>
+          </div>
           <!-- <div class="items-center grid grid-cols-4 gap-4">
             <label hlmLabel for="currency" class="text-right">Currency</label>
             <brn-select id="currency" [(ngModel)]="newCategory.currency" class="col-span-3">
@@ -165,16 +156,8 @@
         </div>
 
         <div class="items-center grid grid-cols-4 gap-4">
-          <label hlmLabel for="icon" class="text-right">Is Shared</label>
-          <hlm-select id="isShared" [(ngModel)]="selectedCategory.isShared" class="col-span-3">
-            <hlm-select-trigger class="w-full">
-              <hlm-select-value />
-            </hlm-select-trigger>
-            <hlm-select-content>
-              <hlm-option [value]="true">Yes</hlm-option>
-              <hlm-option [value]="false">No</hlm-option>
-            </hlm-select-content>
-          </hlm-select>
+          <label hlmLabel class="text-right">Shared</label>
+          <input type="checkbox" [(ngModel)]="selectedCategory.isShared" class="col-span-3 toggle toggle-primary"/>
         </div>
     
         <!-- <div class="items-center grid grid-cols-4 gap-4">

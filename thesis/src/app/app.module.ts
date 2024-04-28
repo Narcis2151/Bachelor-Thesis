@@ -39,6 +39,9 @@ import {
   HlmDialogTitleDirective,
 } from '@spartan-ng/ui-dialog-helm';
 
+import { HlmToggleDirective } from '@spartan-ng/ui-toggle-helm';
+import { BrnToggleDirective } from '@spartan-ng/ui-toggle-brain';
+
 import {
   BrnAlertDialogContentDirective,
   BrnAlertDialogTriggerDirective,
@@ -120,6 +123,8 @@ import { BudgetsPageComponent } from './budgets/pages/budgets-page/budgets-page.
     BudgetsPageComponent,
   ],
   imports: [
+    BrnToggleDirective, 
+    HlmToggleDirective,
     BrnAlertDialogTriggerDirective,
     BrnAlertDialogContentDirective,
     HlmAlertDialogComponent,
