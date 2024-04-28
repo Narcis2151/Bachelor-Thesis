@@ -74,14 +74,14 @@
               <hlm-menu-label>Actions</hlm-menu-label>
               <hlm-menu-separator />
               <hlm-menu-group>
-                <button brnDialogTrigger [brnDialogTriggerFor]="shareDialog" (click)="selectCategory(element)">
+                <button hlmMenuItem brnDialogTrigger [brnDialogTriggerFor]="shareDialog" (click)="selectCategory(element)">
                   {{ element.isShared ? 'Unshare' : 'Share' }}
                 </button>
               </hlm-menu-group>
               <hlm-menu-separator />
               <hlm-menu-group>
                 <hlm-menu-group>
-                  <button brnDialogTrigger [brnDialogTriggerFor]="deleteDialog"
+                  <button hlmMenuItem brnDialogTrigger [brnDialogTriggerFor]="deleteDialog"
                     (click)="selectCategory(element)">Delete</button>
                 </hlm-menu-group> </hlm-menu-group>
             </hlm-menu>
@@ -94,7 +94,7 @@
       </div>
     </brn-table>
 
-    
+
   </section>
 </div>
 
@@ -215,14 +215,14 @@
                 <hlm-menu-label>Actions</hlm-menu-label>
                 <hlm-menu-separator />
                 <hlm-menu-group>
-                  <button brnDialogTrigger [brnDialogTriggerFor]="shareDialog" (click)="selectCategory(element)">
+                  <button hlmMenuItem brnDialogTrigger [brnDialogTriggerFor]="shareDialog" (click)="selectCategory(element)">
                     {{ element.isShared ? 'Unshare' : 'Share' }}
                   </button>
                 </hlm-menu-group>
                 <hlm-menu-separator />
                 <hlm-menu-group>
                   <hlm-menu-group>
-                    <button brnDialogTrigger [brnDialogTriggerFor]="deleteDialog"
+                    <button hlmMenuItem brnDialogTrigger [brnDialogTriggerFor]="deleteDialog"
                       (click)="selectCategory(element)">Delete</button>
                   </hlm-menu-group> </hlm-menu-group>
               </hlm-menu>
@@ -313,14 +313,14 @@
               <hlm-menu-label>Actions</hlm-menu-label>
               <hlm-menu-separator />
               <hlm-menu-group>
-                <button brnDialogTrigger [brnDialogTriggerFor]="shareDialog" (click)="selectCategory(element)">
+                <button hlmMenuItem brnDialogTrigger [brnDialogTriggerFor]="shareDialog" (click)="selectCategory(element)">
                   {{ element.isShared ? 'Unshare' : 'Share' }}
                 </button>
               </hlm-menu-group>
               <hlm-menu-separator />
               <hlm-menu-group>
                 <hlm-menu-group>
-                  <button brnDialogTrigger [brnDialogTriggerFor]="deleteDialog"
+                  <button hlmMenuItem brnDialogTrigger [brnDialogTriggerFor]="deleteDialog"
                     (click)="selectCategory(element)">Delete</button>
                 </hlm-menu-group> </hlm-menu-group>
             </hlm-menu>
@@ -355,8 +355,7 @@
 
       <div class="items-center grid grid-cols-4 gap-4">
         <label hlmLabel class="text-right">Shared</label>
-        <input type="checkbox" [(ngModel)]="newCategory.isShared" class="checkbox col-span-3"
-          checked="false" />
+        <input type="checkbox" [(ngModel)]="newCategory.isShared" class="checkbox col-span-3" checked="false" />
       </div>
       <!-- <div class="items-center grid grid-cols-4 gap-4">
         <label hlmLabel for="currency" class="text-right">Currency</label>
