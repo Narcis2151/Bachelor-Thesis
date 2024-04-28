@@ -5,7 +5,7 @@ export const categories: Category[] = [
     id: "1",
     name: 'Home',
     icon: 'house',
-    isShared: true,
+    isShared: false,
   },
   {
     id: "2",
@@ -29,7 +29,7 @@ export const categories: Category[] = [
     id: "5",
     name: 'Health',
     icon: 'local_hospital',
-    isShared: true,
+    isShared: false,
   },
   {
     id: "6",

@@ -4,6 +4,7 @@ type Category = {
   icon: string;
   isShared?: boolean;
   isEditing?: boolean;
+  isSelected?: boolean;
 };
 
 export default Category;

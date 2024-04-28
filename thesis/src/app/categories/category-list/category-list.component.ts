@@ -18,8 +18,9 @@ import { categories } from './categories-list';
   styleUrl: './category-list.component.scss',
 })
 export class CategoryListComponent {
+  partnerEmail = '';
+  protected _allCategories = signal(categories);
   allCategories: Category[] = categories;
-
   selectedCategory!: Category;
   protected newCategory: Category = {
     id: '',
@@ -114,7 +115,7 @@ export class CategoryListComponent {
     'actions',
   ]);
 
-  private readonly _Categories = signal(this.allCategories);
+  protected _Categories = signal(this.allCategories);
   private readonly _filteredCategories = computed(() => {
     const filter = this._allCategoriesFilter()?.trim()?.toLowerCase();
     if (filter && filter.length > 0) {
@@ -213,5 +214,27 @@ export class CategoryListComponent {
     } else {
       this._nameSort.set('ASC');
     }
+  }
+
+  protected _hasSharedCategories = computed(() => {
+    const categories = this._Categories(); // Get the actual array from the signal
+    return categories.some((category) => category.isShared); // Check if any category is shared
+  });
+
+  protected createPartnership() {
+    const categories = this._Categories(); // Get the actual array from the signal
+    this._Categories.set(
+      categories.map((category) => {
+        if (category.isSelected) {
+          return { ...category, isShared: true }; // Mark as shared
+        }
+        return category; // Keep the category unchanged
+      })
+    );
+  }
+
+  protected emailIsValid(): boolean {
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Simple regex for email validation
+    return emailPattern.test(this.partnerEmail); // Return true if the email is valid
   }
 }
