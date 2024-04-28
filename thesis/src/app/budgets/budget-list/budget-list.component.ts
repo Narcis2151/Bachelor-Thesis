@@ -8,7 +8,6 @@ import {
 import { debounceTime } from 'rxjs';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import {
-  PaginatorState,
   useBrnColumnManager,
 } from '@spartan-ng/ui-table-brain';
 
@@ -49,7 +48,6 @@ export class BudgetListComponent {
     this.newBudget.resetDate = oneMonthLater;
     this.budgets.push({ ...this.newBudget });
     this._Budgets.set([...this.budgets]);
-    console.log('New budget added:', this.newBudget);
     this.resetNewBudget();
   }
 

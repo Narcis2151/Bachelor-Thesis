@@ -5,8 +5,8 @@ import {
   effect,
   signal,
 } from '@angular/core';
-import { debounceTime } from 'rxjs';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { debounceTime } from 'rxjs';
 import { useBrnColumnManager } from '@spartan-ng/ui-table-brain';
 
 import Category from './category/category.model';
@@ -44,7 +44,7 @@ export class CategoryListComponent {
     );
     if (index !== -1) {
       this.allCategories[index] = { ...category, isEditing: false };
-      this._Categories.set([...this.allCategories]); // Update the signal
+      this._Categories.set([...this.allCategories]); 
     }
   }
 
@@ -73,12 +73,13 @@ export class CategoryListComponent {
     this.selectedCategory = { ...category };
   }
 
-  protected saveCategory() {
+  protected updateShareCategory() {
     if (this.selectedCategory) {
       const index = this.allCategories.findIndex(
         (t) => t.id === this.selectedCategory!.id
       );
       if (index > -1) {
+        this.selectedCategory.isShared = !this.selectedCategory.isShared;
         this.allCategories[index] = { ...this.selectedCategory };
         this._Categories.set([...this.allCategories]);
       }

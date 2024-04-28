@@ -56,7 +56,6 @@ export class CashTransactionsListComponent {
     this.newTransaction.postingDate = new Date(this.newTransaction.postingDate);
     this.cashTransactions.push({ ...this.newTransaction });
     this._CashTransactions.set([...this.cashTransactions]);
-    console.log('New transaction added:', this.newTransaction);
     this.resetNewTransaction();
   }
 

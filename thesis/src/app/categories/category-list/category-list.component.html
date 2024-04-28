@@ -9,53 +9,6 @@
       </button>
     </div>
 
-    <hlm-dialog #newDialog>
-      <hlm-dialog-content class="sm:max-w-[425px]" *brnDialogContent="let ctx">
-        <hlm-dialog-header>
-          <h3 hlmDialogTitle>New Category</h3>
-          <p hlmDialogDescription>Add the details for the new category.</p>
-        </hlm-dialog-header>
-
-        <div class="py-4 grid gap-4">
-          <div class="items-center grid grid-cols-4 gap-4">
-            <label hlmLabel for="name" class="text-right">Category Name</label>
-            <input hlmInput id="name" [(ngModel)]="newCategory.name" class="col-span-3" />
-          </div>
-
-          <div class="items-center grid grid-cols-4 gap-4">
-            <label hlmLabel for="icon" class="text-right">Category Icon</label>
-            <input hlmInput id="icon" [(ngModel)]="newCategory.icon" class="col-span-3" />
-          </div>
-
-          <div class="items-center grid grid-cols-4 gap-4">
-            <label hlmLabel class="text-right">Shared</label>
-            <input type="checkbox" [(ngModel)]="newCategory.isShared" class="col-span-3 toggle toggle-primary"
-              checked="false" />
-          </div>
-          <!-- <div class="items-center grid grid-cols-4 gap-4">
-            <label hlmLabel for="currency" class="text-right">Currency</label>
-            <brn-select id="currency" [(ngModel)]="newCategory.currency" class="col-span-3">
-              <hlm-select-trigger class="w-full">
-                <hlm-select-value />
-              </hlm-select-trigger>
-              <hlm-select-content>
-                <hlm-option *ngFor="let currency of currencies" [value]="currency">
-                  {{ currency }}
-                </hlm-option>
-              </hlm-select-content>
-            </brn-select>
-          </div> -->
-        </div>
-
-        <hlm-dialog-footer>
-          <button hlmBtn variant="ghost" (click)="ctx.close()">Cancel</button>
-          <button hlmBtn class="text-white hover:text-gray-400" (click)="addCategory(); ctx.close()">
-            Save
-          </button>
-        </hlm-dialog-footer>
-      </hlm-dialog-content>
-    </hlm-dialog>
-
     <brn-table hlm stickyHeader class="w-full border-border mt-10 block h-8/12 overflow-auto"
       [dataSource]="_filteredSortedPaginatedCategories()" [displayedColumns]="_allDisplayedColumns()"
       [trackBy]="_trackBy">
@@ -121,8 +74,8 @@
               <hlm-menu-label>Actions</hlm-menu-label>
               <hlm-menu-separator />
               <hlm-menu-group>
-                <button brnDialogTrigger [brnDialogTriggerFor]="editDialog" (click)="selectCategory(element)">
-                  Edit
+                <button brnDialogTrigger [brnDialogTriggerFor]="shareDialog" (click)="selectCategory(element)">
+                  {{ element.isShared ? 'Unshare' : 'Share' }}
                 </button>
               </hlm-menu-group>
               <hlm-menu-separator />
@@ -141,65 +94,7 @@
       </div>
     </brn-table>
 
-    <hlm-dialog #editDialog>
-      <hlm-dialog-content class="sm:max-w-[425px]" *brnDialogContent="let ctx">
-        <hlm-dialog-header>
-          <h3 hlmDialogTitle>Edit Category</h3>
-          <p hlmDialogDescription>Modify the Category details and click save to apply changes.</p>
-        </hlm-dialog-header>
-
-        <div class="items-center grid grid-cols-4 gap-4">
-          <label hlmLabel for="name" class="text-right">Category Name</label>
-          <input hlmInput id="name" [(ngModel)]="selectedCategory.name" class="col-span-3" />
-        </div>
-
-        <div class="items-center grid grid-cols-4 gap-4">
-          <label hlmLabel for="icon" class="text-right">Category Icon</label>
-          <input hlmInput id="icon" [(ngModel)]="selectedCategory.icon" class="col-span-3" />
-        </div>
-
-        <div class="items-center grid grid-cols-4 gap-4">
-          <label hlmLabel class="text-right">Shared</label>
-          <input type="checkbox" [(ngModel)]="selectedCategory.isShared" class="col-span-3 toggle toggle-primary" />
-        </div>
-
-        <!-- <div class="items-center grid grid-cols-4 gap-4">
-          <label hlmLabel for="currency" class="text-right">Currency</label>
-          <brn-select id="currency" [(ngModel)]="selectedCashAccount.currency" class="col-span-3">
-            <hlm-select-trigger class="w-full">
-              <hlm-select-value />
-            </hlm-select-trigger>
-            <hlm-select-content>
-              <hlm-option *ngFor="let currency of currencies" [value]="currency">
-                {{ currency }}
-              </hlm-option>
-            </hlm-select-content>
-          </brn-select>
-        </div> -->
-
-        <hlm-dialog-footer>
-          <button hlmBtn variant="ghost" (click)="ctx.close()">Cancel</button>
-          <button hlmBtn class="text-white hover:text-gray-400" (click)="saveCategory(); ctx.close()">
-            Save changes
-          </button>
-        </hlm-dialog-footer>
-      </hlm-dialog-content>
-    </hlm-dialog>
-
-    <hlm-dialog #deleteDialog>
-      <hlm-dialog-content *brnAlertDialogContent="let ctx">
-        <hlm-dialog-header>
-          <h3 hlmAlertDialogTitle>Are you absolutely sure?</h3>
-          <p hlmAlertDialogDescription>
-            This action cannot be undone. This will permanently delete your category.
-          </p>
-        </hlm-dialog-header>
-        <hlm-dialog-footer>
-          <button hlmBtn variant="ghost" (click)="ctx.close()">Cancel</button>
-          <button hlmBtn variant="destructive" (click)="deleteCategory(); ctx.close()">Delete Category</button>
-        </hlm-dialog-footer>
-      </hlm-dialog-content>
-    </hlm-dialog>
+    
   </section>
 </div>
 
@@ -320,8 +215,8 @@
                 <hlm-menu-label>Actions</hlm-menu-label>
                 <hlm-menu-separator />
                 <hlm-menu-group>
-                  <button brnDialogTrigger [brnDialogTriggerFor]="editDialog" (click)="selectCategory(element)">
-                    Edit
+                  <button brnDialogTrigger [brnDialogTriggerFor]="shareDialog" (click)="selectCategory(element)">
+                    {{ element.isShared ? 'Unshare' : 'Share' }}
                   </button>
                 </hlm-menu-group>
                 <hlm-menu-separator />
@@ -418,8 +313,8 @@
               <hlm-menu-label>Actions</hlm-menu-label>
               <hlm-menu-separator />
               <hlm-menu-group>
-                <button brnDialogTrigger [brnDialogTriggerFor]="editDialog" (click)="selectCategory(element)">
-                  Edit
+                <button brnDialogTrigger [brnDialogTriggerFor]="shareDialog" (click)="selectCategory(element)">
+                  {{ element.isShared ? 'Unshare' : 'Share' }}
                 </button>
               </hlm-menu-group>
               <hlm-menu-separator />
@@ -439,3 +334,87 @@
     </brn-table>
   </section>
 </div>
+
+<hlm-dialog #newDialog>
+  <hlm-dialog-content class="sm:max-w-[425px]" *brnDialogContent="let ctx">
+    <hlm-dialog-header>
+      <h3 hlmDialogTitle>New Category</h3>
+      <p hlmDialogDescription>Add the details for the new category.</p>
+    </hlm-dialog-header>
+
+    <div class="py-4 grid gap-4">
+      <div class="items-center grid grid-cols-4 gap-4">
+        <label hlmLabel for="name" class="text-right">Category Name</label>
+        <input hlmInput id="name" [(ngModel)]="newCategory.name" class="col-span-3" />
+      </div>
+
+      <div class="items-center grid grid-cols-4 gap-4">
+        <label hlmLabel for="icon" class="text-right">Category Icon</label>
+        <input hlmInput id="icon" [(ngModel)]="newCategory.icon" class="col-span-3" />
+      </div>
+
+      <div class="items-center grid grid-cols-4 gap-4">
+        <label hlmLabel class="text-right">Shared</label>
+        <input type="checkbox" [(ngModel)]="newCategory.isShared" class="checkbox col-span-3"
+          checked="false" />
+      </div>
+      <!-- <div class="items-center grid grid-cols-4 gap-4">
+        <label hlmLabel for="currency" class="text-right">Currency</label>
+        <brn-select id="currency" [(ngModel)]="newCategory.currency" class="col-span-3">
+          <hlm-select-trigger class="w-full">
+            <hlm-select-value />
+          </hlm-select-trigger>
+          <hlm-select-content>
+            <hlm-option *ngFor="let currency of currencies" [value]="currency">
+              {{ currency }}
+            </hlm-option>
+          </hlm-select-content>
+        </brn-select>
+      </div> -->
+    </div>
+
+    <hlm-dialog-footer>
+      <button hlmBtn variant="ghost" (click)="ctx.close()">Cancel</button>
+      <button hlmBtn class="text-white hover:text-gray-400" (click)="addCategory(); ctx.close()">
+        Save
+      </button>
+    </hlm-dialog-footer>
+  </hlm-dialog-content>
+</hlm-dialog>
+
+<hlm-dialog #shareDialog>
+  <hlm-dialog-content *brnAlertDialogContent="let ctx">
+    <hlm-dialog-header>
+      <h3 hlmAlertDialogTitle *ngIf="!selectedCategory.isShared">Share category with your partner</h3>
+      <h3 hlmAlertDialogTitle *ngIf="selectedCategory.isShared">Make category personal</h3>
+      <p hlmAlertDialogDescription *ngIf="!selectedCategory.isShared">
+        All the transactions under this category will be shared with your partner.
+      </p>
+      <p hlmAlertDialogDescription *ngIf="selectedCategory.isShared">
+        All the transactions under this category will no longer be shared with your partner.
+      </p>
+    </hlm-dialog-header>
+    <hlm-dialog-footer>
+      <button hlmBtn variant="ghost" (click)="ctx.close()">Cancel</button>
+      <button *ngIf="!selectedCategory.isShared" hlmBtn class="text-white hover:text-gray-400"
+        (click)="updateShareCategory(); ctx.close()">Share Category</button>
+      <button *ngIf="selectedCategory.isShared" hlmBtn class="text-white hover:text-gray-400"
+        (click)="updateShareCategory(); ctx.close()">Unshare Category</button>
+    </hlm-dialog-footer>
+  </hlm-dialog-content>
+</hlm-dialog>
+
+<hlm-dialog #deleteDialog>
+  <hlm-dialog-content *brnAlertDialogContent="let ctx">
+    <hlm-dialog-header>
+      <h3 hlmAlertDialogTitle>Are you absolutely sure?</h3>
+      <p hlmAlertDialogDescription>
+        This action cannot be undone. This will permanently delete your category.
+      </p>
+    </hlm-dialog-header>
+    <hlm-dialog-footer>
+      <button hlmBtn variant="ghost" (click)="ctx.close()">Cancel</button>
+      <button hlmBtn variant="destructive" (click)="deleteCategory(); ctx.close()">Delete Category</button>
+    </hlm-dialog-footer>
+  </hlm-dialog-content>
+</hlm-dialog>
