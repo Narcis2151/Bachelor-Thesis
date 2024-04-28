@@ -51,10 +51,10 @@
 
 <brn-table hlm stickyHeader class="w-full border-border mt-10 block h-8/12 overflow-auto"
   [dataSource]="_filteredSortedPaginatedBudgets()" [displayedColumns]="_allDisplayedColumns()" [trackBy]="_trackBy">
-  <brn-column-def name="icon" class="w-1/12 justify-center">
-    <hlm-th truncate *brnHeaderDef class="justify-center text-center">Icon</hlm-th>
-    <hlm-td truncate *brnCellDef="let element" class="justify-center text-center">
-      <div class="w-full h-full justify-center text-center">
+  <brn-column-def name="icon" class="w-2/12 md:w-1/12 justify-center text-center">
+    <hlm-th  *brnHeaderDef class="justify-center text-center">Icon</hlm-th>
+    <hlm-td  *brnCellDef="let element" class="justify-center text-center">
+      <div class="w-full h-full flex justify-center text-center">
         <svg class="justify-center text-center" viewBox="0 0 90 112.5" width="40px" h="40px"
           xmlns="http://www.w3.org/2000/svg">
           <g transform="matrix(1.0162279605865479, 0, 0, 1.0278929471969604, -1.2657499313354492, -0.5505840182304382)">
@@ -68,7 +68,8 @@
       </div>
     </hlm-td>
   </brn-column-def>
-  <brn-column-def name="name" class="w-6/12 justify-start text-start">
+
+  <brn-column-def name="name" class="w-5/12 md:w-6/12 justify-start text-start">
     <hlm-th *brnHeaderDef truncate>
       <button hlmBtn class="p-0" size="sm" variant="ghost" (click)="handleNameSortChange()">
         Account Name
@@ -78,7 +79,7 @@
 
     <hlm-td *brnCellDef="let element" class="flex items-center gap-2">
       <ng-container *ngIf="element.isEditing; else viewMode">
-        <input hlmInput [(ngModel)]="element.name" class="flex-1" name="accountName"
+        <input hlmInput [(ngModel)]="element.name" class="flex-1 w-full" name="accountName"
           (keyup.enter)="saveAccountName(element)" />
         <button hlmBtn class="text-end ml-auto p-1 hover:text-gray-600" variant="ghost"
           (click)="saveAccountName(element)">Save</button>
@@ -98,6 +99,7 @@
       {{ element.balance | number : '1.2-2'}}
     </hlm-td>
   </brn-column-def>
+
   <brn-column-def name="currency" class="w-2/12 justify-center">
     <hlm-th *brnHeaderDef>Currency</hlm-th>
     <hlm-td class="text-start font-medium tabular-nums" *brnCellDef="let element">
@@ -131,6 +133,7 @@
       </ng-template>
     </hlm-td>
   </brn-column-def>
+
   <div class="text-muted-foreground flex items-center justify-center p-20" brnNoDataRow>
     No data
   </div>
