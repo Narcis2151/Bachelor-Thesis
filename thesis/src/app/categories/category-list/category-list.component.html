@@ -1,5 +1,5 @@
-<div hlmTabsContent="all_categories" class="w-full overflow-x-auto mt-10">
-  <section hlmCard class="border-hidden">
+<div hlmTabsContent="all_categories" class="w-full overflow-x-auto mt-9">
+  <section hlmCard class="border-hidden m-1">
     <div class="flex flex-col justify-between gap-4 sm:flex-row">
       <input hlmInput class="w-full md:w-80" placeholder="Filter categories.." [ngModel]="_allCategoriesFilter()"
         (ngModelChange)="_rawFilterInput.set($event)" />
@@ -12,7 +12,7 @@
     <brn-table hlm stickyHeader class="w-full border-border mt-10 block h-8/12 overflow-auto"
       [dataSource]="_filteredSortedPaginatedCategories()" [displayedColumns]="_allDisplayedColumns()"
       [trackBy]="_trackBy">
-      <brn-column-def name="icon" class="w-3/12 justify-center text-center">
+      <brn-column-def name="icon" class="w-2/12 justify-center text-center">
         <hlm-th *brnHeaderDef truncate class="text-center">Icon</hlm-th>
         <hlm-td *brnCellDef="let element" truncate [brnMenuTriggerFor]="menu" (click)="selectCategory(element)" class="
       justify-center text-center">
@@ -40,7 +40,7 @@
 
       </brn-column-def>
 
-      <brn-column-def name="name" class="w-6/12 justify-start text-start">
+      <brn-column-def name="name" class="w-7/12 justify-start text-start">
         <hlm-th *brnHeaderDef truncate>
           <button hlmBtn class="p-0" size="sm" variant="ghost" (click)="handleNameSortChange()">
             Category Name
@@ -103,8 +103,6 @@
         No data
       </div>
     </brn-table>
-
-
   </section>
 </div>
 
@@ -163,7 +161,7 @@
 
       <brn-table hlm stickyHeader class="w-full border-border mt-10 block h-8/12 overflow-auto"
         [dataSource]="_sharedCategoriesFiltered()" [displayedColumns]="_allDisplayedColumns()" [trackBy]="_trackBy">
-        <brn-column-def name="icon" class="w-3/12 justify-center text-center">
+        <brn-column-def name="icon" class="w-2/12 justify-center text-center">
           <hlm-th *brnHeaderDef truncate class="text-center">Icon</hlm-th>
           <hlm-td *brnCellDef="let element" truncate [brnMenuTriggerFor]="menu" (click)="selectCategory(element)" class="
       justify-center text-center">
@@ -190,7 +188,7 @@
           </hlm-td>
         </brn-column-def>
 
-        <brn-column-def name="name" class="w-6/12 justify-start text-start">
+        <brn-column-def name="name" class="w-7/12 justify-start text-start">
           <hlm-th *brnHeaderDef truncate>
             <button hlmBtn class="p-0" size="sm" variant="ghost" (click)="handleNameSortChange()">
               Category Name
@@ -270,7 +268,7 @@
 
     <brn-table hlm stickyHeader class="w-full border-border mt-10 block h-8/12 overflow-auto"
       [dataSource]="_personalCategoriesFiltered()" [displayedColumns]="_allDisplayedColumns()" [trackBy]="_trackBy">
-      <brn-column-def name="icon" class="w-3/12 justify-center text-center">
+      <brn-column-def name="icon" class="w-2/12 justify-center text-center">
         <hlm-th *brnHeaderDef truncate class="text-center">Icon</hlm-th>
         <hlm-td *brnCellDef="let element" truncate [brnMenuTriggerFor]="menu" (click)="selectCategory(element)" class="
       justify-center text-center">
@@ -297,7 +295,7 @@
         </hlm-td>
       </brn-column-def>
 
-      <brn-column-def name="name" class="w-6/12 justify-start text-start">
+      <brn-column-def name="name" class="w-7/12 justify-start text-start">
         <hlm-th *brnHeaderDef truncate>
           <button hlmBtn class="p-0" size="sm" variant="ghost" (click)="handleNameSortChange()">
             Category Name
