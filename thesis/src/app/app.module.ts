@@ -70,6 +70,14 @@ import {
   lucideArrowUpDown,
   lucideChevronDown,
   lucideMoreHorizontal,
+  lucideHome,
+  lucidePizza,
+  lucideCar,
+  lucideShoppingCart,
+  lucideHeartPulse,
+  lucideClapperboard,
+  lucideBookOpen,
+  lucideCircleEllipsis,
 } from '@ng-icons/lucide';
 
 import { HlmButtonModule } from '@spartan-ng/ui-button-helm';
@@ -83,6 +91,7 @@ import { BrnTableModule } from '@spartan-ng/ui-table-brain';
 import { HlmTableModule } from '@spartan-ng/ui-table-helm';
 import { BrnSelectModule } from '@spartan-ng/ui-select-brain';
 import { HlmSelectModule } from '@spartan-ng/ui-select-helm';
+import { HlmSelectOptionComponent } from '../../components/ui-select-helm/src/lib/hlm-select-option.component';
 import {
   BrnProgressComponent,
   BrnProgressIndicatorComponent,
@@ -195,6 +204,15 @@ import { BudgetsPageComponent } from './budgets/pages/budgets-page/budgets-page.
       lucideChevronDown,
       lucideMoreHorizontal,
       lucideArrowUpDown,
+      lucideHome,
+      lucidePizza,
+      lucideCar,
+      lucideShoppingCart,
+      lucideHeartPulse,
+      lucideClapperboard,
+      lucideBookOpen,
+      lucideCircleEllipsis,
+
     }),
   ],
   bootstrap: [AppComponent],

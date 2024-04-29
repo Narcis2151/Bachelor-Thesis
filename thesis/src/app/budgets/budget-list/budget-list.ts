@@ -1,6 +1,6 @@
-import Currency from "../../../../shared/account-currency";
-import Budget from "./budget/budget.model";
-import { categories } from "../../categories/category-list/categories-list";
+import Currency from '../../../../shared/account-currency';
+import Budget from './budget/budget.model';
+import { categories } from '../../categories/category-list/categories-list';
 
 const BudgetData: Budget[] = [
   {
@@ -9,9 +9,7 @@ const BudgetData: Budget[] = [
     amountAvailable: 2500,
     currency: Currency.RON,
     amountSpent: 2000,
-    progress: 20,
     startDate: new Date('2024-04-03'),
-    // endDate: new Date('2021-12-31'),
     resetDate: new Date('2024-05-03'),
     active: true,
   },
@@ -21,7 +19,6 @@ const BudgetData: Budget[] = [
     amountAvailable: 1000,
     currency: Currency.RON,
     amountSpent: 800,
-    progress: 30,
     startDate: new Date('2024-04-01'),
     resetDate: new Date('2022-05-01'),
     active: true,
@@ -34,17 +31,15 @@ const BudgetData: Budget[] = [
     amountSpent: 500,
     progress: 100,
     startDate: new Date('2024-03-31'),
-    // endDate: new Date('2021-12-31'),
     resetDate: new Date('2022-04-30'),
     active: true,
   },
   {
     id: '4',
     category: categories[3],
-    amountAvailable: 200,
+    amountAvailable: 500,
     currency: Currency.RON,
-    amountSpent: 150,
-    progress: 50,
+    amountSpent: 350,
     startDate: new Date('2024-03-30'),
     resetDate: new Date('2022-04-29'),
     active: true,
@@ -55,7 +50,6 @@ const BudgetData: Budget[] = [
     amountAvailable: 300,
     currency: Currency.RON,
     amountSpent: 200,
-    progress: 70,
     startDate: new Date('2024-03-29'),
     resetDate: new Date('2022-04-28'),
     active: true,
@@ -66,7 +60,6 @@ const BudgetData: Budget[] = [
     amountAvailable: 500,
     currency: Currency.RON,
     amountSpent: 400,
-    progress: 80,
     startDate: new Date('2024-03-28'),
     resetDate: new Date('2022-04-27'),
     active: true,
@@ -77,7 +70,6 @@ const BudgetData: Budget[] = [
     amountAvailable: 400,
     currency: Currency.RON,
     amountSpent: 300,
-    progress: 40,
     startDate: new Date('2024-03-27'),
     resetDate: new Date('2022-04-26'),
     active: true,
@@ -85,10 +77,9 @@ const BudgetData: Budget[] = [
   {
     id: '8',
     category: categories[7],
-    amountAvailable: 100,
+    amountAvailable: 300,
     currency: Currency.RON,
-    amountSpent: 50,
-    progress: 10,
+    amountSpent: 120,
     startDate: new Date('2024-03-26'),
     resetDate: new Date('2022-04-25'),
     active: true,

@@ -13,22 +13,31 @@
       [dataSource]="_filteredSortedPaginatedCategories()" [displayedColumns]="_allDisplayedColumns()"
       [trackBy]="_trackBy">
       <brn-column-def name="icon" class="w-3/12 justify-center text-center">
-        <hlm-th *brnHeaderDef class="justify-center text-center">Icon</hlm-th>
-        <hlm-td *brnCellDef="let element" class="justify-center text-center">
+        <hlm-th *brnHeaderDef truncate class="text-center">Icon</hlm-th>
+        <hlm-td *brnCellDef="let element" truncate [brnMenuTriggerFor]="menu" (click)="selectCategory(element)" class="
+      justify-center text-center">
           <div class="w-full h-full flex justify-center text-center">
-            <svg class="justify-center text-center" viewBox="0 0 90 112.5" width="40px" h="40px"
-              xmlns="http://www.w3.org/2000/svg">
-              <g
-                transform="matrix(1.0162279605865479, 0, 0, 1.0278929471969604, -1.2657499313354492, -0.5505840182304382)">
-                <g>
-                  <circle cx="57" cy="48" r="2.001" />
-                  <path
-                    d="M73.026,40H72v-9.498C72,27.606,69.587,25,66.691,25H61v-0.009c0-2.896-2.231-5.252-5.127-5.252L18.238,25.25    C15.377,25.292,13,27.632,13,30.502v34.016C13,67.413,15.606,70,18.502,70h0.073h1.568h46.548C69.587,70,72,67.413,72,64.518V56    h1.026C75.921,56,78,53.708,78,50.812v-5.494C78,42.423,75.921,40,73.026,40z M55.941,21.489C57.703,21.526,59,23.22,59,24.991V25    H30.555L55.941,21.489z M70,64.748C70,66.544,68.544,68,66.748,68H18.252C16.456,68,15,66.544,15,64.748V30.252    C15,28.456,16.456,27,18.252,27h48.496C68.544,27,70,28.456,70,30.252V40H55.53C52.634,40,50,42.423,50,45.319v5.494    C50,53.708,52.634,56,55.53,56H70V64.748z M76,50.748C76,52.544,74.544,54,72.748,54H55.252C53.456,54,52,52.544,52,50.748v-5.496    C52,43.456,53.456,42,55.252,42h17.496C74.544,42,76,43.456,76,45.252V50.748z" />
-                </g>
-              </g>
-            </svg>
+            <hlm-icon class="ml-2" size="lg" [name]="element.icon" />
           </div>
+
+          <ng-template #menu>
+            <hlm-menu class="w-56">
+              <hlm-menu-label>Icon</hlm-menu-label>
+              <hlm-menu-group>
+                @for (icon of _icons; track icon) {
+                <button hlmMenuItemRadio [checked]="icon === element.icon" (triggered)="updateIcon(icon)">
+                  <hlm-menu-item-radio />
+                  <span>
+                    <hlm-icon class="mr-2" [name]="icon" />
+                  </span>
+                </button>
+                }
+              </hlm-menu-group>
+            </hlm-menu>
+          </ng-template>
+
         </hlm-td>
+
       </brn-column-def>
 
       <brn-column-def name="name" class="w-6/12 justify-start text-start">
@@ -74,7 +83,8 @@
               <hlm-menu-label>Actions</hlm-menu-label>
               <hlm-menu-separator />
               <hlm-menu-group>
-                <button hlmMenuItem brnDialogTrigger [brnDialogTriggerFor]="shareDialog" (click)="selectCategory(element)">
+                <button hlmMenuItem brnDialogTrigger [brnDialogTriggerFor]="shareDialog"
+                  (click)="selectCategory(element)">
                   {{ element.isShared ? 'Unshare' : 'Share' }}
                 </button>
               </hlm-menu-group>
@@ -154,21 +164,29 @@
       <brn-table hlm stickyHeader class="w-full border-border mt-10 block h-8/12 overflow-auto"
         [dataSource]="_sharedCategoriesFiltered()" [displayedColumns]="_allDisplayedColumns()" [trackBy]="_trackBy">
         <brn-column-def name="icon" class="w-3/12 justify-center text-center">
-          <hlm-th *brnHeaderDef class="justify-center text-center">Icon</hlm-th>
-          <hlm-td *brnCellDef="let element" class="justify-center text-center">
+          <hlm-th *brnHeaderDef truncate class="text-center">Icon</hlm-th>
+          <hlm-td *brnCellDef="let element" truncate [brnMenuTriggerFor]="menu" (click)="selectCategory(element)" class="
+      justify-center text-center">
             <div class="w-full h-full flex justify-center text-center">
-              <svg class="justify-center text-center" viewBox="0 0 90 112.5" width="40px" h="40px"
-                xmlns="http://www.w3.org/2000/svg">
-                <g
-                  transform="matrix(1.0162279605865479, 0, 0, 1.0278929471969604, -1.2657499313354492, -0.5505840182304382)">
-                  <g>
-                    <circle cx="57" cy="48" r="2.001" />
-                    <path
-                      d="M73.026,40H72v-9.498C72,27.606,69.587,25,66.691,25H61v-0.009c0-2.896-2.231-5.252-5.127-5.252L18.238,25.25    C15.377,25.292,13,27.632,13,30.502v34.016C13,67.413,15.606,70,18.502,70h0.073h1.568h46.548C69.587,70,72,67.413,72,64.518V56    h1.026C75.921,56,78,53.708,78,50.812v-5.494C78,42.423,75.921,40,73.026,40z M55.941,21.489C57.703,21.526,59,23.22,59,24.991V25    H30.555L55.941,21.489z M70,64.748C70,66.544,68.544,68,66.748,68H18.252C16.456,68,15,66.544,15,64.748V30.252    C15,28.456,16.456,27,18.252,27h48.496C68.544,27,70,28.456,70,30.252V40H55.53C52.634,40,50,42.423,50,45.319v5.494    C50,53.708,52.634,56,55.53,56H70V64.748z M76,50.748C76,52.544,74.544,54,72.748,54H55.252C53.456,54,52,52.544,52,50.748v-5.496    C52,43.456,53.456,42,55.252,42h17.496C74.544,42,76,43.456,76,45.252V50.748z" />
-                  </g>
-                </g>
-              </svg>
+              <hlm-icon class="ml-2" size="lg" [name]="element.icon" />
             </div>
+
+            <ng-template #menu>
+              <hlm-menu class="w-56">
+                <hlm-menu-label>Icon</hlm-menu-label>
+                <hlm-menu-group>
+                  @for (icon of _icons; track icon) {
+                  <button hlmMenuItemRadio [checked]="icon === element.icon" (triggered)="updateIcon(icon)">
+                    <hlm-menu-item-radio />
+                    <span>
+                      <hlm-icon class="mr-2" [name]="icon" />
+                    </span>
+                  </button>
+                  }
+                </hlm-menu-group>
+              </hlm-menu>
+            </ng-template>
+
           </hlm-td>
         </brn-column-def>
 
@@ -215,7 +233,8 @@
                 <hlm-menu-label>Actions</hlm-menu-label>
                 <hlm-menu-separator />
                 <hlm-menu-group>
-                  <button hlmMenuItem brnDialogTrigger [brnDialogTriggerFor]="shareDialog" (click)="selectCategory(element)">
+                  <button hlmMenuItem brnDialogTrigger [brnDialogTriggerFor]="shareDialog"
+                    (click)="selectCategory(element)">
                     {{ element.isShared ? 'Unshare' : 'Share' }}
                   </button>
                 </hlm-menu-group>
@@ -252,21 +271,29 @@
     <brn-table hlm stickyHeader class="w-full border-border mt-10 block h-8/12 overflow-auto"
       [dataSource]="_personalCategoriesFiltered()" [displayedColumns]="_allDisplayedColumns()" [trackBy]="_trackBy">
       <brn-column-def name="icon" class="w-3/12 justify-center text-center">
-        <hlm-th *brnHeaderDef class="justify-center text-center">Icon</hlm-th>
-        <hlm-td *brnCellDef="let element" class="justify-center text-center">
+        <hlm-th *brnHeaderDef truncate class="text-center">Icon</hlm-th>
+        <hlm-td *brnCellDef="let element" truncate [brnMenuTriggerFor]="menu" (click)="selectCategory(element)" class="
+      justify-center text-center">
           <div class="w-full h-full flex justify-center text-center">
-            <svg class="justify-center text-center" viewBox="0 0 90 112.5" width="40px" h="40px"
-              xmlns="http://www.w3.org/2000/svg">
-              <g
-                transform="matrix(1.0162279605865479, 0, 0, 1.0278929471969604, -1.2657499313354492, -0.5505840182304382)">
-                <g>
-                  <circle cx="57" cy="48" r="2.001" />
-                  <path
-                    d="M73.026,40H72v-9.498C72,27.606,69.587,25,66.691,25H61v-0.009c0-2.896-2.231-5.252-5.127-5.252L18.238,25.25    C15.377,25.292,13,27.632,13,30.502v34.016C13,67.413,15.606,70,18.502,70h0.073h1.568h46.548C69.587,70,72,67.413,72,64.518V56    h1.026C75.921,56,78,53.708,78,50.812v-5.494C78,42.423,75.921,40,73.026,40z M55.941,21.489C57.703,21.526,59,23.22,59,24.991V25    H30.555L55.941,21.489z M70,64.748C70,66.544,68.544,68,66.748,68H18.252C16.456,68,15,66.544,15,64.748V30.252    C15,28.456,16.456,27,18.252,27h48.496C68.544,27,70,28.456,70,30.252V40H55.53C52.634,40,50,42.423,50,45.319v5.494    C50,53.708,52.634,56,55.53,56H70V64.748z M76,50.748C76,52.544,74.544,54,72.748,54H55.252C53.456,54,52,52.544,52,50.748v-5.496    C52,43.456,53.456,42,55.252,42h17.496C74.544,42,76,43.456,76,45.252V50.748z" />
-                </g>
-              </g>
-            </svg>
+            <hlm-icon class="ml-2" size="lg" [name]="element.icon" />
           </div>
+
+          <ng-template #menu>
+            <hlm-menu class="w-56">
+              <hlm-menu-label>Icon</hlm-menu-label>
+              <hlm-menu-group>
+                @for (icon of _icons; track icon) {
+                <button hlmMenuItemRadio [checked]="icon === element.icon" (triggered)="updateIcon(icon)">
+                  <hlm-menu-item-radio />
+                  <span>
+                    <hlm-icon class="mr-2" [name]="icon" />
+                  </span>
+                </button>
+                }
+              </hlm-menu-group>
+            </hlm-menu>
+          </ng-template>
+
         </hlm-td>
       </brn-column-def>
 
@@ -313,7 +340,8 @@
               <hlm-menu-label>Actions</hlm-menu-label>
               <hlm-menu-separator />
               <hlm-menu-group>
-                <button hlmMenuItem brnDialogTrigger [brnDialogTriggerFor]="shareDialog" (click)="selectCategory(element)">
+                <button hlmMenuItem brnDialogTrigger [brnDialogTriggerFor]="shareDialog"
+                  (click)="selectCategory(element)">
                   {{ element.isShared ? 'Unshare' : 'Share' }}
                 </button>
               </hlm-menu-group>
@@ -349,27 +377,24 @@
       </div>
 
       <div class="items-center grid grid-cols-4 gap-4">
-        <label hlmLabel for="icon" class="text-right">Category Icon</label>
-        <input hlmInput id="icon" [(ngModel)]="newCategory.icon" class="col-span-3" />
+        <label hlmLabel for="icon" class="text-right">Icon</label>
+        <brn-select id="icon" [(ngModel)]="newCategory.icon" class="col-span-1">
+          <hlm-select-trigger class="w-full">
+            <hlm-icon [name]="newCategory.icon" class="ml-2" size="base" />
+          </hlm-select-trigger>
+          <hlm-select-content>
+            <hlm-option *ngFor="let icon of _icons" [value]="icon">
+              <hlm-icon [name]="icon" class="ml-2" size="base" />
+            </hlm-option>
+          </hlm-select-content>
+        </brn-select>
       </div>
 
       <div class="items-center grid grid-cols-4 gap-4">
         <label hlmLabel class="text-right">Shared</label>
         <input type="checkbox" [(ngModel)]="newCategory.isShared" class="checkbox col-span-3" checked="false" />
       </div>
-      <!-- <div class="items-center grid grid-cols-4 gap-4">
-        <label hlmLabel for="currency" class="text-right">Currency</label>
-        <brn-select id="currency" [(ngModel)]="newCategory.currency" class="col-span-3">
-          <hlm-select-trigger class="w-full">
-            <hlm-select-value />
-          </hlm-select-trigger>
-          <hlm-select-content>
-            <hlm-option *ngFor="let currency of currencies" [value]="currency">
-              {{ currency }}
-            </hlm-option>
-          </hlm-select-content>
-        </brn-select>
-      </div> -->
+
     </div>
 
     <hlm-dialog-footer>

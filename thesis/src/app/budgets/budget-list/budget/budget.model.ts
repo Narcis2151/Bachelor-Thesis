@@ -7,7 +7,7 @@ type Budget = {
   amountAvailable: number;
   currency: Currency;
   amountSpent: number;
-  progress: number;
+  progress?: number;
   startDate: Date;
   endDate?: Date;
   resetDate?: Date;

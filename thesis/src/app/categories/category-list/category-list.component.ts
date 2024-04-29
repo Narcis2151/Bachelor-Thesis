@@ -11,6 +11,7 @@ import { useBrnColumnManager } from '@spartan-ng/ui-table-brain';
 
 import Category from './category/category.model';
 import { categories } from './categories-list';
+import icons from '../../common/icons/icons.names';
 
 @Component({
   selector: 'app-category-list',
@@ -19,6 +20,8 @@ import { categories } from './categories-list';
 })
 export class CategoryListComponent {
   partnerEmail = '';
+  
+
   protected _allCategories = signal(categories);
   allCategories: Category[] = categories;
   selectedCategory!: Category;
@@ -44,7 +47,7 @@ export class CategoryListComponent {
     );
     if (index !== -1) {
       this.allCategories[index] = { ...category, isEditing: false };
-      this._Categories.set([...this.allCategories]); 
+      this._Categories.set([...this.allCategories]);
     }
   }
 
@@ -130,7 +133,7 @@ export class CategoryListComponent {
   protected readonly _sharedCategories = computed(() => {
     return this._filteredCategories().filter((category) => category.isShared);
   });
-  
+
   protected readonly _personalCategories = computed(() => {
     return this._filteredCategories().filter((category) => !category.isShared);
   });
@@ -141,14 +144,13 @@ export class CategoryListComponent {
       category.name.toLowerCase().includes(filter)
     );
   });
-  
+
   protected readonly _sharedCategoriesFiltered = computed(() => {
     const filter = this._allCategoriesFilter()?.trim()?.toLowerCase();
     return this._sharedCategoriesSorted().filter((category) =>
       category.name.toLowerCase().includes(filter)
     );
   });
-  
 
   private readonly _nameSort = signal<'ASC' | 'DESC' | null>(null);
   protected readonly _filteredSortedPaginatedCategories = computed(() => {
@@ -178,7 +180,7 @@ export class CategoryListComponent {
         a.name.localeCompare(b.name, undefined, { sensitivity: 'base' })
     );
   });
-  
+
   protected readonly _sharedCategoriesSorted = computed(() => {
     const sort = this._nameSort();
     const categories = this._sharedCategories();
@@ -235,7 +237,31 @@ export class CategoryListComponent {
   }
 
   protected emailIsValid(): boolean {
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Simple regex for email validation
-    return emailPattern.test(this.partnerEmail); // Return true if the email is valid
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailPattern.test(this.partnerEmail);
+  }
+
+  protected _icons = Object.values(icons).filter(
+    (icon) => !this.isIconDisabled(icon)
+  );
+
+  isIconDisabled(icon: string): boolean {
+    return this.allCategories.some((category) => category.icon === icon);
+  }
+  protected updateIcon(icon: string) {
+    if (this.selectedCategory) {
+      const index = this.allCategories.findIndex(
+        (t) => t.id === this.selectedCategory!.id
+      );
+      if (index > -1) {
+        this.allCategories[index].icon = icon;
+        this._Categories.set([...this.allCategories]);
+        if (this.selectedCategory.icon) {
+          const selectedIcon = this.selectedCategory.icon as icons; // Cast the icon to 'icons' type
+          this._icons.push(selectedIcon); // Push the selectedIcon into the _icons array
+        }
+        this._icons = this._icons.filter((i) => i !== icon);
+      }
+    }
   }
 }
