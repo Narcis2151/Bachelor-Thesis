@@ -64,7 +64,7 @@ export class CashTransactionsListComponent {
     this.newTransaction = {
       id: '',
       category: categories[0],
-      postingDate: new Date(),
+      postingDate: formatDate(new Date(), 'yyyy-MM-dd', 'en-US'),
       beneficiary: '',
       details: '',
       amount: 0,
@@ -91,8 +91,9 @@ export class CashTransactionsListComponent {
     if (this.selectedCashTransaction) {
       const index = this.cashTransactions.findIndex(
         (t) => t.id === this.selectedCashTransaction!.id
-      );
+      );  
       if (index > -1) {
+        this.selectedCashTransaction.postingDate = new Date();
         this.cashTransactions[index] = { ...this.selectedCashTransaction };
         this._CashTransactions.set([...this.cashTransactions]);
       }
