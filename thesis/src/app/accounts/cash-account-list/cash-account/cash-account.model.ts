@@ -1,7 +1,7 @@
 import Currency from "../../../../../shared/account-currency";
 
 type CashAccount = {
-  id: number;
+  id: string;
   name: string;
   balance: number;
   currency: Currency;

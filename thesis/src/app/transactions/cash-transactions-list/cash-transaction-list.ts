@@ -1,5 +1,6 @@
-import Currency from "../../../../shared/account-currency";
-import CashTransaction from "./cash-transaction/cash-transaction.model";
+import Currency from '../../../../shared/account-currency';
+import CashTransaction from './cash-transaction/cash-transaction.model';
+import { categories } from '../../categories/category-list/categories-list';
 
 const CashTransactions: CashTransaction[] = [
   {
@@ -10,11 +11,7 @@ const CashTransactions: CashTransaction[] = [
     amount: 316,
     currency: Currency.RON,
     postingDate: new Date('2024-04-01'),
-    category: {
-      id: '2',
-      name: 'Cumparamuri',
-      icon: 'shopping_cart',
-    },
+    category: categories[1],
     status: 'success',
   },
   {
@@ -25,11 +22,7 @@ const CashTransactions: CashTransaction[] = [
     amount: 242,
     currency: Currency.RON,
     postingDate: new Date('2024-04-02'),
-    category: {
-      id: '3',
-      name: 'Transport',
-      icon: 'car',
-    },
+    category: categories[2],
     status: 'success',
   },
   {
@@ -40,11 +33,7 @@ const CashTransactions: CashTransaction[] = [
     amount: 837,
     currency: Currency.RON,
     postingDate: new Date('2024-04-04'),
-    category: {
-      id: '4',
-      name: 'Sanatate',
-      icon: 'local_hospital',
-    },
+    category: categories[4],
     status: 'processing',
   },
   {
@@ -55,11 +44,7 @@ const CashTransactions: CashTransaction[] = [
     amount: 874,
     currency: Currency.RON,
     postingDate: new Date('2024-03-01'),
-    category: {
-      id: '1',
-      name: 'Casa si gradina',
-      icon: 'house',
-    },
+    category: categories[0],
     status: 'success',
   },
   {
@@ -70,11 +55,7 @@ const CashTransactions: CashTransaction[] = [
     amount: 3200,
     currency: Currency.RON,
     postingDate: new Date('2024-04-08'),
-    category: {
-      id: '5',
-      name: 'Electronice',
-      icon: 'laptop',
-    },
+    category: categories[3],
     status: 'failed',
   },
   {
@@ -85,11 +66,7 @@ const CashTransactions: CashTransaction[] = [
     amount: 1000,
     currency: Currency.RON,
     postingDate: new Date('2024-02-01'),
-    category: {
-      id: '5',
-      name: 'Electronice',
-      icon: 'laptop',
-    },
+    category: categories[3],
     status: 'failed',
   },
   {
@@ -100,11 +77,7 @@ const CashTransactions: CashTransaction[] = [
     amount: 589,
     currency: Currency.RON,
     postingDate: new Date('2024-04-10'),
-    category: {
-      id: '2',
-      name: 'Cumparamuri',
-      icon: 'shopping_cart',
-    },
+    category: categories[1],
     status: 'processing',
   },
   {
@@ -115,11 +88,7 @@ const CashTransactions: CashTransaction[] = [
     amount: 456,
     currency: Currency.RON,
     postingDate: new Date('2024-04-01'),
-    category: {
-      id: '1',
-      name: 'Casa si gradina',
-      icon: 'house',
-    },
+    category: categories[0],
     status: 'success',
   },
   {
@@ -130,11 +99,7 @@ const CashTransactions: CashTransaction[] = [
     amount: 100,
     currency: Currency.RON,
     postingDate: new Date('2024-04-12'),
-    category: {
-      id: '2',
-      name: 'Cumparamuri',
-      icon: 'shopping_cart',
-    },
+    category: categories[1],
     status: 'success',
   },
   {
@@ -145,11 +110,7 @@ const CashTransactions: CashTransaction[] = [
     amount: 200,
     currency: Currency.RON,
     postingDate: new Date('2024-04-19'),
-    category: {
-      id: '3',
-      name: 'Transport',
-      icon: 'car',
-    },
+    category: categories[2],
     status: 'failed',
   },
   {
@@ -160,11 +121,7 @@ const CashTransactions: CashTransaction[] = [
     amount: 321,
     currency: Currency.RON,
     postingDate: new Date('2024-04-01'),
-    category: {
-      id: '1',
-      name: 'Casa si gradina',
-      icon: 'house',
-    },
+    category: categories[0],
     status: 'processing',
   },
   {
@@ -175,11 +132,7 @@ const CashTransactions: CashTransaction[] = [
     amount: 400,
     currency: Currency.RON,
     postingDate: new Date('2024-04-19'),
-    category: {
-      id: '1',
-      name: 'Casa si gradina',
-      icon: 'house',
-    },
+    category: categories[0],
     status: 'failed',
   },
   {
@@ -190,11 +143,7 @@ const CashTransactions: CashTransaction[] = [
     amount: 220,
     currency: Currency.RON,
     postingDate: new Date('2024-04-05'),
-    category: {
-      id: '9',
-      name: 'Abonamente',
-      icon: 'subscriptions',
-    },
+    category: categories[10],
     status: 'success',
   },
   {
@@ -205,11 +154,7 @@ const CashTransactions: CashTransaction[] = [
     amount: 45,
     currency: Currency.RON,
     postingDate: new Date('2024-04-02'),
-    category: {
-      id: '9',
-      name: 'Abonamente',
-      icon: 'subscriptions',
-    },
+    category: categories[10],
     status: 'success',
   },
   {
@@ -220,11 +165,7 @@ const CashTransactions: CashTransaction[] = [
     amount: 40,
     currency: Currency.RON,
     postingDate: new Date('2024-04-01'),
-    category: {
-      id: '9',
-      name: 'Abonamente',
-      icon: 'subscriptions',
-    },
+    category: categories[10],
     status: 'failed',
   },
   {
@@ -235,11 +176,7 @@ const CashTransactions: CashTransaction[] = [
     amount: 6600,
     currency: Currency.RON,
     postingDate: new Date('2024-04-10'),
-    category: {
-      id: '6',
-      name: 'Salariu',
-      icon: 'salary',
-    },
+    category: categories[8],
     status: 'success',
   },
   {
@@ -250,11 +187,7 @@ const CashTransactions: CashTransaction[] = [
     amount: 121.12,
     currency: Currency.RON,
     postingDate: new Date('2024-04-18'),
-    category: {
-      id: '7',
-      name: 'Dividende',
-      icon: 'dividends',
-    },
+    category: categories[9],
     status: 'failed',
   },
   {
@@ -265,11 +198,7 @@ const CashTransactions: CashTransaction[] = [
     amount: 650,
     currency: Currency.RON,
     postingDate: new Date('2024-04-13'),
-    category: {
-      id: '8',
-      name: 'Diverse',
-      icon: 'misc',
-    },
+    category: categories[7],
     status: 'processing',
   },
   {
@@ -280,11 +209,7 @@ const CashTransactions: CashTransaction[] = [
     amount: 56.25,
     currency: Currency.RON,
     postingDate: new Date('2024-04-10'),
-    category: {
-      id: '2',
-      name: 'Cumparamuri',
-      icon: 'shopping_cart',
-    },
+    category: categories[1],
     status: 'success',
   },
   {
@@ -295,11 +220,7 @@ const CashTransactions: CashTransaction[] = [
     amount: 120,
     currency: Currency.RON,
     postingDate: new Date('2024-04-14'),
-    category: {
-      id: '2',
-      name: 'Transport',
-      icon: 'car',
-    },
+    category: categories[2],
     status: 'failed',
   },
 ];

@@ -1,5 +1,5 @@
 import Currency from '../../../../../shared/account-currency';
-
+import Category from '../../../categories/category-list/category/category.model';
 type CashTransaction = {
   id: string;
   type: 'expense' | 'income';
@@ -7,12 +7,8 @@ type CashTransaction = {
   details: string;
   amount: number;
   currency: Currency;
-  postingDate: Date;
-  category: {
-    id: string;
-    name: string;
-    icon: string;
-  }
+  postingDate: Date | string;  
+  category: Category;
   status: 'pending' | 'processing' | 'success' | 'failed';
 };
 

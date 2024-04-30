@@ -2306,6 +2306,13 @@
   dependencies:
     tslib "^2.3.0"
 
+"@spartan-ng/ui-alertdialog-brain@0.0.1-alpha.343":
+  version "0.0.1-alpha.343"
+  resolved "https://registry.yarnpkg.com/@spartan-ng/ui-alertdialog-brain/-/ui-alertdialog-brain-0.0.1-alpha.343.tgz#67bb5cdada940900c8e29a91239ab1361f9ce143"
+  integrity sha512-++dtp6V7jPkDxd++lkJ3T/IrMn06qst8qRH9dBc1B2IgIrJWHRzERxSahR9wSSx1BUP9OnvnGg0wQuFcwunTNQ==
+  dependencies:
+    tslib "^2.3.0"
+
 "@spartan-ng/ui-checkbox-brain@0.0.1-alpha.343":
   version "0.0.1-alpha.343"
   resolved "https://registry.yarnpkg.com/@spartan-ng/ui-checkbox-brain/-/ui-checkbox-brain-0.0.1-alpha.343.tgz#87859158f6fdf64f0a5ba6c2c5ce6e027dd1a9e6"
@@ -2317,6 +2324,13 @@
   version "0.0.1-alpha.344"
   resolved "https://registry.yarnpkg.com/@spartan-ng/ui-core/-/ui-core-0.0.1-alpha.344.tgz#d00374fe1b40e8bc552937abdd93c0c5e583b90a"
   integrity sha512-1HMtDo9aCXSeBhbsgPB4mcOIhzG2DBSTA5GWLn5dKB6bM6ilKGO6XyyypAGlH36zReki3EHdLXjIBGuCuXdzIw==
+  dependencies:
+    tslib "^2.3.0"
+
+"@spartan-ng/ui-dialog-brain@0.0.1-alpha.343":
+  version "0.0.1-alpha.343"
+  resolved "https://registry.yarnpkg.com/@spartan-ng/ui-dialog-brain/-/ui-dialog-brain-0.0.1-alpha.343.tgz#a6792d14f91da67233d54c5c5067affb5d037607"
+  integrity sha512-waEGYqM3N00GRtLFyJp1jjQtsI936cBz2Yz34rYekbolUwVaqPnnMVSDIsKTvLUN5fTrGX/7n6bmwfnKrzcuxQ==
   dependencies:
     tslib "^2.3.0"
 
@@ -2359,6 +2373,13 @@
   version "0.0.1-alpha.343"
   resolved "https://registry.yarnpkg.com/@spartan-ng/ui-tabs-brain/-/ui-tabs-brain-0.0.1-alpha.343.tgz#c34a8e5de355b9c5cdb15cd00f1a835715e2f378"
   integrity sha512-oez09MM8CJrSo4U65ORGCZ2xu51/HiAJqoplNV9aoDntmhukIhTCNYLV7eFNZewv9UpcdpCyy4HKg9JQmHlFMA==
+  dependencies:
+    tslib "^2.3.0"
+
+"@spartan-ng/ui-toggle-brain@0.0.1-alpha.343":
+  version "0.0.1-alpha.343"
+  resolved "https://registry.yarnpkg.com/@spartan-ng/ui-toggle-brain/-/ui-toggle-brain-0.0.1-alpha.343.tgz#d0d9630439cb1d387fcb1542cc9666f1f0fef795"
+  integrity sha512-2JMT//NLqHRLpjAi0GJkxd8DLvdG5yOHaIY1KAkdmkuyTeDCKafAIWzwmihNA66j7/pWBFg5AKJxOZFLd0fuUg==
   dependencies:
     tslib "^2.3.0"
 

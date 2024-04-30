@@ -1,25 +1,300 @@
-<div class="w-full overflow-x-auto">
-  <hlm-table class="w-full min-w-[400px] text-sm text-left text-gray-500 dark:text-gray-400">
-    <hlm-th class="text-xs p-0 text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-      <hlm-trow class="w-full">
-        <hlm-th class="px-6 py-3 text-center justify-center w-1/12">Type</hlm-th>
-        <hlm-th class="px-6 py-3 text-start justify-start w-7/12">Name</hlm-th>
-        <hlm-th class="px-6 py-3 text-center justify-center w-2/12">Balance</hlm-th>
-        <hlm-th class="px-6 py-3 text-center justify-center w-2/12">
-          <button hlmBtn class="justify-center w-8/12 rounded-sm text-gray-200 hover:text-gray-400">New</button>
-        </hlm-th>
-      </hlm-trow>
+<div class="flex flex-col justify-between gap-4 sm:flex-row">
+  <input
+    hlmInput
+    class="w-full md:w-80"
+    placeholder="Filter accounts..."
+    [ngModel]="_cashAccountsFilter()"
+    (ngModelChange)="_rawFilterInput.set($event)"
+  />
+  <button
+    hlmBtn
+    brnDialogTrigger
+    [brnDialogTriggerFor]="newDialog"
+    class="justify-center rounded-sm text-white hover:text-gray-400"
+  >
+    New
+  </button>
+</div>
+
+<brn-table
+  hlm
+  stickyHeader
+  class="w-full border-border mt-10 block h-8/12 overflow-auto"
+  [dataSource]="_filteredSortedPaginatedBudgets()"
+  [displayedColumns]="_allDisplayedColumns()"
+  [trackBy]="_trackBy"
+>
+  <brn-column-def
+    name="icon"
+    class="w-2/12 md:w-1/12 justify-center text-center"
+  >
+    <hlm-th *brnHeaderDef class="justify-center text-center">Icon</hlm-th>
+    <hlm-td *brnCellDef="let element" class="justify-center text-center">
+      <div class="w-full h-full justify-center text-center">
+        <hlm-icon class="ml-2" size="lg" name="lucideWallet" />
+      </div>
+    </hlm-td>
+  </brn-column-def>
+
+  <brn-column-def name="name" class="w-5/12 md:w-6/12 justify-start text-start">
+    <hlm-th *brnHeaderDef truncate>
+      <button
+        hlmBtn
+        class="p-0"
+        size="sm"
+        variant="ghost"
+        (click)="handleNameSortChange()"
+      >
+        Account Name
+        <hlm-icon class="ml-2" size="sm" name="lucideArrowUpDown" />
+      </button>
     </hlm-th>
 
-    <!-- Rows for accounts -->
-    <app-cash-account *ngFor="let cashAccount of cashAccounts" [cashAccount]="cashAccount"></app-cash-account>
+    <hlm-td *brnCellDef="let element" class="flex items-center gap-2">
+      <ng-container *ngIf="element.isEditing; else viewMode">
+        <input
+          hlmInput
+          [(ngModel)]="element.name"
+          class="flex-1 w-full"
+          name="accountName"
+          required
+          (keyup.enter)="saveAccountName(element)"
+        />
+        <button
+          hlmBtn
+          class="text-end ml-auto p-1 hover:text-gray-600"
+          variant="ghost"
+          [disabled]="!element.name"
+          (click)="saveAccountName(element)"
+        >
+          Save
+        </button>
+      </ng-container>
 
-    <!-- Adjusted Total Balance Row -->
-    <hlm-trow colspan="4" class="text-center flex bg-muted/50 hover:bg-muted w-full">
-      <hlm-td class="w-1/12 px-6 py-4"></hlm-td>
-      <hlm-td class="w-7/12 px-6 py-4 justify-start text-start font-semibold">Total Balance</hlm-td>
-      <hlm-td class="w-2/12 px-6 py-4 justify-center text-center font-semibold">2,500.00 RON</hlm-td>
-      <hlm-td class="w-2/12 px-6 py-4"></hlm-td>
-    </hlm-trow>
-  </hlm-table>
-</div>
+      <ng-template #viewMode>
+        {{ element.name }}
+        <button
+          class="text-end ml-auto p-1 hover:text-gray-600"
+          hlmBtn
+          variant="ghost"
+          (click)="toggleEditName(element)"
+        >
+          Edit
+        </button>
+      </ng-template>
+    </hlm-td>
+  </brn-column-def>
+
+  <brn-column-def name="balance" class="w-2/12 justify-start text-start">
+    <hlm-th *brnHeaderDef>Balance</hlm-th>
+    <hlm-td
+      class="text-start font-medium tabular-nums"
+      *brnCellDef="let element"
+    >
+      {{ element.balance | number : "1.2-2" }}
+    </hlm-td>
+  </brn-column-def>
+
+  <brn-column-def name="currency" class="w-2/12 justify-center">
+    <hlm-th *brnHeaderDef>Currency</hlm-th>
+    <hlm-td
+      class="text-start font-medium tabular-nums"
+      *brnCellDef="let element"
+    >
+      {{ element.currency }}
+    </hlm-td>
+  </brn-column-def>
+
+  <brn-column-def name="actions" class="w-1/12 justify-center">
+    <hlm-th *brnHeaderDef></hlm-th>
+    <hlm-td *brnCellDef="let element">
+      <button
+        hlmBtn
+        variant="ghost"
+        class="h-6 w-6 p-0.5"
+        align="end"
+        [brnMenuTriggerFor]="menu"
+      >
+        <hlm-icon class="h-4 w-4" name="lucideMoreHorizontal" />
+      </button>
+
+      <ng-template #menu>
+        <hlm-menu>
+          <hlm-menu-label>Actions</hlm-menu-label>
+          <hlm-menu-separator />
+          <hlm-menu-group>
+            <button
+              brnDialogTrigger
+              [brnDialogTriggerFor]="editDialog"
+              (click)="selectCashAccount(element)"
+            >
+              Edit
+            </button>
+          </hlm-menu-group>
+          <hlm-menu-separator />
+          <hlm-menu-group>
+            <hlm-menu-group>
+              <button
+                brnDialogTrigger
+                [brnDialogTriggerFor]="deleteDialog"
+                (click)="selectCashAccount(element)"
+              >
+                Delete
+              </button>
+            </hlm-menu-group>
+          </hlm-menu-group>
+        </hlm-menu>
+      </ng-template>
+    </hlm-td>
+  </brn-column-def>
+
+  <div
+    class="text-muted-foreground flex items-center justify-center p-20"
+    brnNoDataRow
+  >
+    No data
+  </div>
+</brn-table>
+
+<hlm-dialog #newDialog>
+  <hlm-dialog-content class="sm:max-w-[425px]" *brnDialogContent="let ctx">
+    <hlm-dialog-header>
+      <h3 hlmDialogTitle>New Cash Account</h3>
+      <p hlmDialogDescription>Add the details for the new cash account.</p>
+    </hlm-dialog-header>
+
+    <div class="py-4 grid gap-4">
+      <div class="items-center grid grid-cols-4 gap-4">
+        <label hlmLabel for="name" class="text-right">Account Name</label>
+        <input
+          hlmInput
+          id="name"
+          [(ngModel)]="newCashAccount.name"
+          class="col-span-3"
+        />
+      </div>
+
+      <div class="items-center grid grid-cols-4 gap-4">
+        <label hlmLabel for="balance" class="text-right">Account Balance</label>
+        <input
+          type="number"
+          hlmInput
+          id="balance"
+          [(ngModel)]="newCashAccount.balance"
+          class="col-span-3"
+        />
+      </div>
+
+      <div class="items-center grid grid-cols-4 gap-4">
+        <label hlmLabel for="currency" class="text-right">Currency</label>
+        <brn-select
+          id="currency"
+          [(ngModel)]="newCashAccount.currency"
+          class="col-span-3"
+        >
+          <hlm-select-trigger class="w-full">
+            <hlm-select-value />
+          </hlm-select-trigger>
+          <hlm-select-content>
+            <hlm-option *ngFor="let currency of currencies" [value]="currency">
+              {{ currency }}
+            </hlm-option>
+          </hlm-select-content>
+        </brn-select>
+      </div>
+    </div>
+
+    <hlm-dialog-footer>
+      <button hlmBtn variant="ghost" (click)="ctx.close()">Cancel</button>
+      <button
+        hlmBtn
+        class="text-white hover:text-gray-400"
+        (click)="addCashAccount(); ctx.close()"
+      >
+        Save
+      </button>
+    </hlm-dialog-footer>
+  </hlm-dialog-content>
+</hlm-dialog>
+
+<hlm-dialog #editDialog>
+  <hlm-dialog-content class="sm:max-w-[425px]" *brnDialogContent="let ctx">
+    <hlm-dialog-header>
+      <h3 hlmDialogTitle>Edit Account</h3>
+      <p hlmDialogDescription>
+        Modify the Account details and click save to apply changes.
+      </p>
+    </hlm-dialog-header>
+
+    <div class="items-center grid grid-cols-4 gap-4">
+      <label hlmLabel for="name" class="text-right">Account Name</label>
+      <input
+        hlmInput
+        id="name"
+        [(ngModel)]="selectedCashAccount.name"
+        class="col-span-3"
+      />
+    </div>
+
+    <div class="items-center grid grid-cols-4 gap-4">
+      <label hlmLabel for="balance" class="text-right">Account Balance</label>
+      <input
+        type="number"
+        hlmInput
+        id="balance"
+        [(ngModel)]="selectedCashAccount.balance"
+        class="col-span-3"
+      />
+    </div>
+
+    <div class="items-center grid grid-cols-4 gap-4">
+      <label hlmLabel for="currency" class="text-right">Currency</label>
+      <brn-select
+        id="currency"
+        [(ngModel)]="selectedCashAccount.currency"
+        class="col-span-3"
+      >
+        <hlm-select-trigger class="w-full">
+          <hlm-select-value />
+        </hlm-select-trigger>
+        <hlm-select-content>
+          <hlm-option *ngFor="let currency of currencies" [value]="currency">
+            {{ currency }}
+          </hlm-option>
+        </hlm-select-content>
+      </brn-select>
+    </div>
+
+    <hlm-dialog-footer>
+      <button hlmBtn variant="ghost" (click)="ctx.close()">Cancel</button>
+      <button
+        hlmBtn
+        class="text-white hover:text-gray-400"
+        (click)="saveCashAccount(); ctx.close()"
+      >
+        Save changes
+      </button>
+    </hlm-dialog-footer>
+  </hlm-dialog-content>
+</hlm-dialog>
+
+<hlm-dialog #deleteDialog>
+  <hlm-dialog-content *brnAlertDialogContent="let ctx">
+    <hlm-dialog-header>
+      <h3 hlmAlertDialogTitle>Are you absolutely sure?</h3>
+      <p hlmAlertDialogDescription>
+        This action cannot be undone. This will permanently delete your account.
+      </p>
+    </hlm-dialog-header>
+    <hlm-dialog-footer>
+      <button hlmBtn variant="ghost" (click)="ctx.close()">Cancel</button>
+      <button
+        hlmBtn
+        variant="destructive"
+        (click)="deleteCashAccount(); ctx.close()"
+      >
+        Delete Account
+      </button>
+    </hlm-dialog-footer>
+  </hlm-dialog-content>
+</hlm-dialog>

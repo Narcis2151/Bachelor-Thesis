@@ -8,12 +8,14 @@ import {
 import { debounceTime } from 'rxjs';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import {
-  PaginatorState,
   useBrnColumnManager,
 } from '@spartan-ng/ui-table-brain';
 
 import BudgetData from './budget-list';
 import Budget from './budget/budget.model';
+import Currency from '../../../../shared/account-currency';
+import Category from '../../categories/category-list/category/category.model';
+import { categories } from '../../categories/category-list/categories-list';
 
 @Component({
   selector: 'app-budget-list',
@@ -21,25 +23,93 @@ import Budget from './budget/budget.model';
   styleUrl: './budget-list.component.scss',
 })
 export class BudgetListComponent {
-  protected budgets: Budget[] = BudgetData;
-  date: Date = new Date();
+  protected budgets: Budget[] = BudgetData.filter((b) => b.active);
+  protected selectedBudget!: Budget;
+  protected readonly currencies = Object.values(Currency);
+  protected availableCategories: Category[] = categories.filter(
+    (c) => !this.budgets.some((b) => b.category.id === c.id)
+  );
+  protected newBudget: Budget = {
+    id: '',
+    category: categories[0],
+    startDate: new Date(),
+    progress: 0,
+    amountAvailable: 0,
+    amountSpent: 0,
+    currency: Currency.RON,
+    active: true,
+  };
+
+  protected addBudget() {
+    this.newBudget.id = this.generateUniqueId();
+    this.newBudget.startDate = new Date(this.newBudget.startDate);
+    const oneMonthLater = new Date(this.newBudget.startDate);
+    oneMonthLater.setMonth(oneMonthLater.getMonth() + 1);
+    this.newBudget.resetDate = oneMonthLater;
+    this.budgets.push({ ...this.newBudget });
+    this._Budgets.set([...this.budgets]);
+    this.resetNewBudget();
+  }
+
+  protected resetNewBudget() {
+    this.newBudget = {
+      id: '',
+      category: categories[0],
+      startDate: new Date(),
+      resetDate: new Date(),
+      progress: 0,
+      amountAvailable: 0,
+      amountSpent: 0,
+      currency: Currency.RON,
+      active: true,
+    };
+  }
+
+  private generateUniqueId(): string {
+    return Math.random().toString(36).substr(2, 9);
+  }
+
+  protected selectBudget(budget: Budget) {
+    this.selectedBudget = { ...budget };
+  }
+
+  protected saveBudget() {
+    if (this.selectedBudget) {
+      const index = this.budgets.findIndex(
+        (t) => t.id === this.selectedBudget!.id
+      );
+      if (index > -1) {
+        this.budgets[index] = { ...this.selectedBudget };
+        this._Budgets.set([...this.budgets]);
+      }
+    }
+  }
+
+  protected deleteBudget() {
+    if (this.selectedBudget) {
+      const index = this.budgets.findIndex(
+        (t) => t.id === this.selectedBudget!.id
+      );
+      if (index > -1) {
+        this.budgets.splice(index, 1);
+        this._Budgets.set([...this.budgets]);
+      }
+    }
+  }
 
   protected readonly _rawFilterInput = signal('');
   protected readonly _budgetsFilter = signal('');
   private readonly _debouncedFilter = toSignal(
     toObservable(this._rawFilterInput).pipe(debounceTime(300))
   );
-
-  private readonly _displayedIndices = signal({ start: 0, end: 0 });
-  protected readonly _availablePageSizes = [5, 10, 20, 10000];
-  protected readonly _pageSize = signal(this._availablePageSizes[0]);
+  protected readonly _pageSize = signal(10000);
 
   protected readonly _brnColumnManager = useBrnColumnManager({
     category: { visible: true, label: 'category' },
     resetDate: { visible: true, label: 'resetDate' },
     progress: { visible: true, label: 'progress' },
     amountAvailable: { visible: true, label: 'amountAvailable' },
-    amountSpent: { visible: true, label: 'amountSpent' },
+    amountSpent: { visible: false, label: 'amountSpent' },
     isShared: { visible: true, label: 'isShared' },
     currency: { visible: false },
   });
@@ -56,7 +126,6 @@ export class BudgetListComponent {
         (u) =>
           u.category.name.toLowerCase().includes(filter) ||
           u.amountAvailable.toString().includes(filter) ||
-          u.amountSpent.toString().includes(filter) ||
           u.currency.toString().includes(filter)
       );
     }
@@ -65,11 +134,9 @@ export class BudgetListComponent {
   private readonly _dateSort = signal<'ASC' | 'DESC' | null>(null);
   protected readonly _filteredSortedPaginatedBudgets = computed(() => {
     const sort = this._dateSort();
-    const start = this._displayedIndices().start;
-    const end = this._displayedIndices().end + 1;
     const Budgets = this._filteredBudgets();
     if (!sort) {
-      return Budgets.slice(start, end);
+      return Budgets.slice(0, this._pageSize());
     }
     return [...Budgets]
       .sort(
@@ -77,7 +144,7 @@ export class BudgetListComponent {
           (sort === 'ASC' ? 1 : -1) *
           (Number(p1.resetDate) - Number(p2.resetDate))
       )
-      .slice(start, end);
+      .slice(0, this._pageSize());
   });
 
   protected readonly _trackBy: TrackByFunction<Budget> = (
@@ -87,11 +154,6 @@ export class BudgetListComponent {
   protected readonly _totalElements = computed(
     () => this._filteredBudgets().length
   );
-  protected readonly _onStateChange = ({
-    startIndex,
-    endIndex,
-  }: PaginatorState) =>
-    this._displayedIndices.set({ start: startIndex, end: endIndex });
 
   constructor() {
     effect(() => this._budgetsFilter.set(this._debouncedFilter() ?? ''), {

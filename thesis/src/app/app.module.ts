@@ -29,6 +29,38 @@ import {
 } from '@spartan-ng/ui-card-helm';
 import { HlmInputDirective } from '@spartan-ng/ui-input-helm';
 import { HlmLabelDirective } from '@spartan-ng/ui-label-helm';
+import {
+  BrnDialogContentDirective,
+  BrnDialogTriggerDirective,
+} from '@spartan-ng/ui-dialog-brain';
+import {
+  HlmDialogComponent,
+  HlmDialogContentComponent,
+  HlmDialogDescriptionDirective,
+  HlmDialogFooterComponent,
+  HlmDialogHeaderComponent,
+  HlmDialogTitleDirective,
+} from '@spartan-ng/ui-dialog-helm';
+
+import { HlmToggleDirective } from '@spartan-ng/ui-toggle-helm';
+import { BrnToggleDirective } from '@spartan-ng/ui-toggle-brain';
+
+import {
+  BrnAlertDialogContentDirective,
+  BrnAlertDialogTriggerDirective,
+} from '@spartan-ng/ui-alertdialog-brain';
+import {
+  HlmAlertDialogActionButtonDirective,
+  HlmAlertDialogCancelButtonDirective,
+  HlmAlertDialogComponent,
+  HlmAlertDialogContentComponent,
+  HlmAlertDialogDescriptionDirective,
+  HlmAlertDialogFooterComponent,
+  HlmAlertDialogHeaderComponent,
+  HlmAlertDialogOverlayDirective,
+  HlmAlertDialogTitleDirective,
+} from '@spartan-ng/ui-alertdialog-helm';
+
 import { HlmIconComponent, provideIcons } from '@spartan-ng/ui-icon-helm';
 import {
   HlmTabsComponent,
@@ -41,6 +73,18 @@ import {
   lucideArrowUpDown,
   lucideChevronDown,
   lucideMoreHorizontal,
+  lucideHome,
+  lucidePizza,
+  lucideCar,
+  lucideShoppingCart,
+  lucideHeartPulse,
+  lucideClapperboard,
+  lucideBookOpen,
+  lucideCircleEllipsis,
+  lucideWallet,
+  lucideBanknote,
+  lucideBadgeDollarSign,
+  lucidePodcast,
 } from '@ng-icons/lucide';
 
 import { HlmButtonModule } from '@spartan-ng/ui-button-helm';
@@ -94,6 +138,27 @@ import { BudgetsPageComponent } from './budgets/pages/budgets-page/budgets-page.
     BudgetsPageComponent,
   ],
   imports: [
+    BrnToggleDirective,
+    HlmToggleDirective,
+    BrnAlertDialogTriggerDirective,
+    BrnAlertDialogContentDirective,
+    HlmAlertDialogComponent,
+    HlmAlertDialogOverlayDirective,
+    HlmAlertDialogHeaderComponent,
+    HlmAlertDialogFooterComponent,
+    HlmAlertDialogTitleDirective,
+    HlmAlertDialogDescriptionDirective,
+    HlmAlertDialogCancelButtonDirective,
+    HlmAlertDialogActionButtonDirective,
+    HlmAlertDialogContentComponent,
+    BrnDialogTriggerDirective,
+    BrnDialogContentDirective,
+    HlmDialogComponent,
+    HlmDialogContentComponent,
+    HlmDialogHeaderComponent,
+    HlmDialogFooterComponent,
+    HlmDialogTitleDirective,
+    HlmDialogDescriptionDirective,
     BrnProgressComponent,
     BrnProgressIndicatorComponent,
     HlmProgressIndicatorDirective,
@@ -142,9 +207,21 @@ import { BudgetsPageComponent } from './budgets/pages/budgets-page/budgets-page.
   ],
   providers: [
     provideIcons({
+      lucideWallet,
       lucideChevronDown,
       lucideMoreHorizontal,
       lucideArrowUpDown,
+      lucideHome,
+      lucidePizza,
+      lucideCar,
+      lucideShoppingCart,
+      lucideHeartPulse,
+      lucideClapperboard,
+      lucideBookOpen,
+      lucideCircleEllipsis,
+      lucideBanknote,
+      lucideBadgeDollarSign,
+      lucidePodcast,
     }),
   ],
   bootstrap: [AppComponent],

@@ -14,6 +14,10 @@ import {
 
 import CashTransaction from './cash-transaction/cash-transaction.model';
 import CashTransactions from './cash-transaction-list';
+import Currency from '../../../../shared/account-currency';
+import Category from '../../categories/category-list/category/category.model';
+import { categories } from '../../categories/category-list/categories-list';
+import { formatDate } from '@angular/common';
 
 @Component({
   selector: 'app-cash-transactions-list',
@@ -22,6 +26,90 @@ import CashTransactions from './cash-transaction-list';
 })
 export class CashTransactionsListComponent {
   protected cashTransactions: CashTransaction[] = CashTransactions;
+  protected selectedCashTransaction!: CashTransaction;
+  protected readonly currencies = Object.values(Currency);
+  protected categories: Category[] = categories;
+  protected newTransaction: CashTransaction = {
+    id: '',
+    category: categories[0],
+    postingDate: formatDate(new Date(), 'yyyy-MM-dd', 'en-US'),
+    beneficiary: '',
+    details: '',
+    amount: 0,
+    type: 'expense',
+    currency: Currency.RON,
+    status: 'success',
+  };
+
+  protected updateTransactionCategory(category: Category) {
+    if (this.selectedCashTransaction) {
+      const index = this.cashTransactions.findIndex(
+        (t) => t.id === this.selectedCashTransaction!.id
+      );
+      if (index > -1) {
+        this.cashTransactions[index].category = category;
+        this._CashTransactions.set([...this.cashTransactions]);
+      }
+    }
+  }
+  protected addTransaction() {
+    this.newTransaction.id = this.generateUniqueId();
+    this.newTransaction.postingDate = new Date(this.newTransaction.postingDate);
+    this.cashTransactions.push({ ...this.newTransaction });
+    this._CashTransactions.set([...this.cashTransactions]);
+    this.resetNewTransaction();
+  }
+
+  private resetNewTransaction() {
+    this.newTransaction = {
+      id: '',
+      category: categories[0],
+      postingDate: new Date(),
+      beneficiary: '',
+      details: '',
+      amount: 0,
+      type: 'income',
+      currency: Currency.RON,
+      status: 'success',
+    };
+  }
+
+  private generateUniqueId(): string {
+    return `id-${Math.random().toString(36).substr(2, 9)}`;
+  }
+
+  protected selectTransaction(transaction: CashTransaction) {
+    this.selectedCashTransaction = { ...transaction };
+    this.selectedCashTransaction.postingDate = formatDate(
+      new Date(this.selectedCashTransaction.postingDate),
+      'yyyy-MM-dd',
+      'en-US'
+    );
+  }
+
+  protected saveTransaction() {
+    if (this.selectedCashTransaction) {
+      const index = this.cashTransactions.findIndex(
+        (t) => t.id === this.selectedCashTransaction!.id
+      );
+      if (index > -1) {
+        this.cashTransactions[index] = { ...this.selectedCashTransaction };
+        this._CashTransactions.set([...this.cashTransactions]);
+      }
+    }
+  }
+
+  protected deleteTransaction() {
+    if (this.selectedCashTransaction) {
+      const index = this.cashTransactions.findIndex(
+        (t) => t.id === this.selectedCashTransaction!.id
+      );
+      if (index > -1) {
+        this.cashTransactions.splice(index, 1);
+        this._CashTransactions.set([...this.cashTransactions]);
+      }
+    }
+  }
 
   protected readonly _rawFilterInput = signal('');
   protected readonly _transactionsFilter = signal('');
