@@ -54,13 +54,13 @@ export const categories: Category[] = [
     id: '9',
     name: 'Salary',
     icon: icons.lucideBanknote,
-    isShared: true,
+    isShared: false,
   },
   {
     id: '10',
     name: 'Investments',
     icon: icons.lucideBadgeDollarSign,
-    isShared: true,
+    isShared: false,
   },
   {
     id: '11',

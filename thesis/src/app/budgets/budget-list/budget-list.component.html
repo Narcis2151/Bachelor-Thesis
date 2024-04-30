@@ -114,7 +114,13 @@
       class="text-start font-medium tabular-nums"
       *brnCellDef="let element"
     >
-      {{ element.category.isShared ? "Yes" : "No" }}
+      <div class="w-full h-full flex justify-center text-center">
+        <hlm-icon
+          class="ml-2"
+          size="lg"
+          [name]="element.category.isShared ? 'lucideUsers' : 'lucideUser'"
+        />
+      </div>
     </hlm-td>
   </brn-column-def>
 

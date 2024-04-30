@@ -116,7 +116,13 @@
           class="text-start font-medium tabular-nums"
           *brnCellDef="let element"
         >
-          {{ element.isShared }}
+          <div class="w-full h-full flex justify-center text-center">
+            <hlm-icon
+              class="ml-2"
+              size="lg"
+              [name]="element.isShared ? 'lucideUsers' : 'lucideUser'"
+            />
+          </div>
         </hlm-td>
       </brn-column-def>
 
@@ -288,12 +294,18 @@
       </brn-column-def>
 
       <brn-column-def name="isShared" class="w-2/12 justify-center">
-        <hlm-th *brnHeaderDef>Is Shared</hlm-th>
+        <hlm-th *brnHeaderDef>Shared</hlm-th>
         <hlm-td
           class="text-start font-medium tabular-nums"
           *brnCellDef="let element"
         >
-          {{ element.isShared }}
+          <div class="w-full h-full flex justify-center text-center">
+            <hlm-icon
+              class="ml-2"
+              size="lg"
+              name="lucideUser"
+            />
+          </div>
         </hlm-td>
       </brn-column-def>
 
@@ -537,7 +549,13 @@
             class="text-start font-medium tabular-nums"
             *brnCellDef="let element"
           >
-            {{ element.isShared }}
+            <div class="w-full h-full flex justify-center text-center">
+              <hlm-icon
+                class="ml-2"
+                size="lg"
+                name="lucideUsers"
+              />
+            </div>
           </hlm-td>
         </brn-column-def>
 

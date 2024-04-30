@@ -85,6 +85,8 @@ import {
   lucideBanknote,
   lucideBadgeDollarSign,
   lucidePodcast,
+  lucideUser,
+  lucideUsers,
 } from '@ng-icons/lucide';
 
 import { HlmButtonModule } from '@spartan-ng/ui-button-helm';
@@ -222,6 +224,8 @@ import { BudgetsPageComponent } from './budgets/pages/budgets-page/budgets-page.
       lucideBanknote,
       lucideBadgeDollarSign,
       lucidePodcast,
+      lucideUser,
+      lucideUsers,
     }),
   ],
   bootstrap: [AppComponent],
