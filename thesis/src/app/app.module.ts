@@ -78,6 +78,7 @@ import {
   lucideClapperboard,
   lucideBookOpen,
   lucideCircleEllipsis,
+  lucideWallet
 } from '@ng-icons/lucide';
 
 import { HlmButtonModule } from '@spartan-ng/ui-button-helm';
@@ -201,6 +202,7 @@ import { BudgetsPageComponent } from './budgets/pages/budgets-page/budgets-page.
   ],
   providers: [
     provideIcons({
+      lucideWallet,
       lucideChevronDown,
       lucideMoreHorizontal,
       lucideArrowUpDown,
