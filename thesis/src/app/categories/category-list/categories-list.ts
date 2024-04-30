@@ -1,51 +1,53 @@
+import icons from '../../common/icons/icons.names';
 import Category from './category/category.model';
+
 export const categories: Category[] = [
   {
-    id: "1",
+    id: '1',
     name: 'Home',
-    icon: 'lucideHome',
+    icon: icons.lucideHome,
     isShared: true,
   },
   {
-    id: "2",
+    id: '2',
     name: 'Food',
-    icon: 'lucidePizza',
+    icon: icons.lucidePizza,
     isShared: false,
   },
   {
-    id: "3",
+    id: '3',
     name: 'Transport',
-    icon: 'lucideCar',
+    icon: icons.lucideCar,
     isShared: false,
   },
   {
-    id: "4",
+    id: '4',
     name: 'Shopping',
-    icon: 'lucideShoppingCart',
+    icon: icons.lucideShoppingCart,
     isShared: false,
   },
   {
-    id: "5",
+    id: '5',
     name: 'Health',
-    icon: 'lucideHeartPulse',
+    icon: icons.lucideHeartPulse,
     isShared: true,
   },
   {
-    id: "6",
+    id: '6',
     name: 'Entertainment',
-    icon: 'lucideClapperboard',
+    icon: icons.lucideClapperboard,
     isShared: false,
   },
   {
-    id: "7",
+    id: '7',
     name: 'Education',
-    icon: 'lucideBookOpen',
+    icon: icons.lucideBookOpen,
     isShared: false,
   },
   {
-    id: "8",
+    id: '8',
     name: 'Other',
-    icon: 'lucideCircleEllipsis',
+    icon: icons.lucideCircleEllipsis,
     isShared: false,
   },
 ];

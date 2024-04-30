@@ -20,8 +20,6 @@ import icons from '../../common/icons/icons.names';
 })
 export class CategoryListComponent {
   partnerEmail = '';
-  
-
   protected _allCategories = signal(categories);
   allCategories: Category[] = categories;
   selectedCategory!: Category;
@@ -120,6 +118,7 @@ export class CategoryListComponent {
   ]);
 
   protected _Categories = signal(this.allCategories);
+
   private readonly _filteredCategories = computed(() => {
     const filter = this._allCategoriesFilter()?.trim()?.toLowerCase();
     if (filter && filter.length > 0) {
@@ -155,11 +154,11 @@ export class CategoryListComponent {
   private readonly _nameSort = signal<'ASC' | 'DESC' | null>(null);
   protected readonly _filteredSortedPaginatedCategories = computed(() => {
     const sort = this._nameSort();
-    const Categories = this._filteredCategories();
+    const categories = this._filteredCategories();
     if (!sort) {
-      return Categories.slice(0, this._pageSize());
+      return categories.slice(0, this._pageSize());
     }
-    return [...Categories]
+    return [...categories]
       .sort(
         (p1, p2) =>
           (sort === 'ASC' ? 1 : -1) *
@@ -245,9 +244,10 @@ export class CategoryListComponent {
     (icon) => !this.isIconDisabled(icon)
   );
 
-  isIconDisabled(icon: string): boolean {
+  protected isIconDisabled(icon: string): boolean {
     return this.allCategories.some((category) => category.icon === icon);
   }
+  
   protected updateIcon(icon: string) {
     if (this.selectedCategory) {
       const index = this.allCategories.findIndex(
@@ -257,10 +257,11 @@ export class CategoryListComponent {
         this.allCategories[index].icon = icon;
         this._Categories.set([...this.allCategories]);
         if (this.selectedCategory.icon) {
-          const selectedIcon = this.selectedCategory.icon as icons; // Cast the icon to 'icons' type
-          this._icons.push(selectedIcon); // Push the selectedIcon into the _icons array
+          const selectedIcon = this.selectedCategory.icon as icons;
+          this._icons.push(selectedIcon);
         }
         this._icons = this._icons.filter((i) => i !== icon);
+        this._icons = this._icons.sort();
       }
     }
   }
