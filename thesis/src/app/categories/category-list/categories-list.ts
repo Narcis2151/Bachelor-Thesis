@@ -50,4 +50,22 @@ export const categories: Category[] = [
     icon: icons.lucideCircleEllipsis,
     isShared: false,
   },
+  {
+    id: '9',
+    name: 'Salary',
+    icon: icons.lucideBanknote,
+    isShared: true,
+  },
+  {
+    id: '10',
+    name: 'Investments',
+    icon: icons.lucideBadgeDollarSign,
+    isShared: true,
+  },
+  {
+    id: '11',
+    name: 'Subscriptions',
+    icon: icons.lucidePodcast,
+    isShared: true,
+  }
 ];

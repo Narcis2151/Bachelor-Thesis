@@ -7,7 +7,7 @@ type CashTransaction = {
   details: string;
   amount: number;
   currency: Currency;
-  postingDate: Date;
+  postingDate: Date | string;  
   category: Category;
   status: 'pending' | 'processing' | 'success' | 'failed';
 };

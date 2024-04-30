@@ -10,6 +10,9 @@ enum icons {
   lucideClapperboard = 'lucideClapperboard',
   lucideBookOpen = 'lucideBookOpen',
   lucideCircleEllipsis = 'lucideCircleEllipsis',
+  lucideBanknote = 'lucideBanknote',
+  lucideBadgeDollarSign = 'lucideBadgeDollarSign',
+  lucidePodcast = 'lucidePodcast',
 }
 
 export default icons;

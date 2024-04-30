@@ -29,7 +29,10 @@ import {
 } from '@spartan-ng/ui-card-helm';
 import { HlmInputDirective } from '@spartan-ng/ui-input-helm';
 import { HlmLabelDirective } from '@spartan-ng/ui-label-helm';
-import { BrnDialogContentDirective, BrnDialogTriggerDirective } from '@spartan-ng/ui-dialog-brain';
+import {
+  BrnDialogContentDirective,
+  BrnDialogTriggerDirective,
+} from '@spartan-ng/ui-dialog-brain';
 import {
   HlmDialogComponent,
   HlmDialogContentComponent,
@@ -78,7 +81,10 @@ import {
   lucideClapperboard,
   lucideBookOpen,
   lucideCircleEllipsis,
-  lucideWallet
+  lucideWallet,
+  lucideBanknote,
+  lucideBadgeDollarSign,
+  lucidePodcast,
 } from '@ng-icons/lucide';
 
 import { HlmButtonModule } from '@spartan-ng/ui-button-helm';
@@ -92,7 +98,6 @@ import { BrnTableModule } from '@spartan-ng/ui-table-brain';
 import { HlmTableModule } from '@spartan-ng/ui-table-helm';
 import { BrnSelectModule } from '@spartan-ng/ui-select-brain';
 import { HlmSelectModule } from '@spartan-ng/ui-select-helm';
-import { HlmSelectOptionComponent } from '../../components/ui-select-helm/src/lib/hlm-select-option.component';
 import {
   BrnProgressComponent,
   BrnProgressIndicatorComponent,
@@ -133,7 +138,7 @@ import { BudgetsPageComponent } from './budgets/pages/budgets-page/budgets-page.
     BudgetsPageComponent,
   ],
   imports: [
-    BrnToggleDirective, 
+    BrnToggleDirective,
     HlmToggleDirective,
     BrnAlertDialogTriggerDirective,
     BrnAlertDialogContentDirective,
@@ -214,7 +219,9 @@ import { BudgetsPageComponent } from './budgets/pages/budgets-page/budgets-page.
       lucideClapperboard,
       lucideBookOpen,
       lucideCircleEllipsis,
-
+      lucideBanknote,
+      lucideBadgeDollarSign,
+      lucidePodcast,
     }),
   ],
   bootstrap: [AppComponent],

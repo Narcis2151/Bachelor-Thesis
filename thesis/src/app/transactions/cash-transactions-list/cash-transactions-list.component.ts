@@ -17,6 +17,7 @@ import CashTransactions from './cash-transaction-list';
 import Currency from '../../../../shared/account-currency';
 import Category from '../../categories/category-list/category/category.model';
 import { categories } from '../../categories/category-list/categories-list';
+import { formatDate } from '@angular/common';
 
 @Component({
   selector: 'app-cash-transactions-list',
@@ -31,7 +32,7 @@ export class CashTransactionsListComponent {
   protected newTransaction: CashTransaction = {
     id: '',
     category: categories[0],
-    postingDate: new Date(),
+    postingDate: formatDate(new Date(), 'yyyy-MM-dd', 'en-US'),
     beneficiary: '',
     details: '',
     amount: 0,
@@ -79,6 +80,11 @@ export class CashTransactionsListComponent {
 
   protected selectTransaction(transaction: CashTransaction) {
     this.selectedCashTransaction = { ...transaction };
+    this.selectedCashTransaction.postingDate = formatDate(
+      new Date(this.selectedCashTransaction.postingDate),
+      'yyyy-MM-dd',
+      'en-US'
+    );
   }
 
   protected saveTransaction() {
