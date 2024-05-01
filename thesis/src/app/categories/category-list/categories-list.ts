@@ -1,4 +1,4 @@
-import icons from '../../common/icons/icons.names';
+import icons from '../../../../shared/icons/icons.names';
 import Category from './category/category.model';
 
 export const categories: Category[] = [

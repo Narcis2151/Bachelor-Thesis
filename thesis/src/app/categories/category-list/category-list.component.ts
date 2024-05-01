@@ -11,7 +11,7 @@ import { useBrnColumnManager } from '@spartan-ng/ui-table-brain';
 
 import Category from './category/category.model';
 import { categories } from './categories-list';
-import icons from '../../common/icons/icons.names';
+import icons from '../../../../shared/icons/icons.names';
 
 @Component({
   selector: 'app-category-list',

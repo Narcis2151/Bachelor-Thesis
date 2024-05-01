@@ -1,5 +1,4 @@
 enum icons {
-  lucideArrowUpDown = 'lucideArrowUpDown',
   lucideChevronDown = 'lucideChevronDown',
   lucideMoreHorizontal = 'lucideMoreHorizontal',
   lucideHome = 'lucideHome',
