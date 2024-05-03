@@ -105,11 +105,10 @@ import {
   BrnProgressIndicatorComponent,
 } from '@spartan-ng/ui-progress-brain';
 import { HlmProgressIndicatorDirective } from '../../components/ui-progress-helm/src/lib/hlm-progress-indicator.directive';
-
+import { HlmSpinnerComponent } from '@spartan-ng/ui-spinner-helm';
 import { CalendarModule } from 'primeng/calendar';
 
 import { CashAccountListComponent } from './accounts/cash-account-list/cash-account-list.component';
-import { CashAccountComponent } from './accounts/cash-account-list/cash-account/cash-account.component';
 import { AccountsPageComponent } from './accounts/pages/accounts-page/accounts-page.component';
 import { CashTransactionComponent } from './transactions/cash-transactions-list/cash-transaction/cash-transaction.component';
 import { DecimalPipe, TitleCasePipe } from '@angular/common';
@@ -131,7 +130,6 @@ import { JwtInterceptor } from './jwt.interceptor';
     CategoryNavigationComponent,
     CategoriesPageComponent,
     CashAccountListComponent,
-    CashAccountComponent,
     AccountsPageComponent,
     CashTransactionsListComponent,
     CashTransactionComponent,
@@ -145,6 +143,7 @@ import { JwtInterceptor } from './jwt.interceptor';
     HlmToggleDirective,
     BrnAlertDialogTriggerDirective,
     BrnAlertDialogContentDirective,
+    HlmSpinnerComponent,
     HlmAlertDialogComponent,
     HlmAlertDialogOverlayDirective,
     HlmAlertDialogHeaderComponent,

@@ -1,11 +1,11 @@
-import Currency from "../../../../../shared/account-currency";
+import Currency from "../../../../shared/account-currency";
 
 type CashAccount = {
-  id: string;
+  _id?: string;
   name: string;
   balance: number;
   currency: Currency;
-  balanceUpdatedAt: Date;
+  balanceUpdatedAt?: Date;
   isEditing?: boolean;
 };
 

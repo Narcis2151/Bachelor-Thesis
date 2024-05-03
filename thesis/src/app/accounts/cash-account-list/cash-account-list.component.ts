@@ -7,14 +7,12 @@ import {
 } from '@angular/core';
 import { debounceTime } from 'rxjs';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
-import {
-  useBrnColumnManager,
-} from '@spartan-ng/ui-table-brain';
+import { useBrnColumnManager } from '@spartan-ng/ui-table-brain';
 
 import Currency from '../../../../shared/account-currency';
 
-import CashAccount from '../cash-account-list/cash-account/cash-account.model';
-import { cashAccounts } from './cash-account-list';
+import CashAccount from './cash-account.model';
+import { CashAccountService } from '../cash-account.service';
 
 @Component({
   selector: 'app-cash-account-list',
@@ -22,84 +20,101 @@ import { cashAccounts } from './cash-account-list';
   styleUrl: './cash-account-list.component.scss',
 })
 export class CashAccountListComponent {
-  cashAccounts: CashAccount[] = cashAccounts;
+  isLoading = false;
+  cashAccounts: CashAccount[] = [];
   selectedCashAccount!: CashAccount;
   protected readonly currencies = Object.values(Currency);
   protected newCashAccount: CashAccount = {
-    id: '',
     name: '',
-    balance: 0,
     currency: Currency.RON,
-    balanceUpdatedAt: new Date(),
+    balance: 0,
   };
 
-  protected toggleEditName(cashAccount: CashAccount): void {
-    cashAccount.isEditing = !cashAccount.isEditing;
+  ngOnInit() {
+    this.loadCashAccounts();
   }
-  
-  protected saveAccountName(cashAccount: CashAccount): void {
-    if (cashAccount.name.trim() === '') {
-      alert('Account name cannot be empty.');
-      return;
-    }
-  
-    // Find and update the specific cash account in your list
-    const index = this.cashAccounts.findIndex((account) => account.id === cashAccount.id);
-    if (index !== -1) {
-      this.cashAccounts[index] = { ...cashAccount, isEditing: false }; // Save changes
-      this._CashAccounts.set([...this.cashAccounts]); // Update the signal
-    }
+
+  protected loadCashAccounts() {
+    this.isLoading = true;
+    this.cashAccountService.getCashAccounts().subscribe((accounts) => {
+      this.cashAccounts = accounts;
+      this._CashAccounts.set(accounts);
+    });
+    this.isLoading = false;
   }
-  
+
   protected addCashAccount() {
-    this.newCashAccount.id = this.generateUniqueId();
-    this.newCashAccount.balanceUpdatedAt = new Date(
-      this.newCashAccount.balanceUpdatedAt
-    );
-    this.cashAccounts.push({ ...this.newCashAccount });
-    this._CashAccounts.set([...this.cashAccounts]);
-    this.resetNewCashAccount();
+    this.cashAccountService
+      .addCashAccount(this.newCashAccount)
+      .subscribe((account) => {
+        this.cashAccounts.push(account);
+        this.resetNewCashAccount();
+        this._CashAccounts.set([
+          ...this.cashAccounts.sort((a, b) => b.balance - a.balance),
+        ]);
+      });
   }
 
   protected resetNewCashAccount() {
     this.newCashAccount = {
-      id: '',
       name: '',
       balance: 0,
       currency: Currency.RON,
-      balanceUpdatedAt: new Date(),
     };
-  }
-
-  private generateUniqueId(): string {
-    return Math.random().toString(36).substr(2, 9);
   }
 
   protected selectCashAccount(cashAccount: CashAccount) {
     this.selectedCashAccount = { ...cashAccount };
   }
 
-  protected saveCashAccount() {
+  protected toggleEditName(cashAccount: CashAccount): void {
+    cashAccount.isEditing = !cashAccount.isEditing;
+  }
+
+  protected saveCashAccountName(cashAccount: CashAccount): void {
+    this.cashAccountService
+      .updateCashAccountName(cashAccount)
+      .subscribe((account) => {
+        const index = this.cashAccounts.findIndex(
+          (acc) => acc._id === account._id
+        );
+        if (index !== -1) {
+          this.cashAccounts[index] = account;
+          this._CashAccounts.set([...this.cashAccounts]);
+        }
+      });
+  }
+
+  protected saveCashAccountBalance() {
     if (this.selectedCashAccount) {
-      const index = this.cashAccounts.findIndex(
-        (t) => t.id === this.selectedCashAccount!.id
-      );
-      if (index > -1) {
-        this.cashAccounts[index] = { ...this.selectedCashAccount };
-        this._CashAccounts.set([...this.cashAccounts]);
-      }
+      this.cashAccountService
+        .updateCashAccountBalance(this.selectedCashAccount)
+        .subscribe((account) => {
+          const index = this.cashAccounts.findIndex(
+            (acc) => acc._id === account._id
+          );
+          if (index !== -1) {
+            this.cashAccounts[index] = account;
+            this._CashAccounts.set([
+              ...this.cashAccounts.sort((a, b) => b.balance - a.balance),
+            ]);
+          }
+        });
     }
   }
 
   protected deleteCashAccount() {
-    if (this.selectedCashAccount) {
-      const index = this.cashAccounts.findIndex(
-        (t) => t.id === this.selectedCashAccount!.id
-      );
-      if (index > -1) {
-        this.cashAccounts.splice(index, 1);
-        this._CashAccounts.set([...this.cashAccounts]);
-      }
+    if (this.selectedCashAccount && this.selectedCashAccount._id) {
+      this.cashAccountService
+        .deleteCashAccount(this.selectedCashAccount._id)
+        .subscribe(() => {
+          this.cashAccounts = this.cashAccounts.filter(
+            (t) => t._id !== this.selectedCashAccount!._id
+          );
+          this._CashAccounts.set([
+            ...this.cashAccounts.sort((a, b) => b.balance - a.balance),
+          ]);
+        });
     }
   }
 
@@ -154,12 +169,12 @@ export class CashAccountListComponent {
   protected readonly _trackBy: TrackByFunction<CashAccount> = (
     _: number,
     p: CashAccount
-  ) => p.id;
+  ) => p._id;
   protected readonly _totalElements = computed(
     () => this._filteredCashAccounts().length
   );
 
-  constructor() {
+  constructor(private cashAccountService: CashAccountService) {
     effect(() => this._cashAccountsFilter.set(this._debouncedFilter() ?? ''), {
       allowSignalWrites: true,
     });
