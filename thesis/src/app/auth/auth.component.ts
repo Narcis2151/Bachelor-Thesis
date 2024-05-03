@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { AuthService } from './auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-auth',
@@ -10,28 +11,55 @@ import { AuthService } from './auth.service';
 export class AuthComponent {
   loginMode = true;
 
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService, private router: Router) {}
 
   onSwitchMode() {
     this.loginMode = !this.loginMode;
   }
 
   onSubmit(authForm: NgForm) {
-    if (!authForm.valid) {
-      return;
-    }
-
-    const email = authForm.value.email;
-    const password = authForm.value.password;
-
-    if (!this.loginMode) {
-      const username = authForm.value.username;
-      const confirmPassword = authForm.value.confirmPassword;
-      this.authService.signup(username, email, password, confirmPassword);
+    if (this.loginMode) {
+      const { email, password } = authForm.value;
+      this.authService.login(email, password).subscribe({
+        next: (response) => {
+          localStorage.setItem('token', response.token);
+          this.router.navigate(['/transactions']);
+        },
+        error: (error) => {
+          console.error('Login failed', error);
+          if (error.status === 401) {
+            alert(error.error.message);
+          } else {
+            alert(
+              error.error.message ||
+                'An error occurred. Please try again later.'
+            );
+          }
+        },
+      });
     } else {
-      this.authService.login(email, password);
+      const { username, email, password, confirmPassword } = authForm.value;
+      this.authService
+        .register(username, email, password, confirmPassword)
+        .subscribe({
+          next: (response) => {
+            localStorage.setItem('token', response.token);
+            this.router.navigate(['/transactions']);
+          },
+          error: (error) => {
+            console.error('Registration failed', error);
+            if (error.status === 401) {
+              alert(error.error.message);
+            } else {
+              alert(
+                error.error.message ||
+                  'An error occurred. Please try again later.'
+              );
+            }
+          },
+        });
     }
 
-    authForm.reset();
+    // authForm.reset();
   }
 }

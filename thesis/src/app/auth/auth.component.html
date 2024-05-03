@@ -65,7 +65,6 @@
             class="input input-bordered"
             required
             ngModel
-            minlength="6"
             name="password"
             #password="ngModel"
             [ngClass]="{ 'input-error': password.invalid && password.touched }"
@@ -86,7 +85,6 @@
             class="input input-bordered"
             required
             ngModel
-            minlength="6"
             name="confirmPassword"
             #confirmPassword="ngModel"
             [ngClass]="{

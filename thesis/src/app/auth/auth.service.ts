@@ -1,44 +1,31 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-
-interface AuthResponseData {
-  userId: string;
-  email: string;
-  accessToken: string;
-  refreshToken: string;
-  expiresIn: string;
-}
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
+  private loginUrl = 'http://localhost:3000/auth/login';
+  private registerUrl = 'http://localhost:3000/auth/register';
+
   constructor(private http: HttpClient) {}
 
-  signup(
+  login(email: string, password: string): Observable<any> {
+    return this.http.post(this.loginUrl, { email, password });
+  }
+
+  register(
     username: string,
     email: string,
     password: string,
     confirmPassword: string
-  ) {
-    return this.http.post<AuthResponseData>(
-      'http://localhost:3000/api/user/signup',
-      {
-        username: username,
-        email: email,
-        password: password,
-        confirmPassword: confirmPassword,
-      }
-    );
-  }
-
-  login(email: string, password: string) {
-    return this.http.post<AuthResponseData>(
-      'http://localhost:3000/api/user/login',
-      {
-        email: email,
-        password: password,
-      }
-    );
+  ): Observable<any> {
+    return this.http.post(this.registerUrl, {
+      username,
+      email,
+      password,
+      confirmPassword,
+    });
   }
 }
