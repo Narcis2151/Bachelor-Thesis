@@ -15,7 +15,7 @@ import {
 import CashTransaction from './cash-transaction/cash-transaction.model';
 import CashTransactions from './cash-transaction-list';
 import Currency from '../../../../shared/account-currency';
-import Category from '../../categories/category-list/category/category.model';
+import Category from '../../categories/category-list/category.model';
 import { categories } from '../../categories/category-list/categories-list';
 import { formatDate } from '@angular/common';
 

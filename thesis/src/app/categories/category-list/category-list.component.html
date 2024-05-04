@@ -43,11 +43,11 @@
             <hlm-menu class="w-56">
               <hlm-menu-label>Icon</hlm-menu-label>
               <hlm-menu-group>
-                @for (icon of _icons; track icon) {
+                @for (icon of availableIcons; track icon) {
                 <button
                   hlmMenuItemRadio
                   [checked]="icon === element.icon"
-                  (triggered)="updateIcon(icon)"
+                  (triggered)="updateCategoryIcon(element, icon)"
                 >
                   <hlm-menu-item-radio />
                   <span>
@@ -111,7 +111,7 @@
       </brn-column-def>
 
       <brn-column-def name="isShared" class="w-2/12 justify-center">
-        <hlm-th *brnHeaderDef>Is Shared</hlm-th>
+        <hlm-th *brnHeaderDef>Shared</hlm-th>
         <hlm-td
           class="text-start font-medium tabular-nums"
           *brnCellDef="let element"
@@ -226,11 +226,11 @@
             <hlm-menu class="w-56">
               <hlm-menu-label>Icon</hlm-menu-label>
               <hlm-menu-group>
-                @for (icon of _icons; track icon) {
+                @for (icon of availableIcons; track icon) {
                 <button
                   hlmMenuItemRadio
                   [checked]="icon === element.icon"
-                  (triggered)="updateIcon(icon)"
+                  (triggered)="updateCategoryIcon(element, icon)"
                 >
                   <hlm-menu-item-radio />
                   <span>
@@ -472,11 +472,11 @@
               <hlm-menu class="w-56">
                 <hlm-menu-label>Icon</hlm-menu-label>
                 <hlm-menu-group>
-                  @for (icon of _icons; track icon) {
+                  @for (icon of availableIcons; track icon) {
                   <button
                     hlmMenuItemRadio
                     [checked]="icon === element.icon"
-                    (triggered)="updateIcon(icon)"
+                    (triggered)="updateCategoryIcon(element, icon)"
                   >
                     <hlm-menu-item-radio />
                     <span>
@@ -632,9 +632,22 @@
             <hlm-icon [name]="newCategory.icon" class="ml-2" size="base" />
           </hlm-select-trigger>
           <hlm-select-content>
-            <hlm-option *ngFor="let icon of _icons" [value]="icon">
+            <hlm-option *ngFor="let icon of availableIcons" [value]="icon">
               <hlm-icon [name]="icon" class="ml-2" size="base" />
             </hlm-option>
+          </hlm-select-content>
+        </brn-select>
+      </div>
+
+      <div class="items-center grid grid-cols-4 gap-4">
+        <label hlmLabel for="type" class="text-right">Type</label>
+        <brn-select id="type" [(ngModel)]="newCategory.type" class="col-span-3">
+          <hlm-select-trigger class="w-full">
+            <hlm-select-value />
+          </hlm-select-trigger>
+          <hlm-select-content>
+            <hlm-option value="income">Income</hlm-option>
+            <hlm-option value="expense">Expense</hlm-option>
           </hlm-select-content>
         </brn-select>
       </div>

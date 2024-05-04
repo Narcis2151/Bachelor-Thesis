@@ -14,7 +14,7 @@ import {
 import BudgetData from './budget-list';
 import Budget from './budget/budget.model';
 import Currency from '../../../../shared/account-currency';
-import Category from '../../categories/category-list/category/category.model';
+import Category from '../../categories/category-list/category.model';
 import { categories } from '../../categories/category-list/categories-list';
 
 @Component({
@@ -27,7 +27,7 @@ export class BudgetListComponent {
   protected selectedBudget!: Budget;
   protected readonly currencies = Object.values(Currency);
   protected availableCategories: Category[] = categories.filter(
-    (c) => !this.budgets.some((b) => b.category.id === c.id)
+    (c) => !this.budgets.some((b) => b.category._id === c._id)
   );
   protected newBudget: Budget = {
     id: '',
