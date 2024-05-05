@@ -143,7 +143,7 @@
             <hlm-menu>
               <hlm-menu-label>Actions</hlm-menu-label>
               <hlm-menu-separator />
-              <hlm-menu-group>
+              <hlm-menu-group *ngIf="partnershipStatus">
                 <button
                   hlmMenuItem
                   brnDialogTrigger
@@ -153,7 +153,7 @@
                   {{ element.isShared ? "Unshare" : "Share" }}
                 </button>
               </hlm-menu-group>
-              <hlm-menu-separator />
+              <hlm-menu-separator *ngIf="partnershipStatus" />
               <hlm-menu-group>
                 <hlm-menu-group>
                   <button
@@ -322,7 +322,7 @@
             <hlm-menu>
               <hlm-menu-label>Actions</hlm-menu-label>
               <hlm-menu-separator />
-              <hlm-menu-group>
+              <hlm-menu-group *ngIf="partnershipStatus">
                 <button
                   hlmMenuItem
                   brnDialogTrigger
@@ -332,7 +332,7 @@
                   {{ element.isShared ? "Unshare" : "Share" }}
                 </button>
               </hlm-menu-group>
-              <hlm-menu-separator />
+              <hlm-menu-separator *ngIf="partnershipStatus" />
               <hlm-menu-group>
                 <hlm-menu-group>
                   <button
@@ -398,6 +398,10 @@
           />
         </div>
 
+        <span *ngIf="partnershipError" class="label-text text-error">{{
+          partnershipError
+        }}</span>
+
         <div class="pt-2 pb-4">
           <label hlmLabel>Select Categories to Share</label>
           <div class="grid grid-cols-1 gap-2">
@@ -418,7 +422,7 @@
           <button hlmBtn variant="ghost" (click)="ctx.close()">Cancel</button>
           <button
             hlmBtn
-            (click)="createPartnership(); ctx.close()"
+            (click)="createPartnership(ctx)"
             class="text-white hover:text-gray-400"
             [disabled]="!partnerEmail || !emailIsValid()"
           >
@@ -568,7 +572,7 @@
               <hlm-menu>
                 <hlm-menu-label>Actions</hlm-menu-label>
                 <hlm-menu-separator />
-                <hlm-menu-group>
+                <hlm-menu-group *ngIf="partnershipStatus">
                   <button
                     hlmMenuItem
                     brnDialogTrigger
@@ -578,7 +582,7 @@
                     {{ element.isShared ? "Unshare" : "Share" }}
                   </button>
                 </hlm-menu-group>
-                <hlm-menu-separator />
+                <hlm-menu-separator *ngIf="partnershipStatus" />
                 <hlm-menu-group>
                   <hlm-menu-group>
                     <button
@@ -626,33 +630,40 @@
       </div>
 
       <div class="items-center grid grid-cols-4 gap-4">
-        <label hlmLabel for="icon" class="text-right">Icon</label>
-        <brn-select id="icon" [(ngModel)]="newCategory.icon" class="col-span-1">
-          <hlm-select-trigger class="w-full">
-            <hlm-icon [name]="newCategory.icon" class="ml-2" size="base" />
-          </hlm-select-trigger>
-          <hlm-select-content>
-            <hlm-option *ngFor="let icon of availableIcons" [value]="icon">
-              <hlm-icon [name]="icon" class="ml-2" size="base" />
-            </hlm-option>
-          </hlm-select-content>
-        </brn-select>
-      </div>
-
-      <div class="items-center grid grid-cols-4 gap-4">
         <label hlmLabel for="type" class="text-right">Type</label>
         <brn-select id="type" [(ngModel)]="newCategory.type" class="col-span-3">
           <hlm-select-trigger class="w-full">
             <hlm-select-value />
           </hlm-select-trigger>
           <hlm-select-content>
-            <hlm-option value="income">Income</hlm-option>
             <hlm-option value="expense">Expense</hlm-option>
+            <hlm-option value="income">Income</hlm-option>
           </hlm-select-content>
         </brn-select>
       </div>
 
       <div class="items-center grid grid-cols-4 gap-4">
+        <label hlmLabel for="icon" class="text-right">Icon</label>
+        <brn-select
+          id="icon"
+          [(ngModel)]="newCategory.icon"
+          class="col-span-1 justify-center text-center"
+        >
+          <hlm-select-trigger class="w-full">
+            <hlm-icon [name]="newCategory.icon" class="ml-4 mr-4" size="base" />
+          </hlm-select-trigger>
+          <hlm-select-content>
+            <hlm-option *ngFor="let icon of availableIcons" [value]="icon">
+              <hlm-icon [name]="icon" class="ml-4 mr-4" size="base" />
+            </hlm-option>
+          </hlm-select-content>
+        </brn-select>
+      </div>
+
+      <div
+        class="items-center grid grid-cols-4 gap-4"
+        *ngIf="partnershipStatus"
+      >
         <label hlmLabel class="text-right">Shared</label>
         <input
           type="checkbox"

@@ -11,7 +11,7 @@ import { debounceTime } from 'rxjs';
 import { useBrnColumnManager } from '@spartan-ng/ui-table-brain';
 
 import Category from './category.model';
-import { CategoryService } from '../category.service';
+import { CategoryService, CreatePartnershipDto } from '../category.service';
 
 @Component({
   selector: 'app-category-list',
@@ -19,8 +19,10 @@ import { CategoryService } from '../category.service';
   styleUrl: './category-list.component.scss',
 })
 export class CategoryListComponent implements OnInit {
-  protected isLoading = false;
+  // protected isLoading = false;
+  protected partnershipStatus: string | null = null;
   protected partnerEmail = '';
+  protected partnershipError: string | null = null;
   protected allCategories: Category[] = [];
   protected availableIcons: string[] = [];
   protected selectedCategory!: Category;
@@ -39,9 +41,11 @@ export class CategoryListComponent implements OnInit {
   protected loadCategories() {
     this.categoryService.getCategories().subscribe({
       next: (categories) => {
-        this.allCategories = categories;
-        this.isLoading = false;
-        this._Categories.set(categories);
+        console.log(categories);
+        this.allCategories = categories.categories;
+        this.partnershipStatus = categories.partnershipStatus;
+        // this.isLoading = false;
+        this._Categories.set(this.allCategories);
       },
     });
   }
@@ -245,20 +249,39 @@ export class CategoryListComponent implements OnInit {
   }
 
   protected _hasSharedCategories = computed(() => {
-    const categories = this._Categories(); // Get the actual array from the signal
-    return categories.some((category) => category.isShared); // Check if any category is shared
+    const categories = this._Categories(); 
+    return categories.some((category) => category.isShared); 
   });
 
-  protected createPartnership() {
-    const categories = this._Categories(); // Get the actual array from the signal
-    this._Categories.set(
-      categories.map((category) => {
-        if (category.isSelected) {
-          return { ...category, isShared: true }; // Mark as shared
-        }
-        return category; // Keep the category unchanged
-      })
-    );
+  protected createPartnership(ctx: any) {
+    if (this.emailIsValid()) {
+      const createPartnershipDto: CreatePartnershipDto = {
+        partnerEmail: this.partnerEmail,
+        sharedCategories: this.allCategories
+          .filter((category) => category.isSelected)
+          .map((category) => category._id)
+          .filter((id) => id !== undefined) 
+          .map((id) => id as string),
+      };
+      this.categoryService.createPartnership(createPartnershipDto).subscribe({
+        next: (response) => {
+          this.partnershipStatus = response.partnershipStatus;
+          this.partnerEmail = '';
+          this.loadCategories();
+          ctx.close();
+        },
+        error: (error) => {
+          console.error('Create partnership failed', error);
+          if (error.status === 400) {
+            this.partnershipError = error.error.message;
+          } else {
+            this.partnershipError =
+              error.error.message ||
+              'An error occurred. Please try again later.';
+          }
+        },
+      });
+    }
   }
 
   protected emailIsValid(): boolean {
