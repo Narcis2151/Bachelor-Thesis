@@ -5,6 +5,7 @@ import { CategoriesPageComponent } from './categories/pages/categories-page/cate
 import { AccountsPageComponent } from './accounts/pages/accounts-page/accounts-page.component';
 import { TransactionsPageComponent } from './transactions/pages/transactions-page/transactions-page.component';
 import { BudgetsPageComponent } from './budgets/pages/budgets-page/budgets-page.component';
+import { PaymentsPageComponent } from './payments/pages/payments-page/payments-page.component';
 import { AuthGuard } from './auth.guard';
 
 const routes: Routes = [
@@ -27,6 +28,11 @@ const routes: Routes = [
   {
     path: 'budgets',
     component: BudgetsPageComponent,
+    canActivate: [AuthGuard],
+  },
+  {
+    path: 'payments',
+    component: PaymentsPageComponent,
     canActivate: [AuthGuard],
   },
   { path: '**', redirectTo: '/auth', pathMatch: 'full' },

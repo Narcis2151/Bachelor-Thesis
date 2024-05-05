@@ -1,0 +1,103 @@
+import Currency from '../../../../shared/account-currency';
+import Payment from './payment-model';
+
+const payments: Payment[] = [
+  {
+    _id: '1',
+    beneficiary: {
+      name: 'Rent',
+      account: 'RO12RZBR000006000999999',
+    },
+    details: 'Monthly rent payment',
+    amount: 1000,
+    currency: Currency.RON,
+    postingDate: new Date('2024-01-01'),
+    isRecurrence: true,
+    recurrence: 'monthly',
+    recurrenceStart: new Date('2024-01-01'),
+    recurrenceEnd: new Date('2024-12-31'),
+    account: '1',
+  },
+  {
+    _id: '2',
+    beneficiary: {
+      name: 'Utilities',
+      account: 'RO12RZBR000006000999999',
+    },
+    details: 'Monthly utilities payment',
+    amount: 200,
+    currency: Currency.RON,
+    postingDate: new Date('2024-01-01'),
+    isRecurrence: true,
+    recurrence: 'monthly',
+    recurrenceStart: new Date('2024-01-01'),
+    recurrenceEnd: new Date('2024-12-31'),
+    account: '1',
+  },
+  {
+    _id: '3',
+    beneficiary: {
+      name: 'Internet',
+      account: 'RO12RZBR000006000999999',
+    },
+    details: 'Monthly internet payment',
+    amount: 50,
+    currency: Currency.RON,
+    postingDate: new Date('2024-01-01'),
+    isRecurrence: true,
+    recurrence: 'monthly',
+    recurrenceStart: new Date('2024-01-01'),
+    recurrenceEnd: new Date('2024-12-31'),
+    account: '1',
+  },
+  {
+    _id: '4',
+    beneficiary: {
+      name: 'Phone',
+      account: 'RO12RZBR000006000999999',
+    },
+    details: 'Monthly phone payment',
+    amount: 30,
+    currency: Currency.RON,
+    postingDate: new Date('2024-01-01'),
+    isRecurrence: true,
+    recurrence: 'monthly',
+    recurrenceStart: new Date('2024-01-01'),
+    recurrenceEnd: new Date('2024-12-31'),
+    account: '1',
+  },
+  {
+    _id: '5',
+    beneficiary: {
+      name: 'Gym',
+      account: 'RO12RZBR000006000999999',
+    },
+    details: 'Monthly gym subscription',
+    amount: 50,
+    currency: Currency.RON,
+    postingDate: new Date('2024-01-01'),
+    isRecurrence: true,
+    recurrence: 'monthly',
+    recurrenceStart: new Date('2024-01-01'),
+    recurrenceEnd: new Date('2024-12-31'),
+    account: '1',
+  },
+  {
+    _id: '6',
+    beneficiary: {
+      name: 'Spotify',
+      account: 'RO12RZBR000006000999999',
+    },
+    details: 'Monthly Spotify subscription',
+    amount: 6,
+    currency: Currency.EUR,
+    postingDate: new Date('2024-03-01'),
+    isRecurrence: true,
+    recurrence: 'monthly',
+    recurrenceStart: new Date('2024-03-01'),
+    recurrenceEnd: new Date('2024-12-31'),
+    account: '1',
+  },
+];
+
+export default payments;

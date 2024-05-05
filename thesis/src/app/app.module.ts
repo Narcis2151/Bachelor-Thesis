@@ -117,6 +117,8 @@ import { BudgetListComponent } from './budgets/budget-list/budget-list.component
 import { BudgetComponent } from './budgets/budget-list/budget/budget.component';
 import { BudgetsPageComponent } from './budgets/pages/budgets-page/budgets-page.component';
 import { JwtInterceptor } from './jwt.interceptor';
+import { PaymentsListComponent } from './payments/payments-list/payments-list.component';
+import { PaymentsPageComponent } from './payments/pages/payments-page/payments-page.component';
 
 @NgModule({
   declarations: [
@@ -135,6 +137,8 @@ import { JwtInterceptor } from './jwt.interceptor';
     BudgetListComponent,
     BudgetComponent,
     BudgetsPageComponent,
+    PaymentsListComponent,
+    PaymentsPageComponent,
   ],
   imports: [
     BrnToggleDirective,
