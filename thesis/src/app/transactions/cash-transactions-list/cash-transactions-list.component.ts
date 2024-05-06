@@ -5,6 +5,7 @@ import {
   effect,
   signal,
 } from '@angular/core';
+import { formatDate } from '@angular/common';
 import { debounceTime } from 'rxjs';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import {
@@ -12,12 +13,11 @@ import {
   useBrnColumnManager,
 } from '@spartan-ng/ui-table-brain';
 
-import CashTransaction from './cash-transaction/cash-transaction.model';
+import CashTransaction from './cash-transaction.model';
 import CashTransactions from './cash-transaction-list';
 import Currency from '../../../../shared/account-currency';
 import Category from '../../categories/category-list/category.model';
 import { categories } from '../../categories/category-list/categories-list';
-import { formatDate } from '@angular/common';
 
 @Component({
   selector: 'app-cash-transactions-list',
@@ -91,7 +91,7 @@ export class CashTransactionsListComponent {
     if (this.selectedCashTransaction) {
       const index = this.cashTransactions.findIndex(
         (t) => t.id === this.selectedCashTransaction!.id
-      );  
+      );
       if (index > -1) {
         this.selectedCashTransaction.postingDate = new Date();
         this.cashTransactions[index] = { ...this.selectedCashTransaction };

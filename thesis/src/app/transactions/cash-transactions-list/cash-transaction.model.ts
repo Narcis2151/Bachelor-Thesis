@@ -1,5 +1,5 @@
-import Currency from '../../../../../shared/account-currency';
-import Category from '../../../categories/category-list/category.model';
+import Currency from '../../../../shared/account-currency';
+import Category from '../../categories/category-list/category.model';
 type CashTransaction = {
   id: string;
   type: 'expense' | 'income';

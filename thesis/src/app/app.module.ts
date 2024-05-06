@@ -109,7 +109,6 @@ import { CalendarModule } from 'primeng/calendar';
 
 import { CashAccountListComponent } from './accounts/cash-account-list/cash-account-list.component';
 import { AccountsPageComponent } from './accounts/pages/accounts-page/accounts-page.component';
-import { CashTransactionComponent } from './transactions/cash-transactions-list/cash-transaction/cash-transaction.component';
 import { DecimalPipe, TitleCasePipe } from '@angular/common';
 import { CashTransactionsListComponent } from './transactions/cash-transactions-list/cash-transactions-list.component';
 import { TransactionsPageComponent } from './transactions/pages/transactions-page/transactions-page.component';
@@ -119,6 +118,7 @@ import { BudgetsPageComponent } from './budgets/pages/budgets-page/budgets-page.
 import { JwtInterceptor } from './jwt.interceptor';
 import { PaymentsListComponent } from './payments/payments-list/payments-list.component';
 import { PaymentsPageComponent } from './payments/pages/payments-page/payments-page.component';
+import { PaymentsNavigationComponent } from './payments/payments-navigation/payments-navigation.component';
 
 @NgModule({
   declarations: [
@@ -132,13 +132,13 @@ import { PaymentsPageComponent } from './payments/pages/payments-page/payments-p
     CashAccountListComponent,
     AccountsPageComponent,
     CashTransactionsListComponent,
-    CashTransactionComponent,
     TransactionsPageComponent,
     BudgetListComponent,
     BudgetComponent,
     BudgetsPageComponent,
     PaymentsListComponent,
     PaymentsPageComponent,
+    PaymentsNavigationComponent,
   ],
   imports: [
     BrnToggleDirective,

@@ -1,5 +1,5 @@
 import Currency from '../../../../shared/account-currency';
-import CashTransaction from './cash-transaction/cash-transaction.model';
+import CashTransaction from './cash-transaction.model';
 import { categories } from '../../categories/category-list/categories-list';
 
 const CashTransactions: CashTransaction[] = [
