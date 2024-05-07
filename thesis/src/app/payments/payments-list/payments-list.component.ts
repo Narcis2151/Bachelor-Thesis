@@ -15,7 +15,6 @@ import {
 
 import Payment from './payment-model';
 import { PaymentsService } from '../payments.service';
-import payments from './payment-data';
 import Currency from '../../../../shared/account-currency';
 import Category from '../../categories/category-list/category.model';
 import categories from '../../categories/category-list/categories-list';
@@ -27,7 +26,7 @@ import { CategoryService } from '../../categories/category.service';
   styleUrl: './payments-list.component.scss',
 })
 export class PaymentsListComponent {
-  protected payments: Payment[] = payments;
+  protected payments: Payment[] = [];
   protected selectedPayment!: Payment;
   protected readonly currencies = Object.values(Currency);
   protected categories: Category[] = categories;
@@ -67,6 +66,7 @@ export class PaymentsListComponent {
       },
     });
   }
+
   protected loadPayments() {
     this.paymentsService.getPayments().subscribe({
       next: (payments) => {
@@ -208,12 +208,37 @@ export class PaymentsListComponent {
     }
     return this._Payments();
   });
+
+  private readonly _oneTimePayments = computed(() =>
+    this._filteredPayments().filter((p) => !p.isRecurrent)
+  );
+
+  private readonly _recurrentPayments = computed(() =>
+    this._filteredPayments().filter((p) => p.isRecurrent)
+  );
   private readonly _dateSort = signal<'ASC' | 'DESC' | null>(null);
-  protected readonly _filteredSortedPaginatedCashTransactions = computed(() => {
+  protected readonly _filteredSortedPaginatedOneTimePayments = computed(() => {
     const sort = this._dateSort();
     const start = this._displayedIndices().start;
     const end = this._displayedIndices().end + 1;
-    const Payments = this._filteredPayments();
+    const Payments = this._oneTimePayments();
+    if (!sort) {
+      return Payments.slice(start, end);
+    }
+    return [...Payments]
+      .sort(
+        (p1, p2) =>
+          (sort === 'ASC' ? 1 : -1) *
+          (Number(p1.postingDate) - Number(p2.postingDate))
+      )
+      .slice(start, end);
+  });
+
+  protected readonly _filteredSortedPaginatedRecurrentPayments = computed(() => {
+    const sort = this._dateSort();
+    const start = this._displayedIndices().start;
+    const end = this._displayedIndices().end + 1;
+    const Payments = this._recurrentPayments();
     if (!sort) {
       return Payments.slice(start, end);
     }

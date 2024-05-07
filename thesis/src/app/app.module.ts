@@ -105,6 +105,17 @@ import {
 } from '@spartan-ng/ui-progress-brain';
 import { HlmProgressIndicatorDirective } from '../../components/ui-progress-helm/src/lib/hlm-progress-indicator.directive';
 import { HlmSpinnerComponent } from '@spartan-ng/ui-spinner-helm';
+
+import {
+  BrnHoverCardComponent,
+  BrnHoverCardContentDirective,
+  BrnHoverCardTriggerDirective,
+} from '@spartan-ng/ui-hovercard-brain';
+
+import {
+  HlmHoverCardContentComponent
+} from '@spartan-ng/ui-hovercard-helm';
+
 import { CalendarModule } from 'primeng/calendar';
 
 import { CashAccountListComponent } from './accounts/cash-account-list/cash-account-list.component';
@@ -141,6 +152,10 @@ import { PaymentsNavigationComponent } from './payments/payments-navigation/paym
     PaymentsNavigationComponent,
   ],
   imports: [
+    BrnHoverCardComponent,
+    BrnHoverCardContentDirective,
+    BrnHoverCardTriggerDirective,
+    HlmHoverCardContentComponent,
     BrnToggleDirective,
     HlmToggleDirective,
     BrnAlertDialogTriggerDirective,
