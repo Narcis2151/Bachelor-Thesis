@@ -1,4 +1,6 @@
 import Currency from '../../../../shared/account-currency';
+import cashAccounts from '../../accounts/cash-account-list/cash-accounts-list.data';
+import categories  from '../../categories/category-list/categories-list';
 import Payment from './payment-model';
 
 const payments: Payment[] = [
@@ -16,7 +18,8 @@ const payments: Payment[] = [
     recurrence: 'monthly',
     recurrenceStart: new Date('2024-01-01'),
     recurrenceEnd: new Date('2024-12-31'),
-    account: '1',
+    account: cashAccounts[0],
+    category: categories[0],
   },
   {
     _id: '2',
@@ -32,7 +35,8 @@ const payments: Payment[] = [
     recurrence: 'monthly',
     recurrenceStart: new Date('2024-01-01'),
     recurrenceEnd: new Date('2024-12-31'),
-    account: '1',
+    account: cashAccounts[0],
+    category: categories[0],
   },
   {
     _id: '3',
@@ -48,7 +52,8 @@ const payments: Payment[] = [
     recurrence: 'monthly',
     recurrenceStart: new Date('2024-01-01'),
     recurrenceEnd: new Date('2024-12-31'),
-    account: '1',
+    account: cashAccounts[0],
+    category: categories[10],
   },
   {
     _id: '4',
@@ -64,7 +69,8 @@ const payments: Payment[] = [
     recurrence: 'monthly',
     recurrenceStart: new Date('2024-01-01'),
     recurrenceEnd: new Date('2024-12-31'),
-    account: '1',
+    account: cashAccounts[0],
+    category: categories[10],
   },
   {
     _id: '5',
@@ -80,7 +86,8 @@ const payments: Payment[] = [
     recurrence: 'monthly',
     recurrenceStart: new Date('2024-01-01'),
     recurrenceEnd: new Date('2024-12-31'),
-    account: '1',
+    account: cashAccounts[0],
+    category: categories[10],
   },
   {
     _id: '6',
@@ -96,7 +103,8 @@ const payments: Payment[] = [
     recurrence: 'monthly',
     recurrenceStart: new Date('2024-03-01'),
     recurrenceEnd: new Date('2024-12-31'),
-    account: '1',
+    account: cashAccounts[0],
+    category: categories[10],
   },
 ];
 

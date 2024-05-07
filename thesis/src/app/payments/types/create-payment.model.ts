@@ -1,8 +1,6 @@
 import Currency from '../../../../shared/account-currency';
-import CashAccount from '../../accounts/cash-account-list/cash-account.model';
-import Category from '../../categories/category-list/category.model';
 
-type Payment = {
+type CreatePayment = {
   _id?: string;
   beneficiary: {
     name: string;
@@ -16,8 +14,8 @@ type Payment = {
   recurrence?: 'daily' | 'weekly' | 'monthly';
   recurrenceStart?: Date;
   recurrenceEnd?: Date;
-  account: CashAccount;
-  category: Category;
+  accountId: string
+  categoryId: string;
   isSelected?: boolean;
-}
-export default Payment;
+};
+export default CreatePayment;

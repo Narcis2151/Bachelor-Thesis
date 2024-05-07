@@ -7,15 +7,13 @@ import {
 } from '@angular/core';
 import { debounceTime } from 'rxjs';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
-import {
-  useBrnColumnManager,
-} from '@spartan-ng/ui-table-brain';
+import { useBrnColumnManager } from '@spartan-ng/ui-table-brain';
 
 import BudgetData from './budget-list';
 import Budget from './budget/budget.model';
 import Currency from '../../../../shared/account-currency';
 import Category from '../../categories/category-list/category.model';
-import { categories } from '../../categories/category-list/categories-list';
+import categories from '../../categories/category-list/categories-list';
 
 @Component({
   selector: 'app-budget-list',

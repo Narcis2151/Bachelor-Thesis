@@ -1,7 +1,7 @@
 import icons from '../../../../shared/icons/icons.names';
 import Category from './category.model';
 
-export const categories: Category[] = [
+const categories: Category[] = [
   {
     _id: '1',
     name: 'Home',
@@ -69,3 +69,5 @@ export const categories: Category[] = [
     isShared: true,
   }
 ];
+
+export default categories;

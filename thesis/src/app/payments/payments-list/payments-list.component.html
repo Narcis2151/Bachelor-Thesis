@@ -1,426 +1,315 @@
-<div hlmTabsContent="one_time" class="w-full overflow-x-auto mt-9">
-  <section hlmCard class="border-hidden m-1">
-    <div class="flex flex-col justify-between gap-4 sm:flex-row">
-      <input
-        hlmInput
-        class="w-full md:w-80"
-        placeholder="Filter categories.."
-        [ngModel]="_allCategoriesFilter()"
-        (ngModelChange)="_rawFilterInput.set($event)"
-      />
+<div class="flex flex-col justify-between gap-4 sm:flex-row">
+  <input
+    hlmInput
+    class="w-full md:w-80"
+    placeholder="Filter payments..."
+    [ngModel]="_paymentsFilter()"
+    (ngModelChange)="_rawFilterInput.set($event)"
+  />
+  <button
+    hlmBtn
+    brnDialogTrigger
+    [brnDialogTriggerFor]="newPaymentDialog"
+    class="justify-center rounded-sm text-white hover:text-gray-400"
+  >
+    New
+  </button>
+</div>
+
+<brn-table
+  hlm
+  stickyHeader
+  class="w-full border-border mt-10 block h-[335px] overflow-auto"
+  [dataSource]="_filteredSortedPaginatedCashTransactions()"
+  [displayedColumns]="_allDisplayedColumns()"
+  [trackBy]="_trackBy"
+>
+  <brn-column-def name="category" class="w-3/12 md:w-2/12 justify-center">
+    <hlm-th *brnHeaderDef truncate class="text-center">Category</hlm-th>
+    <hlm-td
+      *brnCellDef="let element"
+      truncate
+      [brnMenuTriggerFor]="menu"
+      (click)="selectPayment(element)"
+      class="justify-center text-center"
+    >
+      <div class="w-full h-full flex justify-center text-center align-middle">
+        <hlm-icon class="ml-2" size="lg" [name]="element.category.icon" />
+      </div>
+
+      <ng-template #menu>
+        <hlm-menu class="w-56">
+          <hlm-menu-label>Category</hlm-menu-label>
+          <hlm-menu-group>
+            @for (category of categories; track category) {
+            <button
+              hlmMenuItemRadio
+              [checked]="category.name === element.category.name"
+              (triggered)="updatePaymentCategory(category)"
+            >
+              <hlm-menu-item-radio />
+              <span class="flex align-middle">
+                <hlm-icon class="mr-2" size="sm" [name]="category.icon" />
+                {{ category.name }}
+              </span>
+            </button>
+            }
+          </hlm-menu-group>
+        </hlm-menu>
+      </ng-template>
+    </hlm-td>
+  </brn-column-def>
+
+  <brn-column-def
+    name="postingDate"
+    class="max-sm:hidden w-2/12 justify-center text-center"
+  >
+    <hlm-th *brnHeaderDef>
       <button
         hlmBtn
-        brnDialogTrigger
-        [brnDialogTriggerFor]="newDialog"
-        class="justify-center rounded-sm text-white hover:text-gray-400"
+        class="p-0"
+        size="sm"
+        variant="ghost"
+        (click)="handleDateSortChange()"
       >
-        New
+        Posting Date
+        <hlm-icon class="ml-3" size="sm" name="lucideArrowUpDown" />
       </button>
-    </div>
-
-    <brn-table
-      hlm
-      stickyHeader
-      class="w-full border-border mt-10 block h-8/12 overflow-auto"
-      [dataSource]="_filteredSortedPaginatedCategories()"
-      [displayedColumns]="_allDisplayedColumns()"
-      [trackBy]="_trackBy"
+    </hlm-th>
+    <hlm-td *brnCellDef="let element">
+      {{ element.postingDate | date }}
+    </hlm-td>
+  </brn-column-def>
+  <brn-column-def name="beneficiary" class="w-5/12 sm:w-3/12 md:w-2/12">
+    <hlm-th *brnHeaderDef truncate class="collapse">Beneficiary Name</hlm-th>
+    <hlm-td truncate *brnCellDef="let element">
+      {{ element.beneficiary.name | titlecase }}
+    </hlm-td>
+  </brn-column-def>
+  <brn-column-def name="details" class="max-md:hidden md:w-3/12">
+    <hlm-th *brnHeaderDef>Details</hlm-th>
+    <hlm-td *brnCellDef="let element">
+      {{ element.details | titlecase }}
+    </hlm-td>
+  </brn-column-def>
+  <brn-column-def name="amount" class="w-3/12 md:w-2/12 justify-center">
+    <hlm-th *brnHeaderDef>Amount</hlm-th>
+    <hlm-td
+      class="text-start font-medium tabular-nums"
+      *brnCellDef="let element"
+      [ngClass]="element.type === 'income' ? 'text-green-400' : ''"
     >
-      <brn-column-def name="icon" class="w-2/12 justify-center text-center">
-        <hlm-th *brnHeaderDef truncate class="text-center">Icon</hlm-th>
-        <hlm-td
-          *brnCellDef="let element"
-          truncate
-          [brnMenuTriggerFor]="menu"
-          (click)="selectCategory(element)"
-          class="justify-center text-center"
-        >
-          <div class="w-full h-full flex justify-center text-center">
-            <hlm-icon class="ml-2" size="lg" [name]="element.icon" />
-          </div>
+      {{ element.amount | number : "1.2-2" }} {{ element.currency }}
+    </hlm-td>
+  </brn-column-def>
+  <brn-column-def name="actions" class="w-1/12 justify-center">
+    <hlm-th *brnHeaderDef></hlm-th>
+    <hlm-td *brnCellDef="let element">
+      <button
+        hlmBtn
+        variant="ghost"
+        class="h-6 w-6 p-0.5"
+        align="end"
+        [brnMenuTriggerFor]="menu"
+      >
+        <hlm-icon class="h-4 w-4" name="lucideMoreHorizontal" />
+      </button>
 
-          <ng-template #menu>
-            <hlm-menu class="w-56">
-              <hlm-menu-label>Icon</hlm-menu-label>
-              <hlm-menu-group>
-                @for (icon of availableIcons; track icon) {
-                <button
-                  hlmMenuItemRadio
-                  [checked]="icon === element.icon"
-                  (triggered)="updateCategoryIcon(element, icon)"
-                >
-                  <hlm-menu-item-radio />
-                  <span>
-                    <hlm-icon class="mr-2" [name]="icon" />
-                  </span>
-                </button>
-                }
-              </hlm-menu-group>
-            </hlm-menu>
-          </ng-template>
-        </hlm-td>
-      </brn-column-def>
-
-      <brn-column-def name="name" class="w-7/12 justify-start text-start">
-        <hlm-th *brnHeaderDef truncate>
-          <button
-            hlmBtn
-            class="p-0"
-            size="sm"
-            variant="ghost"
-            (click)="handleNameSortChange()"
-          >
-            Category Name
-            <hlm-icon class="ml-2" size="sm" name="lucideArrowUpDown" />
-          </button>
-        </hlm-th>
-
-        <hlm-td *brnCellDef="let element" class="flex items-center gap-2">
-          <ng-container *ngIf="element.isEditing; else viewMode">
-            <input
-              hlmInput
-              [(ngModel)]="element.name"
-              required
-              class="flex-1 w-full"
-              name="categoryName"
-              (keyup.enter)="saveCategoryName(element)"
-            />
+      <ng-template #menu>
+        <hlm-menu>
+          <hlm-menu-label>Actions</hlm-menu-label>
+          <hlm-menu-separator />
+          <hlm-menu-group>
             <button
-              hlmBtn
-              class="text-end ml-auto p-1 hover:text-gray-600"
-              variant="ghost"
-              [disabled]="!element.name"
-              (click)="saveCategoryName(element)"
-            >
-              Save
-            </button>
-          </ng-container>
-
-          <ng-template #viewMode>
-            {{ element.name }}
-            <button
-              class="text-end ml-auto p-1 hover:text-gray-600"
-              hlmBtn
-              variant="ghost"
-              (click)="toggleEditName(element)"
+              brnDialogTrigger
+              [brnDialogTriggerFor]="editDialog"
+              (click)="selectPayment(element)"
             >
               Edit
             </button>
-          </ng-template>
-        </hlm-td>
-      </brn-column-def>
+          </hlm-menu-group>
+          <hlm-menu-separator />
+          <hlm-menu-group>
+            <button
+              brnDialogTrigger
+              [brnDialogTriggerFor]="deleteDialog"
+              (click)="selectPayment(element)"
+            >
+              Delete
+            </button>
+          </hlm-menu-group>
+        </hlm-menu>
+      </ng-template>
+    </hlm-td>
+  </brn-column-def>
+  <div
+    class="text-muted-foreground flex items-center justify-center p-20"
+    brnNoDataRow
+  >
+    No data
+  </div>
+</brn-table>
 
-      <brn-column-def name="isShared" class="w-2/12 justify-center">
-        <hlm-th *brnHeaderDef>Shared</hlm-th>
-        <hlm-td
-          class="text-start font-medium tabular-nums"
-          *brnCellDef="let element"
-        >
-          <div class="w-full h-full flex justify-center text-center">
-            <hlm-icon
-              class="ml-2"
-              size="lg"
-              [name]="element.isShared ? 'lucideUsers' : 'lucideUser'"
-            />
-          </div>
-        </hlm-td>
-      </brn-column-def>
+<div
+  class="mt-4 flex flex-col justify-between sm:flex-row sm:items-center"
+  *brnPaginator="
+    let ctx;
+    totalElements: _totalElements();
+    pageSize: _pageSize();
+    onStateChange: _onStateChange
+  "
+>
+  <div class="mt-2 flex sm:mt-0">
+    <brn-select
+      class="inline-block"
+      placeholder="{{ _availablePageSizes[0] }}"
+      [(ngModel)]="_pageSize"
+    >
+      <hlm-select-trigger class="w-15 mr-1 inline-flex h-9">
+        <hlm-select-value />
+      </hlm-select-trigger>
+      <hlm-select-content>
+        @for (size of _availablePageSizes; track size) {
+        <hlm-option [value]="size">
+          {{ size === 10000 ? "All" : size }}
+        </hlm-option>
+        }
+      </hlm-select-content>
+    </brn-select>
 
-      <brn-column-def name="actions" class="w-1/12 justify-center">
-        <hlm-th *brnHeaderDef></hlm-th>
-        <hlm-td *brnCellDef="let element">
-          <button
-            hlmBtn
-            variant="ghost"
-            class="h-6 w-6 p-0.5"
-            align="end"
-            [brnMenuTriggerFor]="menu"
-          >
-            <hlm-icon class="h-4 w-4" name="lucideMoreHorizontal" />
-          </button>
-
-          <ng-template #menu>
-            <hlm-menu>
-              <hlm-menu-label>Actions</hlm-menu-label>
-              <hlm-menu-separator />
-              <hlm-menu-group *ngIf="partnershipStatus">
-                <button
-                  hlmMenuItem
-                  brnDialogTrigger
-                  [brnDialogTriggerFor]="shareDialog"
-                  (click)="selectCategory(element)"
-                >
-                  {{ element.isShared ? "Unshare" : "Share" }}
-                </button>
-              </hlm-menu-group>
-              <hlm-menu-separator *ngIf="partnershipStatus" />
-              <hlm-menu-group>
-                <hlm-menu-group>
-                  <button
-                    hlmMenuItem
-                    brnDialogTrigger
-                    [brnDialogTriggerFor]="deleteDialog"
-                    (click)="selectCategory(element)"
-                  >
-                    Delete
-                  </button>
-                </hlm-menu-group>
-              </hlm-menu-group>
-            </hlm-menu>
-          </ng-template>
-        </hlm-td>
-      </brn-column-def>
-
-      <div
-        class="text-muted-foreground flex items-center justify-center p-20"
-        brnNoDataRow
-      >
-        No data
-      </div>
-    </brn-table>
-  </section>
-</div>
-
-<div hlmTabsContent="recurring" class="w-full overflow-x-auto mt-9">
-  <section hlmCard class="border-hidden m-1">
-    <div class="flex flex-col justify-between gap-4 sm:flex-row">
-      <input
-        hlmInput
-        class="w-full md:w-80"
-        placeholder="Filter categories..."
-        [ngModel]="_allCategoriesFilter()"
-        (ngModelChange)="_rawFilterInput.set($event)"
-      />
+    <div class="flex space-x-1">
       <button
+        size="sm"
+        variant="outline"
         hlmBtn
-        brnDialogTrigger
-        [brnDialogTriggerFor]="newDialog"
-        class="justify-center rounded-sm text-white hover:text-gray-400"
+        [disabled]="!ctx.decrementable()"
+        (click)="ctx.decrement()"
       >
-        New
+        Previous
+      </button>
+      <button
+        size="sm"
+        variant="outline"
+        hlmBtn
+        [disabled]="!ctx.incrementable()"
+        (click)="ctx.increment()"
+      >
+        Next
       </button>
     </div>
-
-    <brn-table
-      hlm
-      stickyHeader
-      class="w-full border-border mt-10 block h-8/12 overflow-auto"
-      [dataSource]="_personalCategoriesFiltered()"
-      [displayedColumns]="_allDisplayedColumns()"
-      [trackBy]="_trackBy"
-    >
-      <brn-column-def name="icon" class="w-2/12 justify-center text-center">
-        <hlm-th *brnHeaderDef truncate class="text-center">Icon</hlm-th>
-        <hlm-td
-          *brnCellDef="let element"
-          truncate
-          [brnMenuTriggerFor]="menu"
-          (click)="selectCategory(element)"
-          class="justify-center text-center"
-        >
-          <div class="w-full h-full flex justify-center text-center">
-            <hlm-icon class="ml-2" size="lg" [name]="element.icon" />
-          </div>
-
-          <ng-template #menu>
-            <hlm-menu class="w-56">
-              <hlm-menu-label>Icon</hlm-menu-label>
-              <hlm-menu-group>
-                @for (icon of availableIcons; track icon) {
-                <button
-                  hlmMenuItemRadio
-                  [checked]="icon === element.icon"
-                  (triggered)="updateCategoryIcon(element, icon)"
-                >
-                  <hlm-menu-item-radio />
-                  <span>
-                    <hlm-icon class="mr-2" [name]="icon" />
-                  </span>
-                </button>
-                }
-              </hlm-menu-group>
-            </hlm-menu>
-          </ng-template>
-        </hlm-td>
-      </brn-column-def>
-
-      <brn-column-def name="name" class="w-7/12 justify-start text-start">
-        <hlm-th *brnHeaderDef truncate>
-          <button
-            hlmBtn
-            class="p-0"
-            size="sm"
-            variant="ghost"
-            (click)="handleNameSortChange()"
-          >
-            Category Name
-            <hlm-icon class="ml-2" size="sm" name="lucideArrowUpDown" />
-          </button>
-        </hlm-th>
-
-        <hlm-td *brnCellDef="let element" class="flex items-center gap-2">
-          <ng-container *ngIf="element.isEditing; else viewMode">
-            <input
-              hlmInput
-              [(ngModel)]="element.name"
-              class="flex-1 w-full"
-              name="categoryName"
-              required
-              (keyup.enter)="saveCategoryName(element)"
-            />
-            <button
-              hlmBtn
-              class="text-end ml-auto p-1 hover:text-gray-600"
-              variant="ghost"
-              [disabled]="!element.name"
-              (click)="saveCategoryName(element)"
-            >
-              Save
-            </button>
-          </ng-container>
-
-          <ng-template #viewMode>
-            {{ element.name }}
-            <button
-              class="text-end ml-auto p-1 hover:text-gray-600"
-              hlmBtn
-              variant="ghost"
-              (click)="toggleEditName(element)"
-            >
-              Edit
-            </button>
-          </ng-template>
-        </hlm-td>
-      </brn-column-def>
-
-      <brn-column-def name="isShared" class="w-2/12 justify-center">
-        <hlm-th *brnHeaderDef>Shared</hlm-th>
-        <hlm-td
-          class="text-start font-medium tabular-nums"
-          *brnCellDef="let element"
-        >
-          <div class="w-full h-full flex justify-center text-center">
-            <hlm-icon class="ml-2" size="lg" name="lucideUser" />
-          </div>
-        </hlm-td>
-      </brn-column-def>
-
-      <brn-column-def name="actions" class="w-1/12 justify-center">
-        <hlm-th *brnHeaderDef></hlm-th>
-        <hlm-td *brnCellDef="let element">
-          <button
-            hlmBtn
-            variant="ghost"
-            class="h-6 w-6 p-0.5"
-            align="end"
-            [brnMenuTriggerFor]="menu"
-          >
-            <hlm-icon class="h-4 w-4" name="lucideMoreHorizontal" />
-          </button>
-
-          <ng-template #menu>
-            <hlm-menu>
-              <hlm-menu-label>Actions</hlm-menu-label>
-              <hlm-menu-separator />
-              <hlm-menu-group *ngIf="partnershipStatus">
-                <button
-                  hlmMenuItem
-                  brnDialogTrigger
-                  [brnDialogTriggerFor]="shareDialog"
-                  (click)="selectCategory(element)"
-                >
-                  {{ element.isShared ? "Unshare" : "Share" }}
-                </button>
-              </hlm-menu-group>
-              <hlm-menu-separator *ngIf="partnershipStatus" />
-              <hlm-menu-group>
-                <hlm-menu-group>
-                  <button
-                    hlmMenuItem
-                    brnDialogTrigger
-                    [brnDialogTriggerFor]="deleteDialog"
-                    (click)="selectCategory(element)"
-                  >
-                    Delete
-                  </button>
-                </hlm-menu-group>
-              </hlm-menu-group>
-            </hlm-menu>
-          </ng-template>
-        </hlm-td>
-      </brn-column-def>
-
-      <div
-        class="text-muted-foreground flex items-center justify-center p-20"
-        brnNoDataRow
-      >
-        No data
-      </div>
-    </brn-table>
-  </section>
+  </div>
 </div>
 
-
-<hlm-dialog #newDialog>
+<hlm-dialog #newPaymentDialog>
   <hlm-dialog-content class="sm:max-w-[425px]" *brnDialogContent="let ctx">
     <hlm-dialog-header>
-      <h3 hlmDialogTitle>New Category</h3>
-      <p hlmDialogDescription>Add the details for the new category.</p>
+      <h3 hlmDialogTitle>New Cash Transaction</h3>
+      <p hlmDialogDescription>Add the details for the new cash transaction.</p>
     </hlm-dialog-header>
 
     <div class="py-4 grid gap-4">
       <div class="items-center grid grid-cols-4 gap-4">
-        <label hlmLabel for="name" class="text-right">Category Name</label>
-        <input
-          hlmInput
-          id="name"
-          [(ngModel)]="newCategory.name"
-          class="col-span-3"
-        />
-      </div>
-
-      <div class="items-center grid grid-cols-4 gap-4">
-        <label hlmLabel for="type" class="text-right">Type</label>
-        <brn-select id="type" [(ngModel)]="newCategory.type" class="col-span-3">
-          <hlm-select-trigger class="w-full">
-            <hlm-select-value />
-          </hlm-select-trigger>
-          <hlm-select-content>
-            <hlm-option value="expense">Expense</hlm-option>
-            <hlm-option value="income">Income</hlm-option>
-          </hlm-select-content>
-        </brn-select>
-      </div>
-
-      <div class="items-center grid grid-cols-4 gap-4">
-        <label hlmLabel for="icon" class="text-right">Icon</label>
+        <label hlmLabel for="category" class="text-right">Category</label>
         <brn-select
-          id="icon"
-          [(ngModel)]="newCategory.icon"
-          class="col-span-1 justify-center text-center"
+          id="category"
+          [(ngModel)]="newPayment.category"
+          class="col-span-3"
         >
           <hlm-select-trigger class="w-full">
-            <hlm-icon [name]="newCategory.icon" class="ml-4 mr-4" size="base" />
+            <span class="flex align-middle">
+              <hlm-icon
+                class="mr-2"
+                size="sm"
+                [name]="newPayment.category.icon"
+              />
+              {{ newPayment.category.name }}
+            </span>
           </hlm-select-trigger>
           <hlm-select-content>
-            <hlm-option *ngFor="let icon of availableIcons" [value]="icon">
-              <hlm-icon [name]="icon" class="ml-4 mr-4" size="base" />
+            <hlm-option *ngFor="let category of categories" [value]="category">
+              <span class="flex align-middle">
+                <hlm-icon class="mr-2" size="sm" [name]="category.icon" />
+                {{ category.name }}
+              </span>
             </hlm-option>
           </hlm-select-content>
         </brn-select>
       </div>
 
-      <div
-        class="items-center grid grid-cols-4 gap-4"
-        *ngIf="partnershipStatus"
-      >
-        <label hlmLabel class="text-right">Shared</label>
+      <div class="items-center grid grid-cols-4 gap-4">
+        <label hlmLabel for="postingDate" class="text-right"
+          >Posting Date</label
+        >
         <input
-          type="checkbox"
-          [(ngModel)]="newCategory.isShared"
-          class="checkbox col-span-3"
-          checked="false"
+          type="date"
+          hlmInput
+          id="postingDate"
+          [(ngModel)]="newPayment.postingDate"
+          class="col-span-3"
         />
+      </div>
+
+      <div class="items-center grid grid-cols-4 gap-4">
+        <label hlmLabel for="beneficiary" class="text-right"
+          >Beneficiary Name</label
+        >
+        <input
+          hlmInput
+          id="beneficiary"
+          [(ngModel)]="newPayment.beneficiary.name"
+          class="col-span-3"
+        />
+      </div>
+
+      <div class="items-center grid grid-cols-4 gap-4">
+        <label hlmLabel for="beneficiary" class="text-right"
+          >Beneficiary Account</label
+        >
+        <input
+          hlmInput
+          id="beneficiary"
+          [(ngModel)]="newPayment.beneficiary.account"
+          class="col-span-3"
+        />
+      </div>
+
+      <div class="items-center grid grid-cols-4 gap-4">
+        <label hlmLabel for="details" class="text-right">Details</label>
+        <input
+          hlmInput
+          id="details"
+          [(ngModel)]="newPayment.details"
+          class="col-span-3"
+        />
+      </div>
+
+      <div class="items-center grid grid-cols-4 gap-4">
+        <label hlmLabel for="amount" class="text-right">Amount</label>
+        <input
+          type="number"
+          hlmInput
+          id="amount"
+          [(ngModel)]="newPayment.amount"
+          class="col-span-3"
+        />
+      </div>
+
+      <div class="items-center grid grid-cols-4 gap-4">
+        <label hlmLabel for="currency" class="text-right">Currency</label>
+        <brn-select
+          id="currency"
+          [(ngModel)]="newPayment.currency"
+          class="col-span-3"
+        >
+          <hlm-select-trigger class="w-full">
+            <hlm-select-value />
+          </hlm-select-trigger>
+          <hlm-select-content>
+            <hlm-option *ngFor="let currency of currencies" [value]="currency">
+              {{ currency }}
+            </hlm-option>
+          </hlm-select-content>
+        </brn-select>
       </div>
     </div>
 
@@ -429,7 +318,7 @@
       <button
         hlmBtn
         class="text-white hover:text-gray-400"
-        (click)="addCategory(); ctx.close()"
+        (click)="addPayment(); ctx.close()"
       >
         Save
       </button>
@@ -437,41 +326,99 @@
   </hlm-dialog-content>
 </hlm-dialog>
 
-<hlm-dialog #shareDialog>
-  <hlm-dialog-content *brnAlertDialogContent="let ctx">
+<hlm-dialog #editDialog>
+  <hlm-dialog-content class="sm:max-w-[425px]" *brnDialogContent="let ctx">
     <hlm-dialog-header>
-      <h3 hlmAlertDialogTitle *ngIf="!selectedCategory.isShared">
-        Share category with your partner
-      </h3>
-      <h3 hlmAlertDialogTitle *ngIf="selectedCategory.isShared">
-        Make category personal
-      </h3>
-      <p hlmAlertDialogDescription *ngIf="!selectedCategory.isShared">
-        All the transactions under this category will be shared with your
-        partner.
-      </p>
-      <p hlmAlertDialogDescription *ngIf="selectedCategory.isShared">
-        All the transactions under this category will no longer be shared with
-        your partner.
+      <h3 hlmDialogTitle>Edit Transaction</h3>
+      <p hlmDialogDescription>
+        Modify the transaction details and click save to apply changes.
       </p>
     </hlm-dialog-header>
+
+    <div class="items-center grid grid-cols-4 gap-4">
+      <label hlmLabel for="postingDate" class="text-right">Posting Date</label>
+      <input
+        type="date"
+        hlmInput
+        id="postingDate"
+        [(ngModel)]="selectedPayment.postingDate"
+        class="col-span-3"
+      />
+    </div>
+
+    <div class="py-4 grid gap-4">
+      <div class="items-center grid grid-cols-4 gap-4">
+        <label hlmLabel for="beneficiary" class="text-right"
+          >Beneficiary Name</label
+        >
+        <input
+          hlmInput
+          id="beneficiary"
+          [(ngModel)]="selectedPayment.beneficiary.name"
+          class="col-span-3"
+        />
+      </div>
+
+      <div class="items-center grid grid-cols-4 gap-4">
+        <label hlmLabel for="beneficiary" class="text-right"
+          >Beneficiary Account</label
+        >
+        <input
+          hlmInput
+          id="beneficiary"
+          [(ngModel)]="selectedPayment.beneficiary.account"
+          class="col-span-3"
+        />
+      </div>
+
+      <div class="items-center grid grid-cols-4 gap-4">
+        <label hlmLabel for="details" class="text-right">Details</label>
+        <input
+          hlmInput
+          id="details"
+          [(ngModel)]="selectedPayment.details"
+          class="col-span-3"
+        />
+      </div>
+
+      <div class="items-center grid grid-cols-4 gap-4">
+        <label hlmLabel for="amount" class="text-right">Amount</label>
+        <input
+          type="number"
+          hlmInput
+          id="amount"
+          [(ngModel)]="selectedPayment.amount"
+          class="col-span-3"
+        />
+      </div>
+
+      <div class="items-center grid grid-cols-4 gap-4">
+        <label hlmLabel for="currency" class="text-right">Currency</label>
+        <brn-select
+          id="currency"
+          [(ngModel)]="selectedPayment.currency"
+          class="col-span-3"
+        >
+          <hlm-select-trigger class="w-full">
+            <hlm-select-value />
+          </hlm-select-trigger>
+          <hlm-select-content>
+            <hlm-option *ngFor="let currency of currencies" [value]="currency">
+              {{ currency }}
+            </hlm-option>
+          </hlm-select-content>
+        </brn-select>
+      </div>
+    </div>
+
     <hlm-dialog-footer>
       <button hlmBtn variant="ghost" (click)="ctx.close()">Cancel</button>
       <button
-        *ngIf="!selectedCategory.isShared"
         hlmBtn
         class="text-white hover:text-gray-400"
-        (click)="updateShareCategory(); ctx.close()"
+        (click)="savePayment(); ctx.close()"
       >
-        Share Category
-      </button>
-      <button
-        *ngIf="selectedCategory.isShared"
-        hlmBtn
-        class="text-white hover:text-gray-400"
-        (click)="updateShareCategory(); ctx.close()"
-      >
-        Unshare Category
+        Save changes
       </button>
     </hlm-dialog-footer>
   </hlm-dialog-content>
@@ -483,7 +430,7 @@
       <h3 hlmAlertDialogTitle>Are you absolutely sure?</h3>
       <p hlmAlertDialogDescription>
         This action cannot be undone. This will permanently delete your
-        category.
+        transaction.
       </p>
     </hlm-dialog-header>
     <hlm-dialog-footer>
@@ -491,9 +438,9 @@
       <button
         hlmBtn
         variant="destructive"
-        (click)="deleteCategory(); ctx.close()"
+        (click)="deletePayment(); ctx.close()"
       >
-        Delete Category
+        Delete transaction
       </button>
     </hlm-dialog-footer>
   </hlm-dialog-content>

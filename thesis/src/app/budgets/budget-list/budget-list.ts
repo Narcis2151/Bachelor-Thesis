@@ -1,6 +1,6 @@
 import Currency from '../../../../shared/account-currency';
 import Budget from './budget/budget.model';
-import { categories } from '../../categories/category-list/categories-list';
+import categories from '../../categories/category-list/categories-list';
 
 const BudgetData: Budget[] = [
   {

@@ -2,8 +2,8 @@ import Currency from '../../../../shared/account-currency';
 import CashAccount from '../../accounts/cash-account-list/cash-account.model';
 import Category from '../../categories/category-list/category.model';
 
-type Payment = {
-  _id?: string;
+type FetchPayment = {
+  _id: string;
   beneficiary: {
     name: string;
     account?: string;
@@ -18,6 +18,5 @@ type Payment = {
   recurrenceEnd?: Date;
   account: CashAccount;
   category: Category;
-  isSelected?: boolean;
 }
-export default Payment;
+export default FetchPayment;

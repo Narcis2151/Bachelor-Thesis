@@ -17,7 +17,7 @@ import CashTransaction from './cash-transaction.model';
 import CashTransactions from './cash-transaction-list';
 import Currency from '../../../../shared/account-currency';
 import Category from '../../categories/category-list/category.model';
-import { categories } from '../../categories/category-list/categories-list';
+import categories from '../../categories/category-list/categories-list';
 
 @Component({
   selector: 'app-cash-transactions-list',

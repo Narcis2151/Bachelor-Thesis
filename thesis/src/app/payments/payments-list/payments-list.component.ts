@@ -14,10 +14,13 @@ import {
 } from '@spartan-ng/ui-table-brain';
 
 import Payment from './payment-model';
+import FetchPayment from '../types/fetch-payment.model';
+import CreatePayment from '../types/create-payment.model';
+
 import payments from './payment-data';
 import Currency from '../../../../shared/account-currency';
 import Category from '../../categories/category-list/category.model';
-import { categories } from '../../categories/category-list/categories-list';
+import categories from '../../categories/category-list/categories-list';
 
 @Component({
   selector: 'app-payments-list',
@@ -30,7 +33,6 @@ export class PaymentsListComponent {
   protected readonly currencies = Object.values(Currency);
   protected categories: Category[] = categories;
   protected newPayment: Payment = {
-    _id: '',
     beneficiary: {
       name: '',
       account: '',
@@ -43,18 +45,43 @@ export class PaymentsListComponent {
     recurrence: 'monthly',
     recurrenceStart: new Date(),
     recurrenceEnd: new Date(),
-    account: '1',
+    account: {
+      _id: '1',
+      name: 'Personal',
+      currency: Currency.RON,
+      balance: 1000,
+      balanceUpdatedAt: new Date('2024-01-01'),
+    },
+    category: categories[0],
   };
+
+  protected updatePaymentCategory(category: Category) {
+    if (this.selectedPayment) {
+      const index = this.payments.findIndex(
+        (t) => t._id === this.selectedPayment!._id
+      );
+      if (index > -1) {
+        this.payments[index].category = category;
+        this._Payments.set([...this.payments]);
+      }
+    }
+  }
 
   protected addPayment() {
     this.newPayment._id = this.generateUniqueId();
     this.newPayment.postingDate = new Date(this.newPayment.postingDate);
+    this.newPayment.recurrenceStart = this.newPayment.recurrenceStart
+      ? new Date(this.newPayment.recurrenceStart)
+      : new Date();
+    this.newPayment.recurrenceEnd = this.newPayment.recurrenceEnd
+      ? new Date(this.newPayment.recurrenceEnd)
+      : new Date();
     this.payments.push({ ...this.newPayment });
     this._Payments.set([...this.payments]);
-    this.resetNewTransaction();
+    this.resetNewPayment();
   }
 
-  private resetNewTransaction() {
+  private resetNewPayment() {
     this.newPayment = {
       _id: '',
       beneficiary: {
@@ -69,7 +96,14 @@ export class PaymentsListComponent {
       recurrence: 'monthly',
       recurrenceStart: new Date(),
       recurrenceEnd: new Date(),
-      account: '1',
+      account: {
+        _id: '1',
+        name: 'Personal',
+        currency: Currency.RON,
+        balance: 1000,
+        balanceUpdatedAt: new Date('2024-01-01'),
+      },
+      category: categories[0],
     };
   }
 
@@ -77,7 +111,7 @@ export class PaymentsListComponent {
     return `id-${Math.random().toString(36).substr(2, 9)}`;
   }
 
-  protected selectTransaction(payment: Payment) {
+  protected selectPayment(payment: Payment) {
     this.selectedPayment = { ...payment };
     this.selectedPayment.postingDate = formatDate(
       new Date(this.selectedPayment.postingDate),
@@ -86,7 +120,7 @@ export class PaymentsListComponent {
     );
   }
 
-  protected saveTransaction() {
+  protected savePayment() {
     if (this.selectedPayment) {
       const index = this.payments.findIndex(
         (t) => t._id === this.selectedPayment!._id
@@ -122,7 +156,7 @@ export class PaymentsListComponent {
   protected readonly _pageSize = signal(this._availablePageSizes[0]);
 
   protected readonly _brnColumnManager = useBrnColumnManager({
-    category: { visible: true, label: 'Category' },
+    category: { visible: true, label: 'category' },
     postingDate: { visible: true, label: 'Posting Date' },
     beneficiary: { visible: true, label: 'Beneficiary' },
     details: { visible: true, label: 'Details' },
