@@ -14,9 +14,7 @@ import {
 } from '@spartan-ng/ui-table-brain';
 
 import Payment from './payment-model';
-import FetchPayment from '../types/fetch-payment.model';
-import CreatePayment from '../types/create-payment.model';
-
+import { PaymentsService } from '../payments.service';
 import payments from './payment-data';
 import Currency from '../../../../shared/account-currency';
 import Category from '../../categories/category-list/category.model';
@@ -220,7 +218,7 @@ export class PaymentsListComponent {
   }: PaginatorState) =>
     this._displayedIndices.set({ start: startIndex, end: endIndex });
 
-  constructor() {
+  constructor(private paymentsService: PaymentsService) {
     effect(() => this._paymentsFilter.set(this._debouncedFilter() ?? ''), {
       allowSignalWrites: true,
     });
