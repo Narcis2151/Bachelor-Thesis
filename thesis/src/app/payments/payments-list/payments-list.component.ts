@@ -19,6 +19,7 @@ import payments from './payment-data';
 import Currency from '../../../../shared/account-currency';
 import Category from '../../categories/category-list/category.model';
 import categories from '../../categories/category-list/categories-list';
+import { CategoryService } from '../../categories/category.service';
 
 @Component({
   selector: 'app-payments-list',
@@ -53,30 +54,53 @@ export class PaymentsListComponent {
     category: categories[0],
   };
 
+  ngOnInit() {
+    this.fetchPaymentCategories();
+    this.loadPayments();
+  }
+
+  protected fetchPaymentCategories() {
+    this.categoriesService.getCategories().subscribe({
+      next: (categories) => {
+        console.log(categories);
+        this.categories = categories.categories;
+      },
+    });
+  }
+  protected loadPayments() {
+    this.paymentsService.getPayments().subscribe({
+      next: (payments) => {
+        console.log(payments);
+        this.payments = payments;
+        this._Payments.set(this.payments);
+      },
+    });
+  }
+
   protected updatePaymentCategory(category: Category) {
-    if (this.selectedPayment) {
-      const index = this.payments.findIndex(
-        (t) => t._id === this.selectedPayment!._id
-      );
-      if (index > -1) {
-        this.payments[index].category = category;
-        this._Payments.set([...this.payments]);
-      }
-    }
+    this.paymentsService
+      .updatePaymentCategory(this.selectedPayment, category)
+      .subscribe({
+        next: (updatedPayment) => {
+          const index = this.payments.findIndex(
+            (t) => t._id === updatedPayment._id
+          );
+          if (index > -1) {
+            this.payments[index] = { ...updatedPayment };
+            this._Payments.set([...this.payments]);
+          }
+        },
+      });
   }
 
   protected addPayment() {
-    this.newPayment._id = this.generateUniqueId();
-    this.newPayment.postingDate = new Date(this.newPayment.postingDate);
-    this.newPayment.recurrenceStart = this.newPayment.recurrenceStart
-      ? new Date(this.newPayment.recurrenceStart)
-      : new Date();
-    this.newPayment.recurrenceEnd = this.newPayment.recurrenceEnd
-      ? new Date(this.newPayment.recurrenceEnd)
-      : new Date();
-    this.payments.push({ ...this.newPayment });
-    this._Payments.set([...this.payments]);
-    this.resetNewPayment();
+    this.paymentsService.addPayment(this.newPayment).subscribe({
+      next: (payment) => {
+        this.payments.push(payment);
+        this._Payments.set([...this.payments]);
+        this.resetNewPayment();
+      },
+    });
   }
 
   private resetNewPayment() {
@@ -105,10 +129,6 @@ export class PaymentsListComponent {
     };
   }
 
-  private generateUniqueId(): string {
-    return `id-${Math.random().toString(36).substr(2, 9)}`;
-  }
-
   protected selectPayment(payment: Payment) {
     this.selectedPayment = { ...payment };
     this.selectedPayment.postingDate = formatDate(
@@ -119,16 +139,17 @@ export class PaymentsListComponent {
   }
 
   protected savePayment() {
-    if (this.selectedPayment) {
-      const index = this.payments.findIndex(
-        (t) => t._id === this.selectedPayment!._id
-      );
-      if (index > -1) {
-        this.selectedPayment.postingDate = new Date();
-        this.payments[index] = { ...this.selectedPayment };
-        this._Payments.set([...this.payments]);
-      }
-    }
+    this.paymentsService.updatePayment(this.selectedPayment).subscribe({
+      next: (updatedPayment) => {
+        const index = this.payments.findIndex(
+          (t) => t._id === updatedPayment._id
+        );
+        if (index > -1) {
+          this.payments[index] = { ...updatedPayment };
+          this._Payments.set([...this.payments]);
+        }
+      },
+    });
   }
 
   protected deletePayment() {
@@ -218,7 +239,10 @@ export class PaymentsListComponent {
   }: PaginatorState) =>
     this._displayedIndices.set({ start: startIndex, end: endIndex });
 
-  constructor(private paymentsService: PaymentsService) {
+  constructor(
+    private paymentsService: PaymentsService,
+    private categoriesService: CategoryService
+  ) {
     effect(() => this._paymentsFilter.set(this._debouncedFilter() ?? ''), {
       allowSignalWrites: true,
     });

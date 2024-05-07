@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import Payment from './payments-list/payment-model';
 import Currency from '../../../shared/account-currency';
+import Category from '../categories/category-list/category.model';
 
 export interface CreatePaymentDto {
   _id?: string;
@@ -65,9 +66,9 @@ export class PaymentsService {
   }
 
   // Update payment's category
-  updateCategoryIcon(payment: Payment, category: string): Observable<Payment> {
+  updatePaymentCategory(payment: Payment, category: Category): Observable<Payment> {
     return this.http.patch<Payment>(`${this.apiUrl}/${payment._id}/category`, {
-      category: category,
+      category: category._id,
     });
   }
 
