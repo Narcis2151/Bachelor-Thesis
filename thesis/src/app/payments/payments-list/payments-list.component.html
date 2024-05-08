@@ -23,7 +23,7 @@
       stickyHeader
       class="w-full border-border mt-10 block h-[335px] overflow-auto"
       [dataSource]="_filteredSortedPaginatedOneTimePayments()"
-      [displayedColumns]="_allDisplayedColumns()"
+      [displayedColumns]="_oneTimePaymentsAllDisplayedColumns()"
       [trackBy]="_trackBy"
     >
       <brn-column-def name="category" class="w-3/12 md:w-2/12 justify-center">
@@ -118,7 +118,6 @@
         <hlm-td
           class="text-start font-medium tabular-nums"
           *brnCellDef="let element"
-          [ngClass]="element.type === 'income' ? 'text-green-400' : ''"
         >
           {{ element.amount | number : "1.2-2" }} {{ element.currency }}
         </hlm-td>
@@ -248,7 +247,7 @@
       stickyHeader
       class="w-full border-border mt-10 block h-[335px] overflow-auto"
       [dataSource]="_filteredSortedPaginatedRecurrentPayments()"
-      [displayedColumns]="_allDisplayedColumns()"
+      [displayedColumns]="_recurrentPaymensAllDisplayedColumns()"
       [trackBy]="_trackBy"
     >
       <brn-column-def name="category" class="w-3/12 md:w-2/12 justify-center">
@@ -290,7 +289,7 @@
       </brn-column-def>
 
       <brn-column-def
-        name="postingDate"
+        name="recurrenceEnd"
         class="max-sm:hidden w-2/12 justify-center text-center"
       >
         <hlm-th *brnHeaderDef>
@@ -301,7 +300,7 @@
             variant="ghost"
             (click)="handleDateSortChange()"
           >
-            Posting Date
+            Next Payment
             <hlm-icon class="ml-3" size="sm" name="lucideArrowUpDown" />
           </button>
         </hlm-th>
@@ -343,7 +342,6 @@
         <hlm-td
           class="text-start font-medium tabular-nums"
           *brnCellDef="let element"
-          [ngClass]="element.type === 'income' ? 'text-green-400' : ''"
         >
           {{ element.amount | number : "1.2-2" }} {{ element.currency }}
         </hlm-td>

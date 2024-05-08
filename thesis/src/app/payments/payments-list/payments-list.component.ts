@@ -174,17 +174,29 @@ export class PaymentsListComponent {
   protected readonly _availablePageSizes = [5, 10, 20, 10000];
   protected readonly _pageSize = signal(this._availablePageSizes[0]);
 
-  protected readonly _brnColumnManager = useBrnColumnManager({
+  protected readonly _oneTimePaymentsColumnManager = useBrnColumnManager({
     category: { visible: true, label: 'category' },
     postingDate: { visible: true, label: 'Posting Date' },
     beneficiary: { visible: true, label: 'Beneficiary' },
     details: { visible: true, label: 'Details' },
     amount: { visible: true, label: 'Amount' },
     currency: { visible: false, label: 'Currency' },
-    type: { visible: false },
   });
-  protected readonly _allDisplayedColumns = computed(() => [
-    ...this._brnColumnManager.displayedColumns(),
+  protected readonly _oneTimePaymentsAllDisplayedColumns = computed(() => [
+    ...this._oneTimePaymentsColumnManager.displayedColumns(),
+    'actions',
+  ]);
+
+  protected readonly _recurrentPaymentsColumnManager = useBrnColumnManager({
+    category: { visible: true, label: 'category' },
+    recurrenceEnd: { visible: true, label: 'Posting Date' },
+    beneficiary: { visible: true, label: 'Beneficiary' },
+    details: { visible: true, label: 'Details' },
+    amount: { visible: true, label: 'Amount' },
+    currency: { visible: false, label: 'Currency' },
+  });
+  protected readonly _recurrentPaymensAllDisplayedColumns = computed(() => [
+    ...this._recurrentPaymentsColumnManager.displayedColumns(),
     'actions',
   ]);
 
@@ -246,7 +258,7 @@ export class PaymentsListComponent {
       .sort(
         (p1, p2) =>
           (sort === 'ASC' ? 1 : -1) *
-          (Number(p1.postingDate) - Number(p2.postingDate))
+          (Number(p1.recurrenceEnd) - Number(p2.recurrenceEnd))
       )
       .slice(start, end);
   });

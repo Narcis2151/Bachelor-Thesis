@@ -19,5 +19,6 @@ type Payment = {
   account: CashAccount;
   category: Category;
   isSelected?: boolean;
+  nextPaymentDate?: Date;
 }
 export default Payment;
