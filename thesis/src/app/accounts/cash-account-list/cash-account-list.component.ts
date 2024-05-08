@@ -13,6 +13,7 @@ import Currency from '../../../../shared/account-currency';
 
 import CashAccount from './cash-account.model';
 import { CashAccountService } from '../cash-account.service';
+import { ChartOptions, ChartType } from 'chart.js';
 
 @Component({
   selector: 'app-cash-account-list',
@@ -30,6 +31,15 @@ export class CashAccountListComponent {
     balance: 0,
   };
 
+  public pieChartOptions: ChartOptions = {
+    responsive: false,
+  };
+  public pieChartLabels: string[] = [];
+  public pieChartLegend = true;
+  public pieChartPlugins = [];
+  public pieChartData: any[] = [];
+  public pieChartType: ChartType = 'pie';
+
   ngOnInit() {
     this.loadCashAccounts();
   }
@@ -39,6 +49,7 @@ export class CashAccountListComponent {
     this.cashAccountService.getCashAccounts().subscribe((accounts) => {
       this.cashAccounts = accounts;
       this._CashAccounts.set(accounts);
+      this.prepareChartData();
     });
     this.isLoading = false;
   }
@@ -53,6 +64,33 @@ export class CashAccountListComponent {
           ...this.cashAccounts.sort((a, b) => b.balance - a.balance),
         ]);
       });
+  }
+
+  private prepareChartData() {
+    const currencyTotals = this.cashAccounts.reduce<Record<Currency, number>>(
+      (acc, account) => {
+        if (acc[account.currency]) {
+          acc[account.currency] += account.balance;
+        } else {
+          acc[account.currency] = account.balance;
+        }
+        return acc;
+      },
+      {
+        [Currency.RON]: 0,
+        [Currency.EUR]: 0,
+        [Currency.USD]: 0,
+        [Currency.GBP]: 0,
+        [Currency.HUF]: 0,
+      }
+    );
+
+    this.pieChartLabels = Object.keys(currencyTotals);
+    this.pieChartData = [
+      {
+        data: [100, 200]
+      },
+    ];
   }
 
   protected resetNewCashAccount() {

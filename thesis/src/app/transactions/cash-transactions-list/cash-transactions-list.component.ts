@@ -30,7 +30,7 @@ export class CashTransactionsListComponent {
   protected readonly currencies = Object.values(Currency);
   protected categories: Category[] = categories;
   protected newTransaction: CashTransaction = {
-    id: '',
+    _id: '',
     category: categories[0],
     postingDate: formatDate(new Date(), 'yyyy-MM-dd', 'en-US'),
     beneficiary: '',
@@ -38,13 +38,12 @@ export class CashTransactionsListComponent {
     amount: 0,
     type: 'expense',
     currency: Currency.RON,
-    status: 'success',
   };
 
   protected updateTransactionCategory(category: Category) {
     if (this.selectedCashTransaction) {
       const index = this.cashTransactions.findIndex(
-        (t) => t.id === this.selectedCashTransaction!.id
+        (t) => t._id === this.selectedCashTransaction!._id
       );
       if (index > -1) {
         this.cashTransactions[index].category = category;
@@ -53,7 +52,7 @@ export class CashTransactionsListComponent {
     }
   }
   protected addTransaction() {
-    this.newTransaction.id = this.generateUniqueId();
+    this.newTransaction._id = this.generateUniqueId();
     this.newTransaction.postingDate = new Date(this.newTransaction.postingDate);
     this.cashTransactions.push({ ...this.newTransaction });
     this._CashTransactions.set([...this.cashTransactions]);
@@ -62,7 +61,7 @@ export class CashTransactionsListComponent {
 
   private resetNewTransaction() {
     this.newTransaction = {
-      id: '',
+      _id: '',
       category: categories[0],
       postingDate: formatDate(new Date(), 'yyyy-MM-dd', 'en-US'),
       beneficiary: '',
@@ -70,12 +69,11 @@ export class CashTransactionsListComponent {
       amount: 0,
       type: 'income',
       currency: Currency.RON,
-      status: 'success',
     };
   }
 
   private generateUniqueId(): string {
-    return `id-${Math.random().toString(36).substr(2, 9)}`;
+    return `_id-${Math.random().toString(36).substr(2, 9)}`;
   }
 
   protected selectTransaction(transaction: CashTransaction) {
@@ -90,7 +88,7 @@ export class CashTransactionsListComponent {
   protected saveTransaction() {
     if (this.selectedCashTransaction) {
       const index = this.cashTransactions.findIndex(
-        (t) => t.id === this.selectedCashTransaction!.id
+        (t) => t._id === this.selectedCashTransaction!._id
       );
       if (index > -1) {
         this.selectedCashTransaction.postingDate = new Date();
@@ -103,7 +101,7 @@ export class CashTransactionsListComponent {
   protected deleteTransaction() {
     if (this.selectedCashTransaction) {
       const index = this.cashTransactions.findIndex(
-        (t) => t.id === this.selectedCashTransaction!.id
+        (t) => t._id === this.selectedCashTransaction!._id
       );
       if (index > -1) {
         this.cashTransactions.splice(index, 1);
@@ -172,7 +170,7 @@ export class CashTransactionsListComponent {
   protected readonly _trackBy: TrackByFunction<CashTransaction> = (
     _: number,
     p: CashTransaction
-  ) => p.id;
+  ) => p._id;
   protected readonly _totalElements = computed(
     () => this._filteredCashTransactions().length
   );

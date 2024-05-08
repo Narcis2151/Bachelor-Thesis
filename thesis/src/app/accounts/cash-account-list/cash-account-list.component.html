@@ -1,3 +1,14 @@
+<div>
+  <canvas baseChart
+          [type]="pieChartType" 
+          [datasets]="pieChartData"
+          [labels]="pieChartLabels"
+          [plugins]="pieChartPlugins"
+          [legend]="pieChartLegend"
+          [options]="pieChartOptions">
+  </canvas>
+</div>
+
 <hlm-spinner *ngIf="isLoading else CashAccountTemplate" />
 
 <ng-template #CashAccountTemplate>

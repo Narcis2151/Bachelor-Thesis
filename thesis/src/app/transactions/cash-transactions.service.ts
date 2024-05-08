@@ -5,7 +5,6 @@ import { Observable } from 'rxjs';
 import Currency from '../../../shared/account-currency';
 import Category from '../categories/category-list/category.model';
 import CashTransaction from './cash-transactions-list/cash-transaction.model';
-import cashAccounts from '../accounts/cash-account-list/cash-accounts-list.data';
 
 export interface CreateCashTransactionDto {
   _id?: string;

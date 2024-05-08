@@ -130,6 +130,7 @@ import { JwtInterceptor } from './jwt.interceptor';
 import { PaymentsListComponent } from './payments/payments-list/payments-list.component';
 import { PaymentsPageComponent } from './payments/pages/payments-page/payments-page.component';
 import { PaymentsNavigationComponent } from './payments/payments-navigation/payments-navigation.component';
+import { provideCharts, withDefaultRegisterables, BaseChartDirective } from 'ng2-charts';
 
 @NgModule({
   declarations: [
@@ -152,6 +153,7 @@ import { PaymentsNavigationComponent } from './payments/payments-navigation/paym
     PaymentsNavigationComponent,
   ],
   imports: [
+    BaseChartDirective,
     BrnHoverCardComponent,
     BrnHoverCardContentDirective,
     BrnHoverCardTriggerDirective,
@@ -245,6 +247,7 @@ import { PaymentsNavigationComponent } from './payments/payments-navigation/paym
       lucideUser,
       lucideUsers,
     }),
+    provideCharts(withDefaultRegisterables()),
   ],
   bootstrap: [AppComponent],
 })
