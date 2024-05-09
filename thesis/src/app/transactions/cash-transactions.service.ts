@@ -12,7 +12,7 @@ export interface CreateCashTransactionDto {
   beneficiary: string;
   details: string;
   amount: number;
-  currency: Currency;
+  currency?: Currency;
   postingDate: Date | string;
   account?: string;
   category?: string;
@@ -22,8 +22,8 @@ export interface CreateCashTransactionDto {
 @Injectable({
   providedIn: 'root',
 })
-export class PaymentsService {
-  private apiUrl = 'http://localhost:3000/transactions';
+export class CashTransactionService {
+  private apiUrl = 'http://localhost:3000/cash-transactions';
 
   constructor(private http: HttpClient) {}
 
@@ -43,12 +43,14 @@ export class PaymentsService {
       amount: cashTransaction.amount,
       currency: cashTransaction.currency,
       postingDate: cashTransaction.postingDate,
+      category: cashTransaction.category?._id,
+      account: cashTransaction.account?._id,
     };
     return this.http.post<CashTransaction>(this.apiUrl, newCashTransaction);
   }
 
   // Update a transaction's details
-  updatePayment(cashTransaction: CashTransaction): Observable<CashTransaction> {
+  updateTransaction(cashTransaction: CashTransaction): Observable<CashTransaction> {
     return this.http.patch<CashTransaction>(
       `${this.apiUrl}/${cashTransaction._id}`,
       {
@@ -58,12 +60,13 @@ export class PaymentsService {
         amount: cashTransaction.amount,
         currency: cashTransaction.currency,
         postingDate: cashTransaction.postingDate,
+        account: cashTransaction.account?._id,
       }
     );
   }
 
   // Update a transactions's category
-  updatePaymentCategory(
+  updateTransactionCategory(
     cashTransaction: CashTransaction,
     category: Category
   ): Observable<CashTransaction> {
@@ -76,7 +79,7 @@ export class PaymentsService {
   }
 
   // Delete a category
-  deletePayment(id: string): Observable<void> {
+  deleteCashTransaction(id: string): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 }

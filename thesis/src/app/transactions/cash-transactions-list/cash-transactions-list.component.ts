@@ -6,7 +6,7 @@ import {
   signal,
 } from '@angular/core';
 import { formatDate } from '@angular/common';
-import { debounceTime } from 'rxjs';
+import { debounceTime, forkJoin } from 'rxjs';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import {
   PaginatorState,
@@ -14,10 +14,12 @@ import {
 } from '@spartan-ng/ui-table-brain';
 
 import CashTransaction from './cash-transaction.model';
-import CashTransactions from './cash-transaction-list';
 import Currency from '../../../../shared/account-currency';
 import Category from '../../categories/category-list/category.model';
-import categories from '../../categories/category-list/categories-list';
+import { CashTransactionService } from '../cash-transactions.service';
+import { CategoryService } from '../../categories/category.service';
+import { CashAccountService } from '../../accounts/cash-account.service';
+import CashAccount from '../../accounts/cash-account-list/cash-account.model';
 
 @Component({
   selector: 'app-cash-transactions-list',
@@ -25,55 +27,78 @@ import categories from '../../categories/category-list/categories-list';
   styleUrl: './cash-transactions-list.component.scss',
 })
 export class CashTransactionsListComponent {
-  protected cashTransactions: CashTransaction[] = CashTransactions;
+  isLoading = false;
+  protected cashTransactions: CashTransaction[] = [];
   protected selectedCashTransaction!: CashTransaction;
   protected readonly currencies = Object.values(Currency);
-  protected categories: Category[] = categories;
-  protected newTransaction: CashTransaction = {
-    _id: '',
-    category: categories[0],
-    postingDate: formatDate(new Date(), 'yyyy-MM-dd', 'en-US'),
-    beneficiary: '',
-    details: '',
-    amount: 0,
-    type: 'expense',
-    currency: Currency.RON,
-  };
+  protected categories: Category[] = [];
+  protected cashAccounts: CashAccount[] = [];
+  protected newTransaction!: CashTransaction;
+
+  ngOnInit() {
+    this.loadCashTransactions();
+  }
+
+  protected loadCashTransactions() {
+    this.isLoading = true;
+    forkJoin({
+      categories: this.categoryService.getCategories(),
+      accounts: this.cashAccountService.getCashAccounts(),
+      transactions: this.cashTransactionService.getTransactions(),
+    }).subscribe(({ categories, accounts, transactions }) => {
+      this.categories = categories.categories;
+      this.cashAccounts = accounts;
+      this.cashTransactions = transactions;
+      this._CashTransactions.set(transactions);
+      this.resetNewTransaction();
+      this.isLoading = false;
+    });
+  }
 
   protected updateTransactionCategory(category: Category) {
     if (this.selectedCashTransaction) {
-      const index = this.cashTransactions.findIndex(
-        (t) => t._id === this.selectedCashTransaction!._id
-      );
-      if (index > -1) {
-        this.cashTransactions[index].category = category;
-        this._CashTransactions.set([...this.cashTransactions]);
-      }
+      this.cashTransactionService
+        .updateTransactionCategory(this.selectedCashTransaction, category)
+        .subscribe((transaction) => {
+          const index = this.cashTransactions.findIndex(
+            (t) => t._id === transaction._id
+          );
+          if (index !== -1) {
+            this.cashTransactions[index] = transaction;
+            this._CashTransactions.set([
+              ...this.cashTransactions.sort(
+                (a, b) => Number(b.postingDate) - Number(a.postingDate)
+              ),
+            ]);
+          }
+        });
     }
   }
+
   protected addTransaction() {
-    this.newTransaction._id = this.generateUniqueId();
-    this.newTransaction.postingDate = new Date(this.newTransaction.postingDate);
-    this.cashTransactions.push({ ...this.newTransaction });
-    this._CashTransactions.set([...this.cashTransactions]);
-    this.resetNewTransaction();
+    this.cashTransactionService
+      .addCashTransaction(this.newTransaction)
+      .subscribe((transaction) => {
+        this.cashTransactions.push(transaction);
+        this.resetNewTransaction();
+        this._CashTransactions.set([
+          ...this.cashTransactions.sort(
+            (a, b) => Number(b.postingDate) - Number(a.postingDate)
+          ),
+        ]);
+      });
   }
 
   private resetNewTransaction() {
     this.newTransaction = {
-      _id: '',
-      category: categories[0],
+      category: this.categories[0],
       postingDate: formatDate(new Date(), 'yyyy-MM-dd', 'en-US'),
       beneficiary: '',
       details: '',
       amount: 0,
-      type: 'income',
-      currency: Currency.RON,
+      type: 'expense',
+      account: this.cashAccounts[0],
     };
-  }
-
-  private generateUniqueId(): string {
-    return `_id-${Math.random().toString(36).substr(2, 9)}`;
   }
 
   protected selectTransaction(transaction: CashTransaction) {
@@ -87,26 +112,38 @@ export class CashTransactionsListComponent {
 
   protected saveTransaction() {
     if (this.selectedCashTransaction) {
-      const index = this.cashTransactions.findIndex(
-        (t) => t._id === this.selectedCashTransaction!._id
-      );
-      if (index > -1) {
-        this.selectedCashTransaction.postingDate = new Date();
-        this.cashTransactions[index] = { ...this.selectedCashTransaction };
-        this._CashTransactions.set([...this.cashTransactions]);
-      }
+      this.cashTransactionService
+        .updateTransaction(this.selectedCashTransaction)
+        .subscribe((transaction) => {
+          const index = this.cashTransactions.findIndex(
+            (t) => t._id === transaction._id
+          );
+          if (index !== -1) {
+            this.cashTransactions[index] = transaction;
+            this._CashTransactions.set([
+              ...this.cashTransactions.sort(
+                (a, b) => Number(b.postingDate) - Number(a.postingDate)
+              ),
+            ]);
+          }
+        });
     }
   }
 
   protected deleteTransaction() {
-    if (this.selectedCashTransaction) {
-      const index = this.cashTransactions.findIndex(
-        (t) => t._id === this.selectedCashTransaction!._id
-      );
-      if (index > -1) {
-        this.cashTransactions.splice(index, 1);
-        this._CashTransactions.set([...this.cashTransactions]);
-      }
+    if (this.selectedCashTransaction && this.selectedCashTransaction._id) {
+      this.cashTransactionService
+        .deleteCashTransaction(this.selectedCashTransaction._id)
+        .subscribe(() => {
+          this.cashTransactions = this.cashTransactions.filter(
+            (t) => t._id !== this.selectedCashTransaction!._id
+          );
+          this._CashTransactions.set([
+            ...this.cashTransactions.sort(
+              (a, b) => Number(b.postingDate) - Number(a.postingDate)
+            ),
+          ]);
+        });
     }
   }
 
@@ -144,12 +181,14 @@ export class CashTransactionsListComponent {
           u.details.toLowerCase().includes(filter) ||
           u.category.name.toLowerCase().includes(filter) ||
           u.amount.toString().includes(filter) ||
-          u.currency.toString().includes(filter)
+          (u.currency?.toString() ?? '').includes(filter)
       );
     }
     return this._CashTransactions();
   });
+
   private readonly _dateSort = signal<'ASC' | 'DESC' | null>(null);
+
   protected readonly _filteredSortedPaginatedCashTransactions = computed(() => {
     const sort = this._dateSort();
     const start = this._displayedIndices().start;
@@ -180,7 +219,11 @@ export class CashTransactionsListComponent {
   }: PaginatorState) =>
     this._displayedIndices.set({ start: startIndex, end: endIndex });
 
-  constructor() {
+  constructor(
+    private cashTransactionService: CashTransactionService,
+    private categoryService: CategoryService,
+    private cashAccountService: CashAccountService
+  ) {
     effect(() => this._transactionsFilter.set(this._debouncedFilter() ?? ''), {
       allowSignalWrites: true,
     });

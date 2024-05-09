@@ -88,7 +88,6 @@ export class CashAccountListComponent {
     }];
 }
 
-
   protected resetNewCashAccount() {
     this.newCashAccount = {
       name: '',
