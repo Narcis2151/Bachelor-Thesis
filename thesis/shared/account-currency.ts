@@ -1,4 +1,4 @@
-enum Currency {
+enum CurrencyEnum {
   RON = 'RON',
   EUR = 'EUR',
   USD = 'USD',
@@ -6,4 +6,4 @@ enum Currency {
   HUF = 'HUF',
 }
 
-export default Currency;
+export default CurrencyEnum;

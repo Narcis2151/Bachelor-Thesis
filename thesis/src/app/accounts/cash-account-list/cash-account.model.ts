@@ -6,6 +6,7 @@ type CashAccount = {
   balance: number;
   currency: Currency;
   balanceUpdatedAt?: Date;
+  balanceEquivalent?: number;
   isEditing?: boolean;
 };
 

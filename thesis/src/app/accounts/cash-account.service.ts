@@ -20,7 +20,6 @@ export class CashAccountService {
   }
 
   updateCashAccountBalance(account: CashAccount): Observable<CashAccount> {
-    console.log(account);
     return this.http.patch<CashAccount>(
       `${this.apiUrl}/${account._id}/balance`,
       {
@@ -31,13 +30,9 @@ export class CashAccountService {
   }
 
   updateCashAccountName(account: CashAccount): Observable<CashAccount> {
-    console.log(account);
-    return this.http.patch<CashAccount>(
-      `${this.apiUrl}/${account._id}/name`,
-      {
-        name: account.name,
-      }
-    );
+    return this.http.patch<CashAccount>(`${this.apiUrl}/${account._id}/name`, {
+      name: account.name,
+    });
   }
 
   deleteCashAccount(id: string): Observable<void> {
