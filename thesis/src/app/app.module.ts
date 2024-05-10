@@ -112,9 +112,7 @@ import {
   BrnHoverCardTriggerDirective,
 } from '@spartan-ng/ui-hovercard-brain';
 
-import {
-  HlmHoverCardContentComponent
-} from '@spartan-ng/ui-hovercard-helm';
+import { HlmHoverCardContentComponent } from '@spartan-ng/ui-hovercard-helm';
 
 import { CalendarModule } from 'primeng/calendar';
 
@@ -124,13 +122,16 @@ import { DecimalPipe, TitleCasePipe } from '@angular/common';
 import { CashTransactionsListComponent } from './transactions/cash-transactions-list/cash-transactions-list.component';
 import { TransactionsPageComponent } from './transactions/pages/transactions-page/transactions-page.component';
 import { BudgetListComponent } from './budgets/budget-list/budget-list.component';
-import { BudgetComponent } from './budgets/budget-list/budget/budget.component';
 import { BudgetsPageComponent } from './budgets/pages/budgets-page/budgets-page.component';
 import { JwtInterceptor } from './jwt.interceptor';
 import { PaymentsListComponent } from './payments/payments-list/payments-list.component';
 import { PaymentsPageComponent } from './payments/pages/payments-page/payments-page.component';
 import { PaymentsNavigationComponent } from './payments/payments-navigation/payments-navigation.component';
-import { provideCharts, withDefaultRegisterables, BaseChartDirective } from 'ng2-charts';
+import {
+  provideCharts,
+  withDefaultRegisterables,
+  BaseChartDirective,
+} from 'ng2-charts';
 
 @NgModule({
   declarations: [
@@ -146,7 +147,6 @@ import { provideCharts, withDefaultRegisterables, BaseChartDirective } from 'ng2
     CashTransactionsListComponent,
     TransactionsPageComponent,
     BudgetListComponent,
-    BudgetComponent,
     BudgetsPageComponent,
     PaymentsListComponent,
     PaymentsPageComponent,

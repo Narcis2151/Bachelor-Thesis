@@ -413,13 +413,13 @@
           </hlm-select-trigger>
           <hlm-select-content>
             @for (account of cashAccounts; track account) {
-              <hlm-option [value]="account">
-                <span class="flex align-middle">
-                  <hlm-icon class="mr-2" size="sm" name="lucideWallet" />
-                  {{ account.name }}
-                </span>
-              </hlm-option>
-              }
+            <hlm-option [value]="account">
+              <span class="flex align-middle">
+                <hlm-icon class="mr-2" size="sm" name="lucideWallet" />
+                {{ account.name }}
+              </span>
+            </hlm-option>
+            }
           </hlm-select-content>
         </brn-select>
       </div>

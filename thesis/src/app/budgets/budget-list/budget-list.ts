@@ -1,10 +1,10 @@
 import Currency from '../../../../shared/account-currency';
-import Budget from './budget/budget.model';
+import Budget from './budget.model';
 import categories from '../../categories/category-list/categories-list';
 
 const BudgetData: Budget[] = [
   {
-    id: '1',
+    _id: '1',
     category: categories[0],
     amountAvailable: 2500,
     currency: Currency.RON,
@@ -14,7 +14,7 @@ const BudgetData: Budget[] = [
     active: true,
   },
   {
-    id: '2',
+    _id: '2',
     category: categories[1],
     amountAvailable: 1000,
     currency: Currency.RON,
@@ -24,7 +24,7 @@ const BudgetData: Budget[] = [
     active: true,
   },
   {
-    id: '3',
+    _id: '3',
     category: categories[2],
     amountAvailable: 600,
     currency: Currency.RON,
@@ -35,7 +35,7 @@ const BudgetData: Budget[] = [
     active: true,
   },
   {
-    id: '4',
+    _id: '4',
     category: categories[3],
     amountAvailable: 500,
     currency: Currency.RON,
@@ -45,7 +45,7 @@ const BudgetData: Budget[] = [
     active: true,
   },
   {
-    id: '5',
+    _id: '5',
     category: categories[4],
     amountAvailable: 300,
     currency: Currency.RON,
@@ -55,7 +55,7 @@ const BudgetData: Budget[] = [
     active: true,
   },
   {
-    id: '6',
+    _id: '6',
     category: categories[5],
     amountAvailable: 500,
     currency: Currency.RON,
@@ -65,7 +65,7 @@ const BudgetData: Budget[] = [
     active: true,
   },
   {
-    id: '7',
+    _id: '7',
     category: categories[6],
     amountAvailable: 400,
     currency: Currency.RON,
@@ -75,7 +75,7 @@ const BudgetData: Budget[] = [
     active: true,
   },
   {
-    id: '8',
+    _id: '8',
     category: categories[7],
     amountAvailable: 300,
     currency: Currency.RON,

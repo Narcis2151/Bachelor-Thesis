@@ -27,7 +27,7 @@ import CashAccount from '../../accounts/cash-account-list/cash-account.model';
   styleUrl: './cash-transactions-list.component.scss',
 })
 export class CashTransactionsListComponent {
-  isLoading = false;
+  protected isLoading = false;
   protected cashTransactions: CashTransaction[] = [];
   protected selectedCashTransaction!: CashTransaction;
   protected readonly currencies = Object.values(Currency);
