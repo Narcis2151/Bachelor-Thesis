@@ -13,8 +13,8 @@ import {
   useBrnColumnManager,
 } from '@spartan-ng/ui-table-brain';
 
-import Payment from './payment-model';
-import { PaymentsService } from '../payments.service';
+import Payment from './cash-future-payment-model';
+import { PaymentsService } from '../cash-payments.service';
 import Currency from '../../../../shared/account-currency';
 import Category from '../../categories/category-list/category.model';
 import categories from '../../categories/category-list/categories-list';
