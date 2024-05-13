@@ -73,7 +73,7 @@ export class CashPaymentsService {
       currency: payment.currency,
       recurrence: payment.recurrence,
       recurrenceStart: payment.recurrenceStart,
-      recurrenceEnd: payment.recurrenceEnd,
+      recurrenceEnd: payment.recurrenceEnd == new Date() ? null : payment.recurrenceEnd,
       account: payment.account._id,
       category: payment.category._id,
     };
@@ -94,7 +94,7 @@ export class CashPaymentsService {
       currency: payment.currency,
       recurrence: payment.recurrence,
       recurrenceStart: payment.recurrenceStart,
-      recurrenceEnd: payment.recurrenceEnd,
+      recurrenceEnd: payment.recurrenceEnd == new Date() ? null : payment.recurrenceEnd,
       account: payment.account._id,
       category: payment.category._id,
     };

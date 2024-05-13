@@ -86,6 +86,7 @@ export class PaymentsListComponent {
       this.resetNewCashFuturePayment();
       this.resetNewCashRecurrentPayment();
       this.isLoading = false;
+      console.log(this.cashRecurrentPayments);
     });
   }
 
@@ -166,7 +167,7 @@ export class PaymentsListComponent {
       details: '',
       amount: 0,
       currency: Currency.RON,
-      recurrence: 'monthly',
+      recurrence: 'daily',
       recurrenceStart: new Date(),
       recurrenceEnd: new Date(),
       account: this.cashAccounts[0],
@@ -190,11 +191,11 @@ export class PaymentsListComponent {
       'yyyy-MM-dd',
       'en-US'
     );
-    this.selectedCashRecurrentPayment.recurrenceEnd = formatDate(
+    this.selectedCashRecurrentPayment.recurrenceEnd = this.selectedCashRecurrentPayment.recurrenceEnd ? formatDate(
       new Date(this.selectedCashRecurrentPayment.recurrenceEnd),
       'yyyy-MM-dd',
       'en-US'
-    );
+    ) : '';
   }
 
   protected saveCashFuturePayment() {
@@ -275,8 +276,8 @@ export class PaymentsListComponent {
 
   protected readonly _cashFuturePaymentsColumnManager = useBrnColumnManager({
     category: { visible: true, label: 'category' },
-    postingDate: { visible: true, label: 'Posting Date' },
-    beneficiary: { visible: true, label: 'Beneficiary' },
+    postingDate: { visible: true, label: 'postinDate' },
+    beneficiary: { visible: true, label: 'beneficiary' },
     details: { visible: true, label: 'Details' },
     amount: { visible: true, label: 'Amount' },
     currency: { visible: false, label: 'Currency' },
@@ -289,7 +290,7 @@ export class PaymentsListComponent {
   protected readonly _cashRecurrentPaymentsColumnManager = useBrnColumnManager({
     category: { visible: true, label: 'category' },
     nextPaymentDate: { visible: true, label: 'nextPaymentDate' },
-    beneficiary: { visible: true, label: 'Beneficiary' },
+    beneficiary: { visible: true, label: 'beneficiary' },
     details: { visible: true, label: 'Details' },
     amount: { visible: true, label: 'Amount' },
     currency: { visible: false, label: 'Currency' },
@@ -330,13 +331,15 @@ export class PaymentsListComponent {
     return this._CashRecurrentPayments();
   });
 
-  private readonly _dateSort = signal<'ASC' | 'DESC' | null>(null);
+  private readonly _dateSortFuture = signal<'ASC' | 'DESC' | null>(null);
+  private readonly _dateSortRecurrent = signal<'ASC' | 'DESC' | null>(null);
 
   protected readonly _filteredSortedPaginatedFuturePayments = computed(() => {
-    const sort = this._dateSort();
+    const sort = this._dateSortFuture();
     const start = this._displayedIndices().start;
     const end = this._displayedIndices().end + 1;
     const Payments = this._filteredCashFuturePayments();
+    // console.log(Payments);
     if (!sort) {
       return Payments.slice(start, end);
     }
@@ -351,7 +354,7 @@ export class PaymentsListComponent {
 
   protected readonly _filteredSortedPaginatedRecurrentPayments = computed(
     () => {
-      const sort = this._dateSort();
+      const sort = this._dateSortRecurrent();
       const start = this._displayedIndices().start;
       const end = this._displayedIndices().end + 1;
       const Payments = this._filteredCashRecurrentPayments();
@@ -402,14 +405,25 @@ export class PaymentsListComponent {
     );
   }
 
-  protected handleDateSortChange() {
-    const sort = this._dateSort();
+  protected handleDateSortChangeFuture() {
+    const sort = this._dateSortFuture();
     if (sort === 'ASC') {
-      this._dateSort.set('DESC');
+      this._dateSortFuture.set('DESC');
     } else if (sort === 'DESC') {
-      this._dateSort.set(null);
+      this._dateSortFuture.set(null);
     } else {
-      this._dateSort.set('ASC');
+      this._dateSortFuture.set('ASC');
+    }
+  }
+
+  protected handleDateSortChangeRecurrent() {
+    const sort = this._dateSortRecurrent();
+    if (sort === 'ASC') {
+      this._dateSortRecurrent.set('DESC');
+    } else if (sort === 'DESC') {
+      this._dateSortRecurrent.set(null);
+    } else {
+      this._dateSortRecurrent.set('ASC');
     }
   }
 }

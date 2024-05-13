@@ -74,7 +74,7 @@
             class="p-0"
             size="sm"
             variant="ghost"
-            (click)="handleDateSortChange()"
+            (click)="handleDateSortChangeFuture()"
           >
             Posting Date
             <hlm-icon class="ml-3" size="sm" name="lucideArrowUpDown" />
@@ -86,10 +86,10 @@
       </brn-column-def>
       <brn-column-def name="beneficiary" class="w-5/12 sm:w-3/12 md:w-2/12">
         <hlm-th *brnHeaderDef truncate class="collapse">Beneficiary</hlm-th>
-        <hlm-td truncate *brnCellDef="let element">
+        <hlm-td truncate *brnCellDef="let element" class="justify-start text-start pl-0">
           <brn-hover-card>
-            <button hlmBtn variant="link" brnHoverCardTrigger>
-              Beneficiary
+            <button hlmBtn variant="link" brnHoverCardTrigger class="justify-start text-start">
+              {{ element.beneficiary | titlecase }}
             </button>
             <hlm-hover-card-content *brnHoverCardContent class="w-80">
               <div class="flex justify-between space-x-4">
@@ -296,7 +296,7 @@
             class="p-0"
             size="sm"
             variant="ghost"
-            (click)="handleDateSortChange()"
+            (click)="handleDateSortChangeRecurrent()"
           >
             Next Payment
             <hlm-icon class="ml-3" size="sm" name="lucideArrowUpDown" />
@@ -311,14 +311,14 @@
         <hlm-td truncate *brnCellDef="let element">
           <brn-hover-card>
             <button hlmBtn variant="link" brnHoverCardTrigger class="p-0 m-0">
-              {{ element.beneficiary.name }}
+              {{ element.beneficiary | titlecase}}
             </button>
             <hlm-hover-card-content *brnHoverCardContent class="w-80">
               <div class="flex justify-between space-x-4">
                 <div class="space-y-1">
                   <h4 class="text-sm font-semibold">Beneficiary</h4>
                   <p class="text-sm">
-                    {{ element.beneficiary.name | titlecase }}
+                    {{ element.beneficiary | titlecase }}
                   </p>
                   <p class="text-sm">Cash Payment</p>
                 </div>
@@ -481,6 +481,36 @@
       </div>
 
       <div class="items-center grid grid-cols-4 gap-4">
+        <label hlmLabel for="account" class="text-right">Account</label>
+        <brn-select
+          id="account"
+          [(ngModel)]="newCashFuturePayment.account"
+          class="col-span-3"
+        >
+          <hlm-select-trigger class="w-full">
+            <span class="flex align-middle">
+              <hlm-icon
+                class="mr-2 align-middle"
+                size="sm"
+                name="lucideWallet"
+              />
+              {{ newCashFuturePayment.account.name }}
+            </span>
+          </hlm-select-trigger>
+          <hlm-select-content>
+            @for (account of cashAccounts; track account) {
+            <hlm-option [value]="account">
+              <span class="flex align-middle">
+                <hlm-icon class="mr-2" size="sm" name="lucideWallet" />
+                {{ account.name }}
+              </span>
+            </hlm-option>
+            }
+          </hlm-select-content>
+        </brn-select>
+      </div>
+
+      <div class="items-center grid grid-cols-4 gap-4">
         <label hlmLabel for="postingDate" class="text-right"
           >Posting Date</label
         >
@@ -546,19 +576,50 @@
         Modify the future payment details and click save to apply changes.
       </p>
     </hlm-dialog-header>
-
-    <div class="items-center grid grid-cols-4 gap-4">
-      <label hlmLabel for="postingDate" class="text-right">Posting Date</label>
-      <input
-        type="date"
-        hlmInput
-        id="postingDate"
-        [(ngModel)]="selectedCashFuturePayment.postingDate"
-        class="col-span-3"
-      />
-    </div>
-
     <div class="py-4 grid gap-4">
+      <div class="items-center grid grid-cols-4 gap-4">
+        <label hlmLabel for="account" class="text-right">Account</label>
+        <brn-select
+          id="account"
+          [(ngModel)]="selectedCashFuturePayment.account"
+          class="col-span-3"
+        >
+          <hlm-select-trigger class="w-full">
+            <span class="flex align-middle">
+              <hlm-icon
+                class="mr-2 align-middle"
+                size="sm"
+                name="lucideWallet"
+              />
+              {{ selectedCashFuturePayment.account.name }}
+            </span>
+          </hlm-select-trigger>
+          <hlm-select-content>
+            @for (account of cashAccounts; track account) {
+            <hlm-option [value]="account">
+              <span class="flex align-middle">
+                <hlm-icon class="mr-2" size="sm" name="lucideWallet" />
+                {{ account.name }}
+              </span>
+            </hlm-option>
+            }
+          </hlm-select-content>
+        </brn-select>
+      </div>
+
+      <div class="items-center grid grid-cols-4 gap-4">
+        <label hlmLabel for="postingDate" class="text-right"
+          >Posting Date</label
+        >
+        <input
+          type="date"
+          hlmInput
+          id="postingDate"
+          [(ngModel)]="selectedCashFuturePayment.postingDate"
+          class="col-span-3"
+        />
+      </div>
+
       <div class="items-center grid grid-cols-4 gap-4">
         <label hlmLabel for="beneficiary" class="text-right">Beneficiary</label>
         <input
@@ -620,7 +681,7 @@
         variant="destructive"
         (click)="deleteCashFuturePayment(); ctx.close()"
       >
-        Delete transaction
+        Delete payment
       </button>
     </hlm-dialog-footer>
   </hlm-dialog-content>
@@ -660,6 +721,55 @@
                 {{ category.name }}
               </span>
             </hlm-option>
+          </hlm-select-content>
+        </brn-select>
+      </div>
+
+      <div class="items-center grid grid-cols-4 gap-4">
+        <label hlmLabel for="account" class="text-right">Account</label>
+        <brn-select
+          id="account"
+          [(ngModel)]="newCashRecurrentPayment.account"
+          class="col-span-3"
+        >
+          <hlm-select-trigger class="w-full">
+            <span class="flex align-middle">
+              <hlm-icon
+                class="mr-2 align-middle"
+                size="sm"
+                name="lucideWallet"
+              />
+              {{ newCashRecurrentPayment.account.name }}
+            </span>
+          </hlm-select-trigger>
+          <hlm-select-content>
+            @for (account of cashAccounts; track account) {
+            <hlm-option [value]="account">
+              <span class="flex align-middle">
+                <hlm-icon class="mr-2" size="sm" name="lucideWallet" />
+                {{ account.name }}
+              </span>
+            </hlm-option>
+            }
+          </hlm-select-content>
+        </brn-select>
+      </div>
+
+      <div class="items-center grid grid-cols-4 gap-4">
+        <label hlmLabel for="recurrence" class="text-right">Recurrence</label>
+        <brn-select
+          id="recurrence"
+          [(ngModel)]="newCashRecurrentPayment.recurrence"
+          class="col-span-3"
+        >
+          <hlm-select-trigger class="w-full">
+            <hlm-select-value />
+          </hlm-select-trigger>
+          <hlm-select-content>
+            <hlm-option value="daily">Daily</hlm-option>
+            <hlm-option value="weekly">Weekly</hlm-option>
+            <hlm-option value="monthly">Monthly</hlm-option>
+            <hlm-option value="yearly">Yearly</hlm-option>
           </hlm-select-content>
         </brn-select>
       </div>
@@ -743,6 +853,55 @@
         Modify the recurrent payment details and click save to apply changes.
       </p>
     </hlm-dialog-header>
+
+    <div class="items-center grid grid-cols-4 gap-4">
+      <label hlmLabel for="account" class="text-right">Account</label>
+      <brn-select
+        id="account"
+        [(ngModel)]="selectedCashRecurrentPayment.account"
+        class="col-span-3"
+      >
+        <hlm-select-trigger class="w-full">
+          <span class="flex align-middle">
+            <hlm-icon
+              class="mr-2 align-middle"
+              size="sm"
+              name="lucideWallet"
+            />
+            {{ selectedCashRecurrentPayment.account.name }}
+          </span>
+        </hlm-select-trigger>
+        <hlm-select-content>
+          @for (account of cashAccounts; track account) {
+          <hlm-option [value]="account">
+            <span class="flex align-middle">
+              <hlm-icon class="mr-2" size="sm" name="lucideWallet" />
+              {{ account.name }}
+            </span>
+          </hlm-option>
+          }
+        </hlm-select-content>
+      </brn-select>
+    </div>
+
+    <div class="items-center grid grid-cols-4 gap-4">
+      <label hlmLabel for="recurrence" class="text-right">Recurrence</label>
+      <brn-select
+        id="recurrence"
+        [(ngModel)]="newCashRecurrentPayment.recurrence"
+        class="col-span-3"
+      >
+        <hlm-select-trigger class="w-full">
+          {{ selectedCashRecurrentPayment.recurrence | titlecase }}
+        </hlm-select-trigger>
+        <hlm-select-content>
+          <hlm-option value="daily">Daily</hlm-option>
+          <hlm-option value="weekly">Weekly</hlm-option>
+          <hlm-option value="monthly">Monthly</hlm-option>
+          <hlm-option value="yearly">Yearly</hlm-option>
+        </hlm-select-content>
+      </brn-select>
+    </div>
 
     <div class="items-center grid grid-cols-4 gap-4">
       <label hlmLabel for="recurrenceStart" class="text-right"
@@ -830,7 +989,7 @@
         variant="destructive"
         (click)="deleteCashRecurrentPayment(); ctx.close()"
       >
-        Delete transaction
+        Delete payment
       </button>
     </hlm-dialog-footer>
   </hlm-dialog-content>
