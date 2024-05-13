@@ -5,17 +5,17 @@ import {
   effect,
   signal,
 } from '@angular/core';
-import { debounceTime } from 'rxjs';
+import { debounceTime, forkJoin } from 'rxjs';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
-import {
-  useBrnColumnManager,
-} from '@spartan-ng/ui-table-brain';
+import { useBrnColumnManager } from '@spartan-ng/ui-table-brain';
 
-import BudgetData from './budget-list';
-import Budget from './budget/budget.model';
+import Budget from './budget.model';
 import Currency from '../../../../shared/account-currency';
-import Category from '../../categories/category-list/category/category.model';
-import { categories } from '../../categories/category-list/categories-list';
+import Category from '../../categories/category-list/category.model';
+import categories from '../../categories/category-list/categories-list';
+import { BudgetsService } from '../budgets.service';
+import { CategoryService } from '../../categories/category.service';
+import { formatDate } from '@angular/common';
 
 @Component({
   selector: 'app-budget-list',
@@ -23,77 +23,111 @@ import { categories } from '../../categories/category-list/categories-list';
   styleUrl: './budget-list.component.scss',
 })
 export class BudgetListComponent {
-  protected budgets: Budget[] = BudgetData.filter((b) => b.active);
+  protected isLoading = false;
+  protected budgets: Budget[] = [];
   protected selectedBudget!: Budget;
-  protected readonly currencies = Object.values(Currency);
-  protected availableCategories: Category[] = categories.filter(
-    (c) => !this.budgets.some((b) => b.category.id === c.id)
-  );
-  protected newBudget: Budget = {
-    id: '',
-    category: categories[0],
-    startDate: new Date(),
-    progress: 0,
-    amountAvailable: 0,
-    amountSpent: 0,
-    currency: Currency.RON,
-    active: true,
-  };
+  protected newBudget!: Budget;
+  protected currencies = Object.values(Currency);
+  protected categories: Category[] = [];
+  protected availableCategories: Category[] = [];
+
+  ngOnInit() {
+    this.loadBudgets();
+  }
+
+  protected loadBudgets() {
+    this.isLoading = true;
+    forkJoin({
+      categories: this.categoryService.getCategories(),
+      availableCategories: this.budgetsService.getAvailableCategories(),
+      budgets: this.budgetsService.getBudgets(),
+    }).subscribe(({ categories, availableCategories, budgets }) => {
+      this.categories = categories.categories;
+      this.availableCategories = availableCategories;
+      this.budgets = budgets;
+      this._Budgets.set(budgets);
+      this.resetNewBudget();
+      this.isLoading = false;
+    });
+  }
+
+  protected getAvailableCategories() {
+    this.budgetsService.getAvailableCategories().subscribe((categories) => {
+      this.availableCategories = categories;
+    });
+  }
 
   protected addBudget() {
-    this.newBudget.id = this.generateUniqueId();
-    this.newBudget.startDate = new Date(this.newBudget.startDate);
-    const oneMonthLater = new Date(this.newBudget.startDate);
-    oneMonthLater.setMonth(oneMonthLater.getMonth() + 1);
-    this.newBudget.resetDate = oneMonthLater;
-    this.budgets.push({ ...this.newBudget });
-    this._Budgets.set([...this.budgets]);
-    this.resetNewBudget();
+    this.budgetsService.addBudget(this.newBudget).subscribe((budget) => {
+      this.budgets.push(budget);
+      this._Budgets.set([
+        ...this.budgets.sort(
+          (a, b) => Number(b.resetDate) - Number(a.resetDate)
+        ),
+      ]);
+      this.resetNewBudget();
+      this.getAvailableCategories();
+    });
   }
 
   protected resetNewBudget() {
     this.newBudget = {
-      id: '',
-      category: categories[0],
-      startDate: new Date(),
-      resetDate: new Date(),
-      progress: 0,
+      category: this.availableCategories[0],
+      startDate: formatDate(new Date(), 'yyyy-MM-dd', 'en-US'),
       amountAvailable: 0,
-      amountSpent: 0,
       currency: Currency.RON,
-      active: true,
+      userSpentAmount: 0,
+      partnerSpentAmount: 0,
+      resetDate: formatDate(new Date(), 'yyyy-MM-dd', 'en-US'),
     };
-  }
-
-  private generateUniqueId(): string {
-    return Math.random().toString(36).substr(2, 9);
   }
 
   protected selectBudget(budget: Budget) {
     this.selectedBudget = { ...budget };
+    this.selectedBudget.startDate = formatDate(
+      new Date(budget.startDate),
+      'yyyy-MM-dd',
+      'en-US'
+    );
+    this.selectedBudget.resetDate = formatDate(
+      new Date(budget.resetDate),
+      'yyyy-MM-dd',
+      'en-US'
+    );
   }
 
   protected saveBudget() {
-    if (this.selectedBudget) {
-      const index = this.budgets.findIndex(
-        (t) => t.id === this.selectedBudget!.id
-      );
-      if (index > -1) {
-        this.budgets[index] = { ...this.selectedBudget };
-        this._Budgets.set([...this.budgets]);
-      }
+    if (this.selectedBudget && this.selectedBudget._id) {
+      this.budgetsService
+        .updateBudget(this.selectedBudget)
+        .subscribe((budget) => {
+          const index = this.budgets.findIndex((t) => t._id === budget._id);
+          if (index !== -1) {
+            this.budgets[index] = budget;
+            this._Budgets.set([...this.budgets]);
+          }
+        });
     }
   }
 
   protected deleteBudget() {
-    if (this.selectedBudget) {
-      const index = this.budgets.findIndex(
-        (t) => t.id === this.selectedBudget!.id
-      );
-      if (index > -1) {
-        this.budgets.splice(index, 1);
-        this._Budgets.set([...this.budgets]);
-      }
+    if (this.selectedBudget && this.selectedBudget._id) {
+      this.budgetsService
+        .deleteBudget(this.selectedBudget._id)
+        .subscribe(() => {
+          const index = this.budgets.findIndex(
+            (t) => t._id === this.selectedBudget._id
+          );
+          if (index > -1) {
+            this.budgets.splice(index, 1);
+            this._Budgets.set([
+              ...this.budgets.sort(
+                (a, b) => Number(b.resetDate) - Number(a.resetDate)
+              ),
+            ]);
+          }
+        });
+      this.getAvailableCategories();
     }
   }
 
@@ -109,7 +143,7 @@ export class BudgetListComponent {
     resetDate: { visible: true, label: 'resetDate' },
     progress: { visible: true, label: 'progress' },
     amountAvailable: { visible: true, label: 'amountAvailable' },
-    amountSpent: { visible: false, label: 'amountSpent' },
+    userSpentAmount: { visible: false, label: 'amountSpent' },
     isShared: { visible: true, label: 'isShared' },
     currency: { visible: false },
   });
@@ -150,12 +184,15 @@ export class BudgetListComponent {
   protected readonly _trackBy: TrackByFunction<Budget> = (
     _: number,
     p: Budget
-  ) => p.id;
+  ) => p._id;
   protected readonly _totalElements = computed(
     () => this._filteredBudgets().length
   );
 
-  constructor() {
+  constructor(
+    private budgetsService: BudgetsService,
+    private categoryService: CategoryService
+  ) {
     effect(() => this._budgetsFilter.set(this._debouncedFilter() ?? ''), {
       allowSignalWrites: true,
     });

@@ -9,7 +9,6 @@ import { AuthComponent } from './auth/auth.component';
 
 import { LoadingSpinnerComponent } from './common/loading-spinner/loading-spinner.component';
 import { NavigationComponent } from './navigation/navigation.component';
-import { CategoryComponent } from './categories/category-list/category/category.component';
 import { CategoryListComponent } from './categories/category-list/category-list.component';
 import { CategoryNavigationComponent } from './categories/category-navigation/category-navigation.component';
 import { CategoriesPageComponent } from './categories/pages/categories-page/categories-page.component';
@@ -105,20 +104,34 @@ import {
   BrnProgressIndicatorComponent,
 } from '@spartan-ng/ui-progress-brain';
 import { HlmProgressIndicatorDirective } from '../../components/ui-progress-helm/src/lib/hlm-progress-indicator.directive';
+import { HlmSpinnerComponent } from '@spartan-ng/ui-spinner-helm';
+
+import {
+  BrnHoverCardComponent,
+  BrnHoverCardContentDirective,
+  BrnHoverCardTriggerDirective,
+} from '@spartan-ng/ui-hovercard-brain';
+
+import { HlmHoverCardContentComponent } from '@spartan-ng/ui-hovercard-helm';
 
 import { CalendarModule } from 'primeng/calendar';
 
 import { CashAccountListComponent } from './accounts/cash-account-list/cash-account-list.component';
-import { CashAccountComponent } from './accounts/cash-account-list/cash-account/cash-account.component';
 import { AccountsPageComponent } from './accounts/pages/accounts-page/accounts-page.component';
-import { CashTransactionComponent } from './transactions/cash-transactions-list/cash-transaction/cash-transaction.component';
 import { DecimalPipe, TitleCasePipe } from '@angular/common';
 import { CashTransactionsListComponent } from './transactions/cash-transactions-list/cash-transactions-list.component';
 import { TransactionsPageComponent } from './transactions/pages/transactions-page/transactions-page.component';
 import { BudgetListComponent } from './budgets/budget-list/budget-list.component';
-import { BudgetComponent } from './budgets/budget-list/budget/budget.component';
 import { BudgetsPageComponent } from './budgets/pages/budgets-page/budgets-page.component';
 import { JwtInterceptor } from './jwt.interceptor';
+import { PaymentsListComponent } from './payments/payments-list/payments-list.component';
+import { PaymentsPageComponent } from './payments/pages/payments-page/payments-page.component';
+import { PaymentsNavigationComponent } from './payments/payments-navigation/payments-navigation.component';
+import {
+  provideCharts,
+  withDefaultRegisterables,
+  BaseChartDirective,
+} from 'ng2-charts';
 
 @NgModule({
   declarations: [
@@ -126,25 +139,30 @@ import { JwtInterceptor } from './jwt.interceptor';
     AuthComponent,
     LoadingSpinnerComponent,
     NavigationComponent,
-    CategoryComponent,
     CategoryListComponent,
     CategoryNavigationComponent,
     CategoriesPageComponent,
     CashAccountListComponent,
-    CashAccountComponent,
     AccountsPageComponent,
     CashTransactionsListComponent,
-    CashTransactionComponent,
     TransactionsPageComponent,
     BudgetListComponent,
-    BudgetComponent,
     BudgetsPageComponent,
+    PaymentsListComponent,
+    PaymentsPageComponent,
+    PaymentsNavigationComponent,
   ],
   imports: [
+    BaseChartDirective,
+    BrnHoverCardComponent,
+    BrnHoverCardContentDirective,
+    BrnHoverCardTriggerDirective,
+    HlmHoverCardContentComponent,
     BrnToggleDirective,
     HlmToggleDirective,
     BrnAlertDialogTriggerDirective,
     BrnAlertDialogContentDirective,
+    HlmSpinnerComponent,
     HlmAlertDialogComponent,
     HlmAlertDialogOverlayDirective,
     HlmAlertDialogHeaderComponent,
@@ -229,6 +247,7 @@ import { JwtInterceptor } from './jwt.interceptor';
       lucideUser,
       lucideUsers,
     }),
+    provideCharts(withDefaultRegisterables()),
   ],
   bootstrap: [AppComponent],
 })

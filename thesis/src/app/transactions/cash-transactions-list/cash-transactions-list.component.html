@@ -59,7 +59,7 @@
       </ng-template>
     </hlm-td>
   </brn-column-def>
-  
+
   <brn-column-def
     name="postingDate"
     class="max-sm:hidden w-2/12 justify-center text-center"
@@ -80,18 +80,21 @@
       {{ element.postingDate | date }}
     </hlm-td>
   </brn-column-def>
+
   <brn-column-def name="beneficiary" class="w-5/12 sm:w-3/12 md:w-2/12">
     <hlm-th *brnHeaderDef truncate class="collapse">Beneficiary/Sender</hlm-th>
     <hlm-td truncate *brnCellDef="let element">
       {{ element.beneficiary | titlecase }}
     </hlm-td>
   </brn-column-def>
+
   <brn-column-def name="details" class="max-md:hidden md:w-3/12">
     <hlm-th *brnHeaderDef>Details</hlm-th>
     <hlm-td *brnCellDef="let element">
       {{ element.details | titlecase }}
     </hlm-td>
   </brn-column-def>
+
   <brn-column-def name="amount" class="w-3/12 md:w-2/12 justify-center">
     <hlm-th *brnHeaderDef>Amount</hlm-th>
     <hlm-td
@@ -102,6 +105,7 @@
       {{ element.amount | number : "1.2-2" }} {{ element.currency }}
     </hlm-td>
   </brn-column-def>
+
   <brn-column-def name="actions" class="w-1/12 justify-center">
     <hlm-th *brnHeaderDef></hlm-th>
     <hlm-td *brnCellDef="let element">
@@ -142,6 +146,7 @@
       </ng-template>
     </hlm-td>
   </brn-column-def>
+
   <div
     class="text-muted-foreground flex items-center justify-center p-20"
     brnNoDataRow
@@ -281,19 +286,27 @@
       </div>
 
       <div class="items-center grid grid-cols-4 gap-4">
-        <label hlmLabel for="currency" class="text-right">Currency</label>
+        <label hlmLabel for="account" class="text-right">Account</label>
         <brn-select
-          id="currency"
-          [(ngModel)]="newTransaction.currency"
+          id="account"
+          [(ngModel)]="newTransaction.account"
           class="col-span-3"
         >
           <hlm-select-trigger class="w-full">
-            <hlm-select-value />
+            <span class="flex align-middle">
+              <hlm-icon class="mr-2" size="sm" name="lucideWallet" />
+              {{ newTransaction.account.name }}
+            </span>
           </hlm-select-trigger>
           <hlm-select-content>
-            <hlm-option *ngFor="let currency of currencies" [value]="currency">
-              {{ currency }}
+            @for (account of cashAccounts; track account) {
+            <hlm-option [value]="account">
+              <span class="flex align-middle">
+                <hlm-icon class="mr-2" size="sm" name="lucideWallet" />
+                {{ account.name }}
+              </span>
             </hlm-option>
+            }
           </hlm-select-content>
         </brn-select>
       </div>
@@ -309,8 +322,8 @@
             <hlm-select-value />
           </hlm-select-trigger>
           <hlm-select-content>
-            <hlm-option value="income">Income</hlm-option>
             <hlm-option value="expense">Expense</hlm-option>
+            <hlm-option value="income">Income</hlm-option>
           </hlm-select-content>
         </brn-select>
       </div>
@@ -382,19 +395,31 @@
       </div>
 
       <div class="items-center grid grid-cols-4 gap-4">
-        <label hlmLabel for="currency" class="text-right">Currency</label>
+        <label hlmLabel for="account" class="text-right">Account</label>
         <brn-select
-          id="currency"
-          [(ngModel)]="selectedCashTransaction.currency"
+          id="account"
+          [(ngModel)]="selectedCashTransaction.account"
           class="col-span-3"
         >
           <hlm-select-trigger class="w-full">
-            <hlm-select-value />
+            <span class="flex align-middle">
+              <hlm-icon
+                class="mr-2 align-middle"
+                size="sm"
+                name="lucideWallet"
+              />
+              {{ newTransaction.account.name }}
+            </span>
           </hlm-select-trigger>
           <hlm-select-content>
-            <hlm-option *ngFor="let currency of currencies" [value]="currency">
-              {{ currency }}
+            @for (account of cashAccounts; track account) {
+            <hlm-option [value]="account">
+              <span class="flex align-middle">
+                <hlm-icon class="mr-2" size="sm" name="lucideWallet" />
+                {{ account.name }}
+              </span>
             </hlm-option>
+            }
           </hlm-select-content>
         </brn-select>
       </div>

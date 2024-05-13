@@ -4,80 +4,102 @@ import {
   computed,
   effect,
   signal,
+  OnInit,
 } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { debounceTime } from 'rxjs';
 import { useBrnColumnManager } from '@spartan-ng/ui-table-brain';
 
-import Category from './category/category.model';
-import { categories } from './categories-list';
-import icons from '../../../../shared/icons/icons.names';
+import Category from './category.model';
+import { CategoryService, CreatePartnershipDto } from '../category.service';
 
 @Component({
   selector: 'app-category-list',
   templateUrl: './category-list.component.html',
   styleUrl: './category-list.component.scss',
 })
-export class CategoryListComponent {
-  partnerEmail = '';
-  protected _allCategories = signal(categories);
-  allCategories: Category[] = categories;
-  selectedCategory!: Category;
+export class CategoryListComponent implements OnInit {
+  // protected isLoading = false;
+  protected partnershipStatus: string | null = null;
+  protected partnerEmail = '';
+  protected partnershipError: string | null = null;
+  protected allCategories: Category[] = [];
+  protected availableIcons: string[] = [];
+  protected selectedCategory!: Category;
+
   protected newCategory: Category = {
-    id: '',
     name: '',
     icon: '',
-    isShared: false,
+    type: 'expense',
   };
+
+  ngOnInit() {
+    this.loadCategories();
+    this.fetchCategoryIcons();
+  }
+
+  protected loadCategories() {
+    this.categoryService.getCategories().subscribe({
+      next: (categories) => {
+        console.log(categories);
+        this.allCategories = categories.categories;
+        this.partnershipStatus = categories.partnershipStatus;
+        // this.isLoading = false;
+        this._Categories.set(this.allCategories);
+      },
+    });
+  }
 
   protected toggleEditName(category: Category): void {
     category.isEditing = !category.isEditing;
   }
 
   protected saveCategoryName(category: Category): void {
-    if (category.name.trim() === '') {
-      alert('Category name cannot be empty.');
-      return;
-    }
-
-    const index = this.allCategories.findIndex(
-      (category) => category.id === category.id
-    );
-    if (index !== -1) {
-      this.allCategories[index] = { ...category, isEditing: false };
-      this._Categories.set([...this.allCategories]);
-    }
+    this.categoryService.updateCategoryName(category).subscribe({
+      next: (updatedCategory) => {
+        const index = this.allCategories.findIndex(
+          (t) => t._id === updatedCategory._id
+        );
+        if (index > -1) {
+          this.allCategories[index] = { ...updatedCategory };
+          this._Categories.set([...this.allCategories]);
+        }
+      },
+    });
   }
 
   protected addCategory() {
-    this.newCategory.id = this.generateUniqueId();
-
-    this.allCategories.push({ ...this.newCategory });
-    this._Categories.set([...this.allCategories]);
-    this.resetCategory();
+    this.categoryService.addCategory(this.newCategory).subscribe({
+      next: (category) => {
+        this.allCategories.push(category);
+        this._Categories.set([
+          ...this.allCategories.sort((a, b) =>
+            a._id && b._id ? b._id.localeCompare(a._id) : 0
+          ),
+        ]);
+        this.fetchCategoryIcons();
+        this.resetCategory();
+      },
+    });
   }
 
   protected resetCategory() {
     this.newCategory = {
-      id: '',
       name: '',
       icon: '',
-      isShared: false,
+      type: 'expense',
     };
-  }
-
-  private generateUniqueId(): string {
-    return Math.random().toString(36).substr(2, 9);
   }
 
   protected selectCategory(category: Category) {
     this.selectedCategory = { ...category };
+    this.fetchCategoryIcons();
   }
 
   protected updateShareCategory() {
     if (this.selectedCategory) {
       const index = this.allCategories.findIndex(
-        (t) => t.id === this.selectedCategory!.id
+        (t) => t._id === this.selectedCategory!._id
       );
       if (index > -1) {
         this.selectedCategory.isShared = !this.selectedCategory.isShared;
@@ -88,14 +110,20 @@ export class CategoryListComponent {
   }
 
   protected deleteCategory() {
-    if (this.selectedCategory) {
-      const index = this.allCategories.findIndex(
-        (t) => t.id === this.selectedCategory!.id
-      );
-      if (index > -1) {
-        this.allCategories.splice(index, 1);
-        this._Categories.set([...this.allCategories]);
-      }
+    if (this.selectedCategory && this.selectedCategory._id) {
+      this.categoryService.deleteCategory(this.selectedCategory._id).subscribe({
+        next: () => {
+          this.allCategories = this.allCategories.filter(
+            (t) => t._id !== this.selectedCategory!._id
+          );
+          this._Categories.set([
+            ...this.allCategories.sort((a, b) =>
+              a._id && b._id ? b._id.localeCompare(a._id) : 0
+            ),
+          ]);
+          this.fetchCategoryIcons();
+        },
+      });
     }
   }
 
@@ -105,6 +133,8 @@ export class CategoryListComponent {
     toObservable(this._rawFilterInput).pipe(debounceTime(300))
   );
   protected readonly _pageSize = signal(10000);
+  protected _allCategories = signal(this.allCategories);
+  protected _AvailableIcons = signal(this.availableIcons);
 
   protected readonly _brnColumnManager = useBrnColumnManager({
     icon: { visible: true, label: 'icon' },
@@ -196,12 +226,12 @@ export class CategoryListComponent {
   protected readonly _trackBy: TrackByFunction<Category> = (
     _: number,
     p: Category
-  ) => p.id;
+  ) => p._id;
   protected readonly _totalElements = computed(
     () => this._filteredCategories().length
   );
 
-  constructor() {
+  constructor(private categoryService: CategoryService) {
     effect(() => this._allCategoriesFilter.set(this._debouncedFilter() ?? ''), {
       allowSignalWrites: true,
     });
@@ -219,20 +249,39 @@ export class CategoryListComponent {
   }
 
   protected _hasSharedCategories = computed(() => {
-    const categories = this._Categories(); // Get the actual array from the signal
-    return categories.some((category) => category.isShared); // Check if any category is shared
+    const categories = this._Categories(); 
+    return categories.some((category) => category.isShared); 
   });
 
-  protected createPartnership() {
-    const categories = this._Categories(); // Get the actual array from the signal
-    this._Categories.set(
-      categories.map((category) => {
-        if (category.isSelected) {
-          return { ...category, isShared: true }; // Mark as shared
-        }
-        return category; // Keep the category unchanged
-      })
-    );
+  protected createPartnership(ctx: any) {
+    if (this.emailIsValid()) {
+      const createPartnershipDto: CreatePartnershipDto = {
+        partnerEmail: this.partnerEmail,
+        sharedCategories: this.allCategories
+          .filter((category) => category.isSelected)
+          .map((category) => category._id)
+          .filter((id) => id !== undefined) 
+          .map((id) => id as string),
+      };
+      this.categoryService.createPartnership(createPartnershipDto).subscribe({
+        next: (response) => {
+          this.partnershipStatus = response.partnershipStatus;
+          this.partnerEmail = '';
+          this.loadCategories();
+          ctx.close();
+        },
+        error: (error) => {
+          console.error('Create partnership failed', error);
+          if (error.status === 400) {
+            this.partnershipError = error.error.message;
+          } else {
+            this.partnershipError =
+              error.error.message ||
+              'An error occurred. Please try again later.';
+          }
+        },
+      });
+    }
   }
 
   protected emailIsValid(): boolean {
@@ -240,29 +289,27 @@ export class CategoryListComponent {
     return emailPattern.test(this.partnerEmail);
   }
 
-  protected _icons = Object.values(icons).filter(
-    (icon) => !this.isIconDisabled(icon)
-  );
-
-  protected isIconDisabled(icon: string): boolean {
-    return this.allCategories.some((category) => category.icon === icon);
+  protected fetchCategoryIcons() {
+    this.categoryService.getCategoryIcons().subscribe({
+      next: (icons) => {
+        this.availableIcons = icons;
+        this._AvailableIcons.set(icons);
+      },
+    });
   }
-  
-  protected updateIcon(icon: string) {
-    if (this.selectedCategory) {
-      const index = this.allCategories.findIndex(
-        (t) => t.id === this.selectedCategory!.id
-      );
-      if (index > -1) {
-        this.allCategories[index].icon = icon;
-        this._Categories.set([...this.allCategories]);
-        if (this.selectedCategory.icon) {
-          const selectedIcon = this.selectedCategory.icon as icons;
-          this._icons.push(selectedIcon);
+
+  protected updateCategoryIcon(category: Category, icon: string) {
+    this.categoryService.updateCategoryIcon(category, icon).subscribe({
+      next: (updatedCategory) => {
+        const index = this.allCategories.findIndex(
+          (t) => t._id === updatedCategory._id
+        );
+        if (index > -1) {
+          this.allCategories[index] = { ...updatedCategory };
+          this._Categories.set([...this.allCategories]);
         }
-        this._icons = this._icons.filter((i) => i !== icon);
-        this._icons = this._icons.sort();
-      }
-    }
+        this.fetchCategoryIcons();
+      },
+    });
   }
 }

@@ -62,7 +62,7 @@
     name="progress"
     class="w-5/12 sm:w-4/12 justify-start text-start"
   >
-    <hlm-th *brnHeaderDef>Progress</hlm-th>
+    <hlm-th *brnHeaderDef>Spent</hlm-th>
     <hlm-td
       class="text-start justify-start font-medium tabular-nums h-full px-4"
       *brnCellDef="let element"
@@ -79,16 +79,19 @@
           <div
             class="bg-primary h-6 rounded-full text-white text-xs flex items-start justify-start"
             [ngStyle]="{
-              width: (element.amountSpent / element.amountAvailable) * 100 + '%'
+              width:
+                (element.userSpentAmount / element.amountAvailable) * 100 + '%'
             }"
           ></div>
         </brn-progress>
         <div
           class="absolute h-full justify-start inset-0 bg-gray-100 text-center text-gray-700 rounded-badge p-0 opacity-0 group-hover:opacity-100 transition-opacity w-full sm:w-auto sm:max-w-sm text-xs whitespace-normal"
         >
-          Spent: {{ element.amountSpent | number : "1.2-2" }}
+          Spent: {{ element.userSpentAmount | number : "1.2-2" }}
           {{ element.currency }}, Remaining:
-          {{ element.amountAvailable - element.amountSpent | number : "1.2-2" }}
+          {{
+            element.amountAvailable - element.userSpentAmount | number : "1.2-2"
+          }}
           {{ element.currency }}
         </div>
       </div>
@@ -191,15 +194,24 @@
           class="col-span-3"
         >
           <hlm-select-trigger class="w-full">
-            <hlm-select-value />
+            <span class="flex align-middle">
+              <hlm-icon
+                class="mr-2"
+                size="sm"
+                [name]="newBudget.category.icon"
+              />
+              {{ newBudget.category.name }}
+            </span>
           </hlm-select-trigger>
           <hlm-select-content>
-            <hlm-option
-              *ngFor="let category of availableCategories"
-              [value]="category"
-            >
-              {{ category.name }}
+            @for (category of availableCategories; track category) {
+            <hlm-option [value]="category">
+              <span class="flex align-middle">
+                <hlm-icon class="mr-2" size="sm" [name]="category.icon" />
+                {{ category.name }}
+              </span>
             </hlm-option>
+            }
           </hlm-select-content>
         </brn-select>
       </div>

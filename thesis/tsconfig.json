@@ -69,6 +69,12 @@
       ],
       "@spartan-ng/ui-toggle-helm": [
         "./components/ui-toggle-helm/src/index.ts"
+      ],
+      "@spartan-ng/ui-spinner-helm": [
+        "./components/ui-spinner-helm/src/index.ts"
+      ],
+      "@spartan-ng/ui-hovercard-helm": [
+        "./components/ui-hovercard-helm/src/index.ts"
       ]
     }
   },
