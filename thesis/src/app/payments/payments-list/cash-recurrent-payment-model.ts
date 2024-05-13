@@ -9,11 +9,11 @@ type CashRecurrentPayment = {
   amount: number;
   currency: Currency;
   recurrence: 'daily' | 'weekly' | 'monthly';
-  recurrenceStart: Date;
-  recurrenceEnd: Date;
+  recurrenceStart: Date | string;
+  recurrenceEnd: Date | string;
   account: CashAccount;
   category: Category;
   isSelected?: boolean;
-  nextPaymentDate: Date | string;
-}
+  nextPaymentDate?: Date | string;
+};
 export default CashRecurrentPayment;

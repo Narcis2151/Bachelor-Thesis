@@ -20,8 +20,8 @@ export class CashPaymentsService {
   constructor(private http: HttpClient) {}
 
   // Fetch all payments
-  getPayments(): Observable<FetchPaymentsResponse[]> {
-    return this.http.get<FetchPaymentsResponse[]>(this.apiUrl);
+  getPayments(): Observable<FetchPaymentsResponse> {
+    return this.http.get<FetchPaymentsResponse>(this.apiUrl);
   }
 
   // Add a new recurrent payment
@@ -131,7 +131,7 @@ export class CashPaymentsService {
   }
 
   // Delete a cash payment
-  deleteCashFuturePaymet(id: string): Observable<void> {
+  deleteCashFuturePayment(id: string): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/future/${id}`);
   }
   deleteCashRecurrentPayment(id: string): Observable<void> {

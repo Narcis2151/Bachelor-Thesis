@@ -1,17 +1,17 @@
-<div hlmTabsContent="one_time" class="w-full overflow-x-auto mt-9">
+<div hlmTabsContent="future" class="w-full overflow-x-auto mt-9">
   <section hlmCard class="border-hidden m-1">
     <div class="flex flex-col justify-between gap-4 sm:flex-row">
       <input
         hlmInput
         class="w-full md:w-80"
         placeholder="Filter payments..."
-        [ngModel]="_paymentsFilter()"
+        [ngModel]="_CashFuturePaymentsFilter()"
         (ngModelChange)="_rawFilterInput.set($event)"
       />
       <button
         hlmBtn
         brnDialogTrigger
-        [brnDialogTriggerFor]="newPaymentDialog"
+        [brnDialogTriggerFor]="newCashFuturePaymentDialog"
         class="justify-center rounded-sm text-white hover:text-gray-400"
       >
         New
@@ -22,9 +22,9 @@
       hlm
       stickyHeader
       class="w-full border-border mt-10 block h-[335px] overflow-auto"
-      [dataSource]="_filteredSortedPaginatedOneTimePayments()"
-      [displayedColumns]="_oneTimePaymentsAllDisplayedColumns()"
-      [trackBy]="_trackBy"
+      [dataSource]="_filteredSortedPaginatedFuturePayments()"
+      [displayedColumns]="_cashFuturePaymentsAllDisplayedColumns()"
+      [trackBy]="_trackByFuture"
     >
       <brn-column-def name="category" class="w-3/12 md:w-2/12 justify-center">
         <hlm-th *brnHeaderDef truncate class="text-center">Category</hlm-th>
@@ -32,7 +32,7 @@
           *brnCellDef="let element"
           truncate
           [brnMenuTriggerFor]="menu"
-          (click)="selectPayment(element)"
+          (click)="selectCashFuturePayment(element)"
           class="justify-center text-center"
         >
           <div
@@ -49,7 +49,7 @@
                 <button
                   hlmMenuItemRadio
                   [checked]="category.name === element.category.name"
-                  (triggered)="updatePaymentCategory(category)"
+                  (triggered)="updateCashFuturePaymentCategory(category)"
                 >
                   <hlm-menu-item-radio />
                   <span class="flex align-middle">
@@ -96,11 +96,9 @@
                 <div class="space-y-1">
                   <h4 class="text-sm font-semibold">Beneficiary</h4>
                   <p class="text-sm">
-                    {{ element.beneficiary.name | titlecase }}
+                    {{ element.beneficiary | titlecase }}
                   </p>
-                  <p class="text-sm">
-                    {{ element.beneficiary.account | uppercase }}
-                  </p>
+                  <p class="text-sm">Cash Payment</p>
                 </div>
               </div>
             </hlm-hover-card-content>
@@ -142,8 +140,8 @@
               <hlm-menu-group>
                 <button
                   brnDialogTrigger
-                  [brnDialogTriggerFor]="editDialog"
-                  (click)="selectPayment(element)"
+                  [brnDialogTriggerFor]="editCashFuturePaymentDialog"
+                  (click)="selectCashFuturePayment(element)"
                 >
                   Edit
                 </button>
@@ -152,8 +150,8 @@
               <hlm-menu-group>
                 <button
                   brnDialogTrigger
-                  [brnDialogTriggerFor]="deleteDialog"
-                  (click)="selectPayment(element)"
+                  [brnDialogTriggerFor]="deleteCashFuturePaymentDialog"
+                  (click)="selectCashFuturePayment(element)"
                 >
                   Delete
                 </button>
@@ -174,7 +172,7 @@
       class="mt-4 flex flex-col justify-between sm:flex-row sm:items-center"
       *brnPaginator="
         let ctx;
-        totalElements: _totalElements();
+        totalElements: _totalCashFuturePayments();
         pageSize: _pageSize();
         onStateChange: _onStateChange
       "
@@ -222,20 +220,20 @@
   </section>
 </div>
 
-<div hlmTabsContent="recurring" class="w-full overflow-x-auto mt-9">
+<div hlmTabsContent="recurrent" class="w-full overflow-x-auto mt-9">
   <section hlmCard class="border-hidden m-1">
     <div class="flex flex-col justify-between gap-4 sm:flex-row">
       <input
         hlmInput
         class="w-full md:w-80"
         placeholder="Filter payments..."
-        [ngModel]="_paymentsFilter()"
+        [ngModel]="_CashRecurrentPaymentsFilter()"
         (ngModelChange)="_rawFilterInput.set($event)"
       />
       <button
-        hlmBtn
+        whlmBtn
         brnDialogTrigger
-        [brnDialogTriggerFor]="newPaymentDialog"
+        [brnDialogTriggerFor]="newCashRecurrentPaymentDialog"
         class="justify-center rounded-sm text-white hover:text-gray-400"
       >
         New
@@ -247,8 +245,8 @@
       stickyHeader
       class="w-full border-border mt-10 block h-[335px] overflow-auto"
       [dataSource]="_filteredSortedPaginatedRecurrentPayments()"
-      [displayedColumns]="_recurrentPaymensAllDisplayedColumns()"
-      [trackBy]="_trackBy"
+      [displayedColumns]="_cashRecurrentPaymensAllDisplayedColumns()"
+      [trackBy]="_trackByRecurrent"
     >
       <brn-column-def name="category" class="w-3/12 md:w-2/12 justify-center">
         <hlm-th *brnHeaderDef truncate class="text-center">Category</hlm-th>
@@ -256,7 +254,7 @@
           *brnCellDef="let element"
           truncate
           [brnMenuTriggerFor]="menu"
-          (click)="selectPayment(element)"
+          (click)="selectCashRecurrentPayment(element)"
           class="justify-center text-center"
         >
           <div
@@ -273,7 +271,7 @@
                 <button
                   hlmMenuItemRadio
                   [checked]="category.name === element.category.name"
-                  (triggered)="updatePaymentCategory(category)"
+                  (triggered)="updateCashRecurrentPaymentCategory(category)"
                 >
                   <hlm-menu-item-radio />
                   <span class="flex align-middle">
@@ -305,7 +303,7 @@
           </button>
         </hlm-th>
         <hlm-td *brnCellDef="let element">
-          {{ element.postingDate | date }}
+          {{ element.nextPaymentDate | date }}
         </hlm-td>
       </brn-column-def>
       <brn-column-def name="beneficiary" class="w-5/12 sm:w-3/12 md:w-2/12">
@@ -322,9 +320,7 @@
                   <p class="text-sm">
                     {{ element.beneficiary.name | titlecase }}
                   </p>
-                  <p class="text-sm">
-                    {{ element.beneficiary.account | uppercase }}
-                  </p>
+                  <p class="text-sm">Cash Payment</p>
                 </div>
               </div>
             </hlm-hover-card-content>
@@ -366,8 +362,8 @@
               <hlm-menu-group>
                 <button
                   brnDialogTrigger
-                  [brnDialogTriggerFor]="editDialog"
-                  (click)="selectPayment(element)"
+                  [brnDialogTriggerFor]="editCashRecurrentPaymentDialog"
+                  (click)="selectCashRecurrentPayment(element)"
                 >
                   Edit
                 </button>
@@ -376,8 +372,8 @@
               <hlm-menu-group>
                 <button
                   brnDialogTrigger
-                  [brnDialogTriggerFor]="deleteDialog"
-                  (click)="selectPayment(element)"
+                  [brnDialogTriggerFor]="deleteCashRecurrentPaymentDialog"
+                  (click)="selectCashRecurrentPayment(element)"
                 >
                   Delete
                 </button>
@@ -398,7 +394,7 @@
       class="mt-4 flex flex-col justify-between sm:flex-row sm:items-center"
       *brnPaginator="
         let ctx;
-        totalElements: _totalElements();
+        totalElements: _totalCashRecurrentPayments();
         pageSize: _pageSize();
         onStateChange: _onStateChange
       "
@@ -446,11 +442,13 @@
   </section>
 </div>
 
-<hlm-dialog #newPaymentDialog>
+<hlm-dialog #newCashFuturePaymentDialog>
   <hlm-dialog-content class="sm:max-w-[425px]" *brnDialogContent="let ctx">
     <hlm-dialog-header>
-      <h3 hlmDialogTitle>New Cash Transaction</h3>
-      <p hlmDialogDescription>Add the details for the new cash transaction.</p>
+      <h3 hlmDialogTitle>New Cash Future Payment</h3>
+      <p hlmDialogDescription>
+        Add the details for the new cash future payment.
+      </p>
     </hlm-dialog-header>
 
     <div class="py-4 grid gap-4">
@@ -458,7 +456,7 @@
         <label hlmLabel for="category" class="text-right">Category</label>
         <brn-select
           id="category"
-          [(ngModel)]="newPayment.category"
+          [(ngModel)]="newCashFuturePayment.category"
           class="col-span-3"
         >
           <hlm-select-trigger class="w-full">
@@ -466,9 +464,9 @@
               <hlm-icon
                 class="mr-2"
                 size="sm"
-                [name]="newPayment.category.icon"
+                [name]="newCashFuturePayment.category.icon"
               />
-              {{ newPayment.category.name }}
+              {{ newCashFuturePayment.category.name }}
             </span>
           </hlm-select-trigger>
           <hlm-select-content>
@@ -490,7 +488,7 @@
           type="date"
           hlmInput
           id="postingDate"
-          [(ngModel)]="newPayment.postingDate"
+          [(ngModel)]="newCashFuturePayment.postingDate"
           class="col-span-3"
         />
       </div>
@@ -500,19 +498,7 @@
         <input
           hlmInput
           id="beneficiary"
-          [(ngModel)]="newPayment.beneficiary.name"
-          class="col-span-3"
-        />
-      </div>
-
-      <div class="items-center grid grid-cols-4 gap-4">
-        <label hlmLabel for="beneficiary" class="text-right"
-          >Beneficiary Account</label
-        >
-        <input
-          hlmInput
-          id="beneficiary"
-          [(ngModel)]="newPayment.beneficiary.account"
+          [(ngModel)]="newCashFuturePayment.beneficiary"
           class="col-span-3"
         />
       </div>
@@ -522,7 +508,7 @@
         <input
           hlmInput
           id="details"
-          [(ngModel)]="newPayment.details"
+          [(ngModel)]="newCashFuturePayment.details"
           class="col-span-3"
         />
       </div>
@@ -533,27 +519,9 @@
           type="number"
           hlmInput
           id="amount"
-          [(ngModel)]="newPayment.amount"
+          [(ngModel)]="newCashFuturePayment.amount"
           class="col-span-3"
         />
-      </div>
-
-      <div class="items-center grid grid-cols-4 gap-4">
-        <label hlmLabel for="currency" class="text-right">Currency</label>
-        <brn-select
-          id="currency"
-          [(ngModel)]="newPayment.currency"
-          class="col-span-3"
-        >
-          <hlm-select-trigger class="w-full">
-            <hlm-select-value />
-          </hlm-select-trigger>
-          <hlm-select-content>
-            <hlm-option *ngFor="let currency of currencies" [value]="currency">
-              {{ currency }}
-            </hlm-option>
-          </hlm-select-content>
-        </brn-select>
       </div>
     </div>
 
@@ -562,7 +530,7 @@
       <button
         hlmBtn
         class="text-white hover:text-gray-400"
-        (click)="addPayment(); ctx.close()"
+        (click)="addCashFuturePayment(); ctx.close()"
       >
         Save
       </button>
@@ -570,12 +538,12 @@
   </hlm-dialog-content>
 </hlm-dialog>
 
-<hlm-dialog #editDialog>
+<hlm-dialog #editCashFuturePaymentDialog>
   <hlm-dialog-content class="sm:max-w-[425px]" *brnDialogContent="let ctx">
     <hlm-dialog-header>
-      <h3 hlmDialogTitle>Edit Transaction</h3>
+      <h3 hlmDialogTitle>Edit Future Payment</h3>
       <p hlmDialogDescription>
-        Modify the transaction details and click save to apply changes.
+        Modify the future payment details and click save to apply changes.
       </p>
     </hlm-dialog-header>
 
@@ -585,7 +553,7 @@
         type="date"
         hlmInput
         id="postingDate"
-        [(ngModel)]="selectedPayment.postingDate"
+        [(ngModel)]="selectedCashFuturePayment.postingDate"
         class="col-span-3"
       />
     </div>
@@ -596,19 +564,7 @@
         <input
           hlmInput
           id="beneficiary"
-          [(ngModel)]="selectedPayment.beneficiary.name"
-          class="col-span-3"
-        />
-      </div>
-
-      <div class="items-center grid grid-cols-4 gap-4">
-        <label hlmLabel for="beneficiary" class="text-right"
-          >Beneficiary Account</label
-        >
-        <input
-          hlmInput
-          id="beneficiary"
-          [(ngModel)]="selectedPayment.beneficiary.account"
+          [(ngModel)]="selectedCashFuturePayment.beneficiary"
           class="col-span-3"
         />
       </div>
@@ -618,7 +574,7 @@
         <input
           hlmInput
           id="details"
-          [(ngModel)]="selectedPayment.details"
+          [(ngModel)]="selectedCashFuturePayment.details"
           class="col-span-3"
         />
       </div>
@@ -629,27 +585,9 @@
           type="number"
           hlmInput
           id="amount"
-          [(ngModel)]="selectedPayment.amount"
+          [(ngModel)]="selectedCashFuturePayment.amount"
           class="col-span-3"
         />
-      </div>
-
-      <div class="items-center grid grid-cols-4 gap-4">
-        <label hlmLabel for="currency" class="text-right">Currency</label>
-        <brn-select
-          id="currency"
-          [(ngModel)]="selectedPayment.currency"
-          class="col-span-3"
-        >
-          <hlm-select-trigger class="w-full">
-            <hlm-select-value />
-          </hlm-select-trigger>
-          <hlm-select-content>
-            <hlm-option *ngFor="let currency of currencies" [value]="currency">
-              {{ currency }}
-            </hlm-option>
-          </hlm-select-content>
-        </brn-select>
       </div>
     </div>
 
@@ -658,7 +596,7 @@
       <button
         hlmBtn
         class="text-white hover:text-gray-400"
-        (click)="savePayment(); ctx.close()"
+        (click)="saveCashFuturePayment(); ctx.close()"
       >
         Save changes
       </button>
@@ -666,13 +604,13 @@
   </hlm-dialog-content>
 </hlm-dialog>
 
-<hlm-dialog #deleteDialog>
+<hlm-dialog #deleteCashFuturePaymentDialog>
   <hlm-dialog-content *brnAlertDialogContent="let ctx">
     <hlm-dialog-header>
       <h3 hlmAlertDialogTitle>Are you absolutely sure?</h3>
       <p hlmAlertDialogDescription>
-        This action cannot be undone. This will permanently delete your
-        transaction.
+        This action cannot be undone. This will permanently delete your future
+        payment.
       </p>
     </hlm-dialog-header>
     <hlm-dialog-footer>
@@ -680,7 +618,217 @@
       <button
         hlmBtn
         variant="destructive"
-        (click)="deletePayment(); ctx.close()"
+        (click)="deleteCashFuturePayment(); ctx.close()"
+      >
+        Delete transaction
+      </button>
+    </hlm-dialog-footer>
+  </hlm-dialog-content>
+</hlm-dialog>
+
+<hlm-dialog #newCashRecurrentPaymentDialog>
+  <hlm-dialog-content class="sm:max-w-[425px]" *brnDialogContent="let ctx">
+    <hlm-dialog-header>
+      <h3 hlmDialogTitle>New Cash Recurrent Payment</h3>
+      <p hlmDialogDescription>
+        Add the details for the new cash recurrent payment.
+      </p>
+    </hlm-dialog-header>
+
+    <div class="py-4 grid gap-4">
+      <div class="items-center grid grid-cols-4 gap-4">
+        <label hlmLabel for="category" class="text-right">Category</label>
+        <brn-select
+          id="category"
+          [(ngModel)]="newCashRecurrentPayment.category"
+          class="col-span-3"
+        >
+          <hlm-select-trigger class="w-full">
+            <span class="flex align-middle">
+              <hlm-icon
+                class="mr-2"
+                size="sm"
+                [name]="newCashRecurrentPayment.category.icon"
+              />
+              {{ newCashRecurrentPayment.category.name }}
+            </span>
+          </hlm-select-trigger>
+          <hlm-select-content>
+            <hlm-option *ngFor="let category of categories" [value]="category">
+              <span class="flex align-middle">
+                <hlm-icon class="mr-2" size="sm" [name]="category.icon" />
+                {{ category.name }}
+              </span>
+            </hlm-option>
+          </hlm-select-content>
+        </brn-select>
+      </div>
+
+      <div class="items-center grid grid-cols-4 gap-4">
+        <label hlmLabel for="recurrenceStart" class="text-right"
+          >Recurrency Start</label
+        >
+        <input
+          type="date"
+          hlmInput
+          id="recurrenceStart"
+          [(ngModel)]="newCashRecurrentPayment.recurrenceStart"
+          class="col-span-3"
+        />
+      </div>
+
+      <div class="items-center grid grid-cols-4 gap-4">
+        <label hlmLabel for="recurrenceEnd" class="text-right"
+          >Recurrency End (Optional)</label
+        >
+        <input
+          type="date"
+          hlmInput
+          id="recurrenceEnd"
+          [(ngModel)]="newCashRecurrentPayment.recurrenceEnd"
+          class="col-span-3"
+        />
+      </div>
+
+      <div class="items-center grid grid-cols-4 gap-4">
+        <label hlmLabel for="beneficiary" class="text-right">Beneficiary</label>
+        <input
+          hlmInput
+          id="beneficiary"
+          [(ngModel)]="newCashRecurrentPayment.beneficiary"
+          class="col-span-3"
+        />
+      </div>
+
+      <div class="items-center grid grid-cols-4 gap-4">
+        <label hlmLabel for="details" class="text-right">Details</label>
+        <input
+          hlmInput
+          id="details"
+          [(ngModel)]="newCashRecurrentPayment.details"
+          class="col-span-3"
+        />
+      </div>
+
+      <div class="items-center grid grid-cols-4 gap-4">
+        <label hlmLabel for="amount" class="text-right">Amount</label>
+        <input
+          type="number"
+          hlmInput
+          id="amount"
+          [(ngModel)]="newCashRecurrentPayment.amount"
+          class="col-span-3"
+        />
+      </div>
+    </div>
+
+    <hlm-dialog-footer>
+      <button hlmBtn variant="ghost" (click)="ctx.close()">Cancel</button>
+      <button
+        hlmBtn
+        class="text-white hover:text-gray-400"
+        (click)="addCashRecurrentPayment(); ctx.close()"
+      >
+        Save
+      </button>
+    </hlm-dialog-footer>
+  </hlm-dialog-content>
+</hlm-dialog>
+
+<hlm-dialog #editCashRecurrentPaymentDialog>
+  <hlm-dialog-content class="sm:max-w-[425px]" *brnDialogContent="let ctx">
+    <hlm-dialog-header>
+      <h3 hlmDialogTitle>Edit Recurrent Payment</h3>
+      <p hlmDialogDescription>
+        Modify the recurrent payment details and click save to apply changes.
+      </p>
+    </hlm-dialog-header>
+
+    <div class="items-center grid grid-cols-4 gap-4">
+      <label hlmLabel for="recurrenceStart" class="text-right"
+        >Recurrency Start</label
+      >
+      <input
+        type="date"
+        hlmInput
+        id="recurrenceStart"
+        [(ngModel)]="selectedCashRecurrentPayment.recurrenceStart"
+        class="col-span-3"
+      />
+    </div>
+
+    <div class="items-center grid grid-cols-4 gap-4">
+      <label hlmLabel for="recurrenceEnd" class="text-right"
+        >Recurrency End (Optional)</label
+      >
+      <input
+        type="date"
+        hlmInput
+        id="recurrenceEnd"
+        [(ngModel)]="selectedCashRecurrentPayment.recurrenceEnd"
+        class="col-span-3"
+      />
+    </div>
+
+    <div class="items-center grid grid-cols-4 gap-4">
+      <label hlmLabel for="beneficiary" class="text-right">Beneficiary</label>
+      <input
+        hlmInput
+        id="beneficiary"
+        [(ngModel)]="selectedCashRecurrentPayment.beneficiary"
+        class="col-span-3"
+      />
+    </div>
+
+    <div class="items-center grid grid-cols-4 gap-4">
+      <label hlmLabel for="details" class="text-right">Details</label>
+      <input
+        hlmInput
+        id="details"
+        [(ngModel)]="selectedCashRecurrentPayment.details"
+        class="col-span-3"
+      />
+    </div>
+
+    <div class="items-center grid grid-cols-4 gap-4">
+      <label hlmLabel for="amount" class="text-right">Amount</label>
+      <input
+        type="number"
+        hlmInput
+        id="amount"
+        [(ngModel)]="selectedCashRecurrentPayment.amount"
+        class="col-span-3"
+      />
+    </div>
+
+    <hlm-dialog-footer>
+      <button hlmBtn variant="ghost" (click)="ctx.close()">Cancel</button>
+      <button
+        hlmBtn
+        class="text-white hover:text-gray-400"
+        (click)="saveCashRecurrentPayment(); ctx.close()"
+      >
+        Save changes
+      </button>
+    </hlm-dialog-footer>
+  </hlm-dialog-content>
+</hlm-dialog>
+
+<hlm-dialog #deleteCashRecurrentPaymentDialog>
+  <hlm-dialog-content *brnAlertDialogContent="let ctx">
+    <hlm-dialog-header>
+      <h3 hlmAlertDialogTitle>Are you absolutely sure?</h3>
+      <p hlmAlertDialogDescription>
+        This action cannot be undone. This will permanently delete your
+        recurrent payment.
+      </p>
+    </hlm-dialog-header>
+    <hlm-dialog-footer>
+      <button hlmBtn variant="ghost" (click)="ctx.close()">Cancel</button>
+      <button
+        hlmBtn
+        variant="destructive"
+        (click)="deleteCashRecurrentPayment(); ctx.close()"
       >
         Delete transaction
       </button>
