@@ -19,21 +19,16 @@
       </div>
       <ul
         tabindex="0"
-        class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
+        class="menu menu-sm dropdown-content mt-3 z-10 p-2 shadow bg-base-100 rounded-box w-52"
       >
+        <li><a>Dashboard</a></li>
         <li>
-          <a>Home</a>
-          <ul class="p-2">
-            <li><a>Dashboard</a></li>
-            <li>
-              <a routerLink="/transactions" routerLinkActive="active"
-                >Transactions</a
-              >
-            </li>
-            <li>
-              <a routerLink="/budgets" routerLinkActive="active">Budgets</a>
-            </li>
-          </ul>
+          <a routerLink="/transactions" routerLinkActive="active"
+            >Transactions</a
+          >
+        </li>
+        <li>
+          <a routerLink="/budgets" routerLinkActive="active">Budgets</a>
         </li>
         <li>
           <a routerLink="/payments" routerLinkActive="active">Payments</a>
@@ -45,14 +40,7 @@
           <a routerLink="/accounts" routerLinkActive="active">Accounts</a>
         </li>
         <li>
-          <a>Settings</a>
-          <ul class="p-2">
-            <li><a>Account</a></li>
-            <li><a>Others</a></li>
-            <li>
-              <a (click)="logout()">Logout</a>
-            </li>
-          </ul>
+          <a (click)="logout()">Logout</a>
         </li>
       </ul>
     </div>
@@ -60,26 +48,12 @@
   </div>
   <div class="navbar-center hidden lg:flex">
     <ul class="menu menu-horizontal px-1 flex justify-items-center">
+      <li><a>Dashboard</a></li>
       <li>
-        <details>
-          <summary>Home</summary>
-          <!-- <div *ngIf="dropdowns.home" class="dropdown-content"> -->
-          <ul
-            tabindex="0"
-            class="menu menu-sm dropdown-content mt-3 z-[1000] p-2 shadow bg-base-100 rounded-box w-52"
-          >
-            <li><a>Dashboard</a></li>
-            <li>
-              <a routerLink="/transactions" routerLinkActive="active"
-                >Transactions</a
-              >
-            </li>
-            <li>
-              <a routerLink="/budgets" routerLinkActive="active">Budgets</a>
-            </li>
-          </ul>
-          <!-- </div> -->
-        </details>
+        <a routerLink="/transactions" routerLinkActive="active">Transactions</a>
+      </li>
+      <li>
+        <a routerLink="/budgets" routerLinkActive="active">Budgets</a>
       </li>
       <li><a routerLink="/payments" routerLinkActive="active">Payments</a></li>
       <li>
@@ -87,19 +61,7 @@
       </li>
       <li><a routerLink="/accounts" routerLinkActive="active">Accounts</a></li>
       <li>
-        <details>
-          <summary>Settings</summary>
-          <ul
-            tabindex="0"
-            class="menu menu-sm dropdown-content mt-3 z-[1000] p-2 shadow bg-base-100 rounded-box w-52"
-          >
-            <li><a>Account</a></li>
-            <li><a>Others</a></li>
-            <li>
-              <a (click)="logout()">Logout</a>
-            </li>
-          </ul>
-        </details>
+        <a (click)="logout()">Logout</a>
       </li>
     </ul>
   </div>

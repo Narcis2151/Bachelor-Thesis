@@ -288,7 +288,7 @@ export class PaymentsListComponent {
 
   protected readonly _cashRecurrentPaymentsColumnManager = useBrnColumnManager({
     category: { visible: true, label: 'category' },
-    nextPaymentDate: { visible: true, label: 'Next Payment Date' },
+    nextPaymentDate: { visible: true, label: 'nextPaymentDate' },
     beneficiary: { visible: true, label: 'Beneficiary' },
     details: { visible: true, label: 'Details' },
     amount: { visible: true, label: 'Amount' },
