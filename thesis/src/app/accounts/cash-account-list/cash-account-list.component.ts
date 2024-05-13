@@ -68,10 +68,9 @@ export class CashAccountListComponent {
   }
 
   private prepareChartData() {
-    // Accumulate total balances for each currency present in cashAccounts
     const currencyTotals = this.cashAccounts.reduce<Record<string, number>>((acc, account) => {
         const balance = account.balanceEquivalent ?? 0;
-        if (balance > 0) { // Ensure only to include accounts with a positive balance
+        if (balance > 0) { 
             if (acc[account.currency]) {
                 acc[account.currency] += balance;
             } else {

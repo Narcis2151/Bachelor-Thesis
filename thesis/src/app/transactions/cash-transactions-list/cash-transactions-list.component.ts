@@ -6,6 +6,7 @@ import {
   signal,
 } from '@angular/core';
 import { formatDate } from '@angular/common';
+import { ChartOptions, ChartType } from 'chart.js';
 import { debounceTime, forkJoin } from 'rxjs';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import {
@@ -13,13 +14,13 @@ import {
   useBrnColumnManager,
 } from '@spartan-ng/ui-table-brain';
 
-import CashTransaction from './cash-transaction.model';
-import Currency from '../../../../shared/account-currency';
 import Category from '../../categories/category-list/category.model';
-import { CashTransactionService } from '../cash-transactions.service';
+import Currency from '../../../../shared/account-currency';
+import CashAccount from '../../accounts/cash-account-list/cash-account.model';
+import CashTransaction from './cash-transaction.model';
 import { CategoryService } from '../../categories/category.service';
 import { CashAccountService } from '../../accounts/cash-account.service';
-import CashAccount from '../../accounts/cash-account-list/cash-account.model';
+import { CashTransactionService } from '../cash-transactions.service';
 
 @Component({
   selector: 'app-cash-transactions-list',
@@ -34,6 +35,17 @@ export class CashTransactionsListComponent {
   protected categories: Category[] = [];
   protected cashAccounts: CashAccount[] = [];
   protected newTransaction!: CashTransaction;
+
+  public pieChartOptions: ChartOptions = {
+    responsive: false,
+  };
+  public pieChartLabelsExpenses: string[] = [];
+  public pieChartLabelsIncome: string[] = [];
+  public pieChartLegend = true;
+  public pieChartPlugins = [];
+  public pieChartDataExpenses: any[] = [];
+  public pieChartDataIncome: any[] = [];
+  public pieChartType: ChartType = 'pie';
 
   ngOnInit() {
     this.loadCashTransactions();
@@ -51,8 +63,63 @@ export class CashTransactionsListComponent {
       this.cashTransactions = transactions;
       this._CashTransactions.set(transactions);
       this.resetNewTransaction();
+      this.prepareChartData();
       this.isLoading = false;
     });
+  }
+
+  protected prepareChartData() {
+    const expenseCategories = this.categories.filter(
+      (c) => c.type === 'expense'
+    );
+    this.pieChartLabelsExpenses = expenseCategories.map((c) => c.name);
+    const expenseTotals = this.cashTransactions.reduce<Record<string, number>>(
+      (trn, transaction) => {
+        const amount = transaction.amount ?? 0;
+        if (amount > 0) {
+          if (trn[transaction.category.name]) {
+            trn[transaction.category.name] += amount;
+          } else {
+            trn[transaction.category.name] = amount;
+          }
+        }
+        return trn;
+      },
+      {}
+    );
+    this.pieChartDataExpenses = [
+      {
+        data: this.pieChartLabelsExpenses.map(
+          (label) => expenseTotals[label] ?? 0
+        ),
+      },
+    ];
+
+    const incomeCategories = this.categories.filter((c) => c.type === 'income');
+    this.pieChartLabelsIncome = incomeCategories.map((c) => c.name);
+    // console.log(this.cashTransactions);
+    const incomeTotals = this.cashTransactions.reduce<Record<string, number>>(
+      (trn, transaction) => {
+        const amount = transaction.amount ?? 0;
+        if (amount > 0) {
+          if (trn[transaction.category.name]) {
+            trn[transaction.category.name] += amount;
+          } else {
+            trn[transaction.category.name] = amount;
+          }
+        }
+        return trn;
+      },
+      {}
+    );
+    this.pieChartDataIncome = [
+      {
+        data: this.pieChartLabelsIncome.map(
+          (label) => incomeTotals[label] ?? 0
+        ),
+      },
+    ];
+    console.log(incomeTotals);
   }
 
   protected updateTransactionCategory(category: Category) {
