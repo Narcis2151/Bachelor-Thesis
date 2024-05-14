@@ -1,8 +1,13 @@
-<hlm-spinner *ngIf="isLoading; else CashTransactionsTemplate" />
+<div
+  class="flex w-full h-full"
+  *ngIf="isLoading; else CashTransactionsTemplate"
+>
+  <hlm-spinner class="justify-center align-middle"></hlm-spinner>
+</div>
 
 <ng-template #CashTransactionsTemplate>
   <div class="flex flex-col md:flex-row justify-between gap-4">
-    <div class="md:w-8/12 w-full">
+    <div class="md:w-8/12 w-full h-6/12">
       <div class="flex flex-col justify-between gap-4 sm:flex-row">
         <input
           hlmInput
@@ -214,10 +219,13 @@
         </div>
       </div>
     </div>
-    <div class="md:w-4/12 w-full grid grid-flow-row">
-      <div class="flex justify-center align-middle grid-cols-4">
+    <!-- Only show pie charts on large screens -->
+    <div
+      class="hidden md:flex md:w-4/12 flex-col justify-center items-center gap-4 h-6/12"
+    >
+      <div class="hidden md:flex justify-center w-8/12 h-4/12">
         <canvas
-          class="justify-center align-middle"
+          class="justify-center text-center pie-chart w-10/12 h-4/12"
           baseChart
           [type]="pieChartType"
           [datasets]="pieChartDataExpenses"
@@ -225,12 +233,11 @@
           [plugins]="pieChartPlugins"
           [legend]="pieChartLegend"
           [options]="pieChartOptions"
-        >
-        </canvas>
+        ></canvas>
       </div>
-      <div class="justify-center flex align-middle grid-cols-4">
+      <div class="hidden md:flex justify-center w-8/12 h-4/12 text-end">
         <canvas
-          class="justify-center align-middle"
+          class="justify-center text-center pie-chart w-10/12"
           baseChart
           [type]="pieChartType"
           [datasets]="pieChartDataIncome"
@@ -238,9 +245,22 @@
           [plugins]="pieChartPlugins"
           [legend]="pieChartLegend"
           [options]="pieChartOptions"
-        >
-        </canvas>
+        ></canvas>
       </div>
+    </div>
+  </div>
+  <div class="md:w-8/12 w-full mt-4 h-6/12">
+    <div class="justify-center flex grid-cols-4">
+      <canvas
+        class="justify-center line-chart w-10/12 h-6/12"
+        baseChart
+        [type]="lineChartType"
+        [datasets]="lineChartData"
+        [labels]="lineChartLabels"
+        [plugins]="lineChartPlugins"
+        [legend]="lineChartLegend"
+        [options]="lineChartOptions"
+      ></canvas>
     </div>
   </div>
 </ng-template>
