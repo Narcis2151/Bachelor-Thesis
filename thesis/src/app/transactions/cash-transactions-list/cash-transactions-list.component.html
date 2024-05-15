@@ -1,7 +1,4 @@
-<div
-  class="flex w-full h-full"
-  *ngIf="isLoading; else CashTransactionsTemplate"
->
+<div class="flex w-full h-full" *ngIf="isLoading; else CashTransactionsTemplate">
   <hlm-spinner class="justify-center align-middle"></hlm-spinner>
 </div>
 
@@ -468,7 +465,7 @@
                 size="sm"
                 name="lucideWallet"
               />
-              {{ newTransaction.account.name }}
+              {{ selectedCashTransaction.account.name }}
             </span>
           </hlm-select-trigger>
           <hlm-select-content>

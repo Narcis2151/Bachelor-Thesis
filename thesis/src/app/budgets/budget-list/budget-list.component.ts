@@ -61,8 +61,8 @@ export class BudgetListComponent {
     this.budgetsService.addBudget(this.newBudget).subscribe((budget) => {
       this.budgets.push(budget);
       this._Budgets.set([
-        ...this.budgets.sort(
-          (a, b) => Number(b.resetDate) - Number(a.resetDate)
+        ...this.budgets.sort((a, b) =>
+          String(a.resetDate).localeCompare(String(b.resetDate))
         ),
       ]);
       this.resetNewBudget();
@@ -122,7 +122,7 @@ export class BudgetListComponent {
             this.budgets.splice(index, 1);
             this._Budgets.set([
               ...this.budgets.sort(
-                (a, b) => Number(b.resetDate) - Number(a.resetDate)
+                (a, b) => String(a.resetDate).localeCompare(String(b.resetDate))
               ),
             ]);
           }
@@ -175,8 +175,8 @@ export class BudgetListComponent {
     return [...Budgets]
       .sort(
         (p1, p2) =>
-          (sort === 'ASC' ? 1 : -1) *
-          (Number(p1.resetDate) - Number(p2.resetDate))
+          String(p1.resetDate).localeCompare(String(p2.resetDate)) *
+          (sort === 'ASC' ? 1 : -1)
       )
       .slice(0, this._pageSize());
   });

@@ -47,6 +47,7 @@ export class BudgetsService {
   // Update a budget's details
   updateBudget(budget: Budget): Observable<Budget> {
     return this.http.patch<Budget>(`${this.apiUrl}/${budget._id}`, {
+      startDate: budget.startDate,
       amountAvailable: budget.amountAvailable,
       currency: budget.currency,
     });
