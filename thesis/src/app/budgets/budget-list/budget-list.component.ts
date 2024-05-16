@@ -5,17 +5,17 @@ import {
   effect,
   signal,
 } from '@angular/core';
-import { debounceTime, forkJoin } from 'rxjs';
+import { formatDate } from '@angular/common';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { debounceTime, forkJoin } from 'rxjs';
 import { useBrnColumnManager } from '@spartan-ng/ui-table-brain';
 
 import Budget from './budget.model';
 import Currency from '../../../../shared/account-currency';
 import Category from '../../categories/category-list/category.model';
-import categories from '../../categories/category-list/categories-list';
 import { BudgetsService } from '../budgets.service';
 import { CategoryService } from '../../categories/category.service';
-import { formatDate } from '@angular/common';
+import { ChartOptions, ChartType } from 'chart.js';
 
 @Component({
   selector: 'app-budget-list',
@@ -24,12 +24,31 @@ import { formatDate } from '@angular/common';
 })
 export class BudgetListComponent {
   protected isLoading = false;
+  protected totalBudgetedAmount = 0;
   protected budgets: Budget[] = [];
   protected selectedBudget!: Budget;
   protected newBudget!: Budget;
   protected currencies = Object.values(Currency);
   protected categories: Category[] = [];
   protected availableCategories: Category[] = [];
+
+  public pieChartOptions: ChartOptions = {
+    responsive: false,
+  };
+  public pieChartLabels: string[] = [];
+  public pieChartLegend = true;
+  public pieChartPlugins = [];
+  public pieChartData: any[] = [];
+  public pieChartType: ChartType = 'pie';
+
+  public barChartOptions: ChartOptions = {
+    responsive: false,
+  };
+  public barChartLabels: string[] = [];
+  public barChartLegend = true;
+  public barChartPlugins = [];
+  public barChartData: any[] = [];
+  public barChartType: ChartType = 'bar';
 
   ngOnInit() {
     this.loadBudgets();
@@ -42,13 +61,92 @@ export class BudgetListComponent {
       availableCategories: this.budgetsService.getAvailableCategories(),
       budgets: this.budgetsService.getBudgets(),
     }).subscribe(({ categories, availableCategories, budgets }) => {
+      this.isLoading = false;
       this.categories = categories.categories;
       this.availableCategories = availableCategories;
-      this.budgets = budgets;
-      this._Budgets.set(budgets);
+      this.budgets = budgets.budgets;
+      this.totalBudgetedAmount = budgets.totalBudgetedAmount;
+      this._Budgets.set(this.budgets);
       this.resetNewBudget();
-      this.isLoading = false;
+      this.preparePieChartData();
+      this.prepareBarChartData();
     });
+  }
+
+  protected preparePieChartData() {
+    const budgetedCategories = this.categories.filter((c) =>
+      this.budgets.find((b) => b.category._id === c._id)
+    );
+    this.pieChartLabels = budgetedCategories.map((c) => c.name);
+    this.pieChartLabels.push('Unbudgeted');
+
+    const budgetedTotals = this.budgets.reduce<Record<string, number>>(
+      (bgt, budget) => {
+        const budgetedAmount = budget.amountAvailableEquivalent ?? 0;
+        if (budgetedAmount > 0) {
+          if (bgt[budget.category.name]) {
+            bgt[budget.category.name] += budgetedAmount;
+          } else {
+            bgt[budget.category.name] = budgetedAmount;
+          }
+        }
+        return bgt;
+      },
+      {}
+    );
+    const budgetedTotalsSum = Object.values(budgetedTotals).reduce(
+      (sum, amount) => sum + amount,
+      0
+    );
+    budgetedTotals['Unbudgeted'] = this.totalBudgetedAmount - budgetedTotalsSum;
+
+    this.pieChartLabels = this.pieChartLabels.filter(
+      (label) => budgetedTotals[label]
+    );
+    this.pieChartData = [
+      {
+        data: this.pieChartLabels.map((label) => budgetedTotals[label] ?? 0),
+      },
+    ];
+  }
+
+  protected prepareBarChartData() {
+    const today = new Date();
+    const currentMonth = today.getMonth();
+    const currentYear = today.getFullYear();
+    const last6Months = Array.from({ length: 6 }, (_, i) => {
+      const month = currentMonth - i;
+      const year = month < 0 ? currentYear - 1 : currentYear;
+      return { month, year };
+    });
+
+    this.barChartLabels = last6Months.map(
+      ({ month, year }) => `${month + 1}/${year}`
+    );
+
+    const spentAmounts = last6Months.map(({ month, year }) => {
+      const startDate = new Date(year, month, 1);
+      const endDate = new Date(year, month + 1, 0);
+      const monthBudgets = this.budgets.filter(
+        (budget) =>
+          new Date(budget.resetDate) >= startDate &&
+          new Date(budget.resetDate) <= endDate
+      );
+      return monthBudgets.reduce(
+        (sum, budget) =>
+          sum + budget.userSpentAmount + budget.partnerSpentAmount,
+        0
+      );
+    });
+
+    this.barChartData = [
+      {
+        data: spentAmounts,
+      },
+    ];
+
+    this.barChartLabels.reverse();
+    this.barChartData[0].data.reverse();
   }
 
   protected getAvailableCategories() {
@@ -121,8 +219,8 @@ export class BudgetListComponent {
           if (index > -1) {
             this.budgets.splice(index, 1);
             this._Budgets.set([
-              ...this.budgets.sort(
-                (a, b) => String(a.resetDate).localeCompare(String(b.resetDate))
+              ...this.budgets.sort((a, b) =>
+                String(a.resetDate).localeCompare(String(b.resetDate))
               ),
             ]);
           }
@@ -158,9 +256,10 @@ export class BudgetListComponent {
     if (filter && filter.length > 0) {
       return this._Budgets().filter(
         (u) =>
-          u.category.name.toLowerCase().includes(filter) ||
-          u.amountAvailable.toString().includes(filter) ||
-          u.currency.toString().includes(filter)
+          u.active &&
+          (u.category.name.toLowerCase().includes(filter) ||
+            u.amountAvailable.toString().includes(filter) ||
+            u.currency.toString().includes(filter))
       );
     }
     return this._Budgets();

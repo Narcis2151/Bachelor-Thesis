@@ -14,6 +14,11 @@ export interface CreateBudgetDto {
   startDate: Date | string;
 }
 
+interface BudgetsResponse {
+  totalBudgetedAmount: number;
+  budgets: Budget[];
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -23,18 +28,16 @@ export class BudgetsService {
   constructor(private http: HttpClient) {}
 
   // Fetch all cash transactions
-  getBudgets(): Observable<Budget[]> {
-    return this.http.get<Budget[]>(this.apiUrl);
+  getBudgets(): Observable<BudgetsResponse> {
+    return this.http.get<BudgetsResponse>(this.apiUrl);
   }
 
   getAvailableCategories(): Observable<Category[]> {
-    return this.http.get<Category[]>(`${this.apiUrl}/categories`)
+    return this.http.get<Category[]>(`${this.apiUrl}/categories`);
   }
 
   // Add a new cash budget
-  addBudget(
-    budget: Budget
-  ): Observable<Budget> {
+  addBudget(budget: Budget): Observable<Budget> {
     const newBudget: CreateBudgetDto = {
       category: budget.category._id,
       amountAvailable: budget.amountAvailable,

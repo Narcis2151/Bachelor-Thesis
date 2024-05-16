@@ -106,7 +106,7 @@ export class CashTransactionsListComponent {
       },
       {}
     );
-    console.log(expenseTotals);
+    
     this.pieChartLabelsExpenses = this.pieChartLabelsExpenses.filter(
       (label) => expenseTotals[label]
     );
