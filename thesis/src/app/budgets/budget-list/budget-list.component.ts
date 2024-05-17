@@ -33,7 +33,7 @@ export class BudgetListComponent {
   protected availableCategories: Category[] = [];
 
   public pieChartOptions: ChartOptions = {
-    responsive: false,
+    responsive: true,
   };
   public pieChartLabels: string[] = [];
   public pieChartLegend = true;
@@ -42,7 +42,7 @@ export class BudgetListComponent {
   public pieChartType: ChartType = 'pie';
 
   public barChartOptions: ChartOptions = {
-    responsive: false,
+    responsive: true,
   };
   public barChartLabels: string[] = [];
   public barChartLegend = true;
@@ -74,13 +74,15 @@ export class BudgetListComponent {
   }
 
   protected preparePieChartData() {
+    const activeBudgets = this.budgets.filter((b) => b.active);
     const budgetedCategories = this.categories.filter((c) =>
-      this.budgets.find((b) => b.category._id === c._id)
+      activeBudgets.find((b) => b.category._id === c._id)
     );
     this.pieChartLabels = budgetedCategories.map((c) => c.name);
     this.pieChartLabels.push('Unbudgeted');
+    console.log(activeBudgets);
 
-    const budgetedTotals = this.budgets.reduce<Record<string, number>>(
+    const budgetedTotals = activeBudgets.reduce<Record<string, number>>(
       (bgt, budget) => {
         const budgetedAmount = budget.amountAvailableEquivalent ?? 0;
         if (budgetedAmount > 0) {
@@ -115,11 +117,11 @@ export class BudgetListComponent {
     const currentMonth = today.getMonth();
     const currentYear = today.getFullYear();
     const last6Months = Array.from({ length: 6 }, (_, i) => {
-      const month = currentMonth - i;
+      const month = currentMonth - i + 1;
       const year = month < 0 ? currentYear - 1 : currentYear;
       return { month, year };
     });
-
+    console.log(last6Months);
     this.barChartLabels = last6Months.map(
       ({ month, year }) => `${month + 1}/${year}`
     );
@@ -142,6 +144,7 @@ export class BudgetListComponent {
     this.barChartData = [
       {
         data: spentAmounts,
+        label: 'Spent amount',
       },
     ];
 
@@ -165,6 +168,7 @@ export class BudgetListComponent {
       ]);
       this.resetNewBudget();
       this.getAvailableCategories();
+      this.preparePieChartData();
     });
   }
 
@@ -203,6 +207,7 @@ export class BudgetListComponent {
           if (index !== -1) {
             this.budgets[index] = budget;
             this._Budgets.set([...this.budgets]);
+            this.preparePieChartData();
           }
         });
     }
