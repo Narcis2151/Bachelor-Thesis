@@ -1,0 +1,70 @@
+<div class="flex w-full h-full" *ngIf="isLoading; else DashBoardTemplate">
+  <hlm-spinner class="justify-center align-middle"></hlm-spinner>
+</div>
+
+<ng-template #DashBoardTemplate>
+  <div class="flex flex-col md:flex-row justify-between gap-4">
+    <div class="md:w-8/12 w-full h-6/12">
+      <hlm-table
+        class="w-full border-border mt-10 block h-[335px] overflow-visible"
+      >
+        <hlm-trow>
+          <hlm-th class="w-3/12 md:w-2/12 justify-center text-center"
+            >Category</hlm-th
+          >
+          <hlm-th class="max-sm:hidden w-2/12 justify-center text-center"
+            >Posting Date</hlm-th
+          >
+          <hlm-th class="w-5/12 sm:w-3/12 md:w-2/12">Beneficiary</hlm-th>
+          <hlm-th class="max-md:hidden md:w-3/12">Details</hlm-th>
+          <hlm-th class="w-4/12 md:w-3/12 justify-center">Amount</hlm-th>
+        </hlm-trow>
+        @for (cashTransaction of tableCashTransactions; track
+        cashTransaction._id) {
+        <hlm-trow>
+          <hlm-td
+            truncate
+            class="w-3/12 md:w-2/12 j justify-center text-center"
+          >
+            <div
+              class="w-full h-full flex justify-center text-center align-middle"
+            >
+              <hlm-icon
+                class="ml-2"
+                size="lg"
+                [name]="cashTransaction.category.icon"
+              />
+            </div>
+          </hlm-td>
+          <hlm-td class="max-sm:hidden w-2/12 justify-center text-center">
+            {{ cashTransaction.postingDate | date }}
+          </hlm-td>
+          <hlm-td truncate class="w-5/12 sm:w-3/12 md:w-2/12">{{
+            cashTransaction.beneficiary | titlecase
+          }}</hlm-td>
+          <hlm-td class="max-md:hidden md:w-3/12">{{
+            cashTransaction.details
+          }}</hlm-td>
+          <hlm-td
+            class="w-4/12 md:w-3/12 justify-center font-medium tabular-nums"
+            [ngClass]="
+              cashTransaction.type === 'income' ? 'text-green-400' : ''
+            "
+            >{{ cashTransaction.amount | number : "1.2-2" }}
+            {{ cashTransaction.currency }}</hlm-td
+          >
+        </hlm-trow>
+        }
+        <hlm-trow
+          class="bg-muted/50 hover:bg-muted flex items-center justify-center"
+        >
+          <hlm-td class="flex items-center justify-center" colspan="4">
+            <a class="text-primary hover:underline" href="/transactions"
+              >View More</a
+            >
+          </hlm-td>
+        </hlm-trow>
+      </hlm-table>
+    </div>
+  </div>
+</ng-template>

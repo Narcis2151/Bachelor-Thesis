@@ -7,6 +7,7 @@ import { TransactionsPageComponent } from './transactions/pages/transactions-pag
 import { BudgetsPageComponent } from './budgets/pages/budgets-page/budgets-page.component';
 import { PaymentsPageComponent } from './payments/pages/payments-page/payments-page.component';
 import { AuthGuard } from './auth.guard';
+import { DashboardPageComponent } from './dashboard/pages/dashboard-page/dashboard-page.component';
 
 const routes: Routes = [
   { path: 'auth', component: AuthComponent },
@@ -33,6 +34,11 @@ const routes: Routes = [
   {
     path: 'payments',
     component: PaymentsPageComponent,
+    canActivate: [AuthGuard],
+  },
+  {
+    path: 'dashboard',
+    component: DashboardPageComponent,
     canActivate: [AuthGuard],
   },
   { path: '**', redirectTo: '/auth', pathMatch: 'full' },

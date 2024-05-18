@@ -28,8 +28,18 @@ export class CashTransactionService {
   constructor(private http: HttpClient) {}
 
   // Fetch all cash transactions
-  getTransactions(): Observable<CashTransaction[]> {
-    return this.http.get<CashTransaction[]>(this.apiUrl);
+  getTransactions(
+    page?: number,
+    limit?: number,
+    categoryId?: string
+  ): Observable<CashTransaction[]> {
+    return this.http.get<CashTransaction[]>(this.apiUrl, {
+      params: {
+        page: page !== undefined ? page.toString() : [],
+        limit: limit !== undefined ? limit.toString() : [],
+        categoryId: categoryId !== undefined ? categoryId : [],
+      },
+    });
   }
 
   // Add a new cash transaction
@@ -50,7 +60,9 @@ export class CashTransactionService {
   }
 
   // Update a transaction's details
-  updateTransaction(cashTransaction: CashTransaction): Observable<CashTransaction> {
+  updateTransaction(
+    cashTransaction: CashTransaction
+  ): Observable<CashTransaction> {
     return this.http.patch<CashTransaction>(
       `${this.apiUrl}/${cashTransaction._id}`,
       {
