@@ -52,7 +52,6 @@ export class PaymentsListComponent {
     currency: Currency.RON,
     recurrence: 'monthly',
     recurrenceStart: new Date(),
-    recurrenceEnd: new Date(),
     account: this.cashAccounts[0],
     category: this.categories[0],
   };
@@ -169,7 +168,6 @@ export class PaymentsListComponent {
       currency: Currency.RON,
       recurrence: 'daily',
       recurrenceStart: new Date(),
-      recurrenceEnd: new Date(),
       account: this.cashAccounts[0],
       category: this.categories[0],
     };
@@ -191,14 +189,6 @@ export class PaymentsListComponent {
       'yyyy-MM-dd',
       'en-US'
     );
-    this.selectedCashRecurrentPayment.recurrenceEnd = this
-      .selectedCashRecurrentPayment.recurrenceEnd
-      ? formatDate(
-          new Date(this.selectedCashRecurrentPayment.recurrenceEnd),
-          'yyyy-MM-dd',
-          'en-US'
-        )
-      : '';
   }
 
   protected saveCashFuturePayment() {

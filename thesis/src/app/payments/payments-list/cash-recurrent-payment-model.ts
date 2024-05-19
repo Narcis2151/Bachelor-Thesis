@@ -10,7 +10,6 @@ type CashRecurrentPayment = {
   currency: Currency;
   recurrence: 'daily' | 'weekly' | 'monthly';
   recurrenceStart: Date | string;
-  recurrenceEnd: Date | string;
   account: CashAccount;
   category: Category;
   isSelected?: boolean;
