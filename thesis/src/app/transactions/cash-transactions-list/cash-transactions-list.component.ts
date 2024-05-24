@@ -52,6 +52,8 @@ export class CashTransactionsListComponent {
   public lineChartPlugins = [];
   public lineChartOptions: ChartOptions = {
     responsive: true,
+    maintainAspectRatio: false,
+    aspectRatio: 4,
   };
   public lineChartColors: any[] = [
     {
@@ -298,6 +300,7 @@ export class CashTransactionsListComponent {
     postingDate: { visible: true, label: 'Posting Date' },
     beneficiary: { visible: true, label: 'Beneficiary' },
     details: { visible: true, label: 'Details' },
+    account: { visible: true, label: 'Account' },
     amount: { visible: true, label: 'Amount' },
     currency: { visible: false, label: 'Currency' },
     type: { visible: false },

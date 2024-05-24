@@ -1,10 +1,13 @@
-<div class="flex w-full h-full" *ngIf="isLoading; else CashTransactionsTemplate">
+<div
+  class="flex w-full h-full"
+  *ngIf="isLoading; else CashTransactionsTemplate"
+>
   <hlm-spinner class="justify-center align-middle"></hlm-spinner>
 </div>
 
 <ng-template #CashTransactionsTemplate>
-  <div class="flex flex-col md:flex-row justify-between gap-4">
-    <div class="md:w-8/12 w-full h-6/12">
+  <div class="flex flex-col h-full md:grid md:grid-cols-3 md:gap-4 w-full">
+    <div class="md:col-span-2 flex flex-col h-full">
       <div class="flex flex-col justify-between gap-4 sm:flex-row">
         <input
           hlmInput
@@ -25,16 +28,15 @@
 
       <brn-table
         hlm
-        class="w-full border-border mt-10 block h-[335px] overflow-auto"
+        class="w-full border-border mt-4 flex-grow overflow-auto"
         [dataSource]="_filteredSortedPaginatedCashTransactions()"
         [displayedColumns]="_allDisplayedColumns()"
         [trackBy]="_trackBy"
       >
-        <brn-column-def name="category" class="w-3/12 md:w-2/12 justify-center">
-          <hlm-th *brnHeaderDef truncate class="text-center">Category</hlm-th>
+        <brn-column-def name="category" class="w-2/12 xl:w-1/12 justify-center">
+          <hlm-th *brnHeaderDef class="text-center">Category</hlm-th>
           <hlm-td
             *brnCellDef="let element"
-            truncate
             [brnMenuTriggerFor]="menu"
             (click)="selectTransaction(element)"
             class="justify-center text-center"
@@ -70,9 +72,9 @@
 
         <brn-column-def
           name="postingDate"
-          class="max-sm:hidden w-2/12 justify-center text-center"
+          class="max-sm:hidden max-md:block max-md:w-2/12 max-xl:hidden xl:w-2/12 justify-center text-center"
         >
-          <hlm-th *brnHeaderDef>
+          <hlm-th *brnHeaderDef truncate>
             <button
               hlmBtn
               class="p-0"
@@ -89,23 +91,34 @@
           </hlm-td>
         </brn-column-def>
 
-        <brn-column-def name="beneficiary" class="w-5/12 sm:w-3/12 md:w-2/12">
-          <hlm-th *brnHeaderDef truncate class="collapse"
-            >Beneficiary/Sender</hlm-th
-          >
-          <hlm-td truncate *brnCellDef="let element">
+        <brn-column-def
+          name="beneficiary"
+          class="w-5/12 sm:w-3/12 xl:w-2/12 justify-start text-start"
+        >
+          <hlm-th *brnHeaderDef truncate>Beneficiary</hlm-th>
+          <hlm-td *brnCellDef="let element" truncate>
             {{ element.beneficiary | titlecase }}
           </hlm-td>
         </brn-column-def>
 
-        <brn-column-def name="details" class="max-md:hidden md:w-3/12">
+        <brn-column-def name="details" class="max-lg:hidden lg:w-2/12">
           <hlm-th *brnHeaderDef>Details</hlm-th>
           <hlm-td *brnCellDef="let element">
             {{ element.details | titlecase }}
           </hlm-td>
         </brn-column-def>
 
-        <brn-column-def name="amount" class="w-3/12 md:w-2/12 justify-center">
+        <brn-column-def name="account" class="w-2/12 md:w-3/12 lg:w-2/12">
+          <hlm-th *brnHeaderDef class="text-start">Account</hlm-th>
+          <hlm-td *brnCellDef="let element">
+            {{ element.account.name | titlecase }}
+          </hlm-td>
+        </brn-column-def>
+
+        <brn-column-def
+          name="amount"
+          class="w-2/12 md:w-3/12 lg:w-2/12 justify-start text-start"
+        >
           <hlm-th *brnHeaderDef>Amount</hlm-th>
           <hlm-td
             class="text-start font-medium tabular-nums"
@@ -214,13 +227,23 @@
           </div>
         </div>
       </div>
-    </div>
-    <div
-      class="hidden md:flex md:w-4/12 flex-col justify-center items-center gap-4 h-6/12"
-    >
-      <div class="hidden md:flex justify-center w-8/12 h-4/12">
+
+      <div class="w-full border-border mt-4 overflow-auto">
         <canvas
-          class="justify-center text-center pie-chart w-10/12 h-4/12"
+          class="w-full min-h-72 overflow-auto"
+          baseChart
+          [type]="lineChartType"
+          [datasets]="lineChartData"
+          [labels]="lineChartLabels"
+          [plugins]="lineChartPlugins"
+          [legend]="lineChartLegend"
+          [options]="lineChartOptions"
+        ></canvas>
+      </div>
+    </div>
+    <div class="hidden md:flex flex-col justify-between gap-4 md:col-span-1">
+      <div class="w-full h-6/12">
+        <canvas
           baseChart
           [type]="pieChartType"
           [datasets]="pieChartDataExpenses"
@@ -230,9 +253,8 @@
           [options]="pieChartOptions"
         ></canvas>
       </div>
-      <div class="hidden md:flex justify-center w-8/12 h-4/12 text-end">
+      <div class="w-full h-6/12">
         <canvas
-          class="justify-center text-center pie-chart w-10/12"
           baseChart
           [type]="pieChartType"
           [datasets]="pieChartDataIncome"
@@ -242,20 +264,6 @@
           [options]="pieChartOptions"
         ></canvas>
       </div>
-    </div>
-  </div>
-  <div class="md:w-8/12 w-full mt-4 h-6/12">
-    <div class="justify-center flex grid-cols-4">
-      <canvas
-        class="justify-center line-chart w-10/12 h-6/12"
-        baseChart
-        [type]="lineChartType"
-        [datasets]="lineChartData"
-        [labels]="lineChartLabels"
-        [plugins]="lineChartPlugins"
-        [legend]="lineChartLegend"
-        [options]="lineChartOptions"
-      ></canvas>
     </div>
   </div>
 </ng-template>
