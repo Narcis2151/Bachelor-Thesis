@@ -12,6 +12,7 @@ type CashTransaction = {
   postingDate: Date | string;  
   category: Category;
   account: CashAccount;
+  amountEquivalent?: number;
 };
 
 export default CashTransaction;

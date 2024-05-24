@@ -1,209 +1,281 @@
-<div class="flex flex-col justify-between gap-4 sm:flex-row">
-  <input
-    hlmInput
-    class="w-full md:w-80"
-    placeholder="Filter transactions..."
-    [ngModel]="_transactionsFilter()"
-    (ngModelChange)="_rawFilterInput.set($event)"
-  />
-  <button
-    hlmBtn
-    brnDialogTrigger
-    [brnDialogTriggerFor]="newTransactionDialog"
-    class="justify-center rounded-sm text-white hover:text-gray-400"
-  >
-    New
-  </button>
+<div
+  class="flex w-full h-full"
+  *ngIf="isLoading; else CashTransactionsTemplate"
+>
+  <hlm-spinner class="justify-center align-middle"></hlm-spinner>
 </div>
 
-<brn-table
-  hlm
-  stickyHeader
-  class="w-full border-border mt-10 block h-[335px] overflow-auto"
-  [dataSource]="_filteredSortedPaginatedCashTransactions()"
-  [displayedColumns]="_allDisplayedColumns()"
-  [trackBy]="_trackBy"
->
-  <brn-column-def name="category" class="w-3/12 md:w-2/12 justify-center">
-    <hlm-th *brnHeaderDef truncate class="text-center">Category</hlm-th>
-    <hlm-td
-      *brnCellDef="let element"
-      truncate
-      [brnMenuTriggerFor]="menu"
-      (click)="selectTransaction(element)"
-      class="justify-center text-center"
-    >
-      <div class="w-full h-full flex justify-center text-center align-middle">
-        <hlm-icon class="ml-2" size="lg" [name]="element.category.icon" />
+<ng-template #CashTransactionsTemplate>
+  <div class="flex flex-col h-full md:grid md:grid-cols-3 md:gap-4 w-full">
+    <div class="md:col-span-2 flex flex-col h-full">
+      <div class="flex flex-col justify-between gap-4 sm:flex-row">
+        <input
+          hlmInput
+          class="w-full md:w-80"
+          placeholder="Filter transactions..."
+          [ngModel]="_transactionsFilter()"
+          (ngModelChange)="_rawFilterInput.set($event)"
+        />
+        <button
+          hlmBtn
+          brnDialogTrigger
+          [brnDialogTriggerFor]="newTransactionDialog"
+          class="justify-center rounded-sm text-white hover:text-gray-400"
+        >
+          New
+        </button>
       </div>
 
-      <ng-template #menu>
-        <hlm-menu class="w-56">
-          <hlm-menu-label>Category</hlm-menu-label>
-          <hlm-menu-group>
-            @for (category of categories; track category) {
-            <button
-              hlmMenuItemRadio
-              [checked]="category.name === element.category.name"
-              (triggered)="updateTransactionCategory(category)"
+      <brn-table
+        hlm
+        class="w-full border-border mt-4 flex-grow overflow-auto"
+        [dataSource]="_filteredSortedPaginatedCashTransactions()"
+        [displayedColumns]="_allDisplayedColumns()"
+        [trackBy]="_trackBy"
+      >
+        <brn-column-def name="category" class="w-2/12 xl:w-1/12 justify-center">
+          <hlm-th *brnHeaderDef class="text-center">Category</hlm-th>
+          <hlm-td
+            *brnCellDef="let element"
+            [brnMenuTriggerFor]="menu"
+            (click)="selectTransaction(element)"
+            class="justify-center text-center"
+          >
+            <div
+              class="w-full h-full flex justify-center text-center align-middle"
             >
-              <hlm-menu-item-radio />
-              <span class="flex align-middle">
-                <hlm-icon class="mr-2" size="sm" [name]="category.icon" />
-                {{ category.name }}
-              </span>
-            </button>
-            }
-          </hlm-menu-group>
-        </hlm-menu>
-      </ng-template>
-    </hlm-td>
-  </brn-column-def>
+              <hlm-icon class="ml-2" size="lg" [name]="element.category.icon" />
+            </div>
 
-  <brn-column-def
-    name="postingDate"
-    class="max-sm:hidden w-2/12 justify-center text-center"
-  >
-    <hlm-th *brnHeaderDef>
-      <button
-        hlmBtn
-        class="p-0"
-        size="sm"
-        variant="ghost"
-        (click)="handleDateSortChange()"
-      >
-        Date
-        <hlm-icon class="ml-3" size="sm" name="lucideArrowUpDown" />
-      </button>
-    </hlm-th>
-    <hlm-td *brnCellDef="let element">
-      {{ element.postingDate | date }}
-    </hlm-td>
-  </brn-column-def>
+            <ng-template #menu>
+              <hlm-menu class="w-56">
+                <hlm-menu-label>Category</hlm-menu-label>
+                <hlm-menu-group>
+                  @for (category of categories; track category) {
+                  <button
+                    hlmMenuItemRadio
+                    [checked]="category.name === element.category.name"
+                    (triggered)="updateTransactionCategory(category)"
+                  >
+                    <hlm-menu-item-radio />
+                    <span class="flex align-middle">
+                      <hlm-icon class="mr-2" size="sm" [name]="category.icon" />
+                      {{ category.name }}
+                    </span>
+                  </button>
+                  }
+                </hlm-menu-group>
+              </hlm-menu>
+            </ng-template>
+          </hlm-td>
+        </brn-column-def>
 
-  <brn-column-def name="beneficiary" class="w-5/12 sm:w-3/12 md:w-2/12">
-    <hlm-th *brnHeaderDef truncate class="collapse">Beneficiary/Sender</hlm-th>
-    <hlm-td truncate *brnCellDef="let element">
-      {{ element.beneficiary | titlecase }}
-    </hlm-td>
-  </brn-column-def>
-
-  <brn-column-def name="details" class="max-md:hidden md:w-3/12">
-    <hlm-th *brnHeaderDef>Details</hlm-th>
-    <hlm-td *brnCellDef="let element">
-      {{ element.details | titlecase }}
-    </hlm-td>
-  </brn-column-def>
-
-  <brn-column-def name="amount" class="w-3/12 md:w-2/12 justify-center">
-    <hlm-th *brnHeaderDef>Amount</hlm-th>
-    <hlm-td
-      class="text-start font-medium tabular-nums"
-      *brnCellDef="let element"
-      [ngClass]="element.type === 'income' ? 'text-green-400' : ''"
-    >
-      {{ element.amount | number : "1.2-2" }} {{ element.currency }}
-    </hlm-td>
-  </brn-column-def>
-
-  <brn-column-def name="actions" class="w-1/12 justify-center">
-    <hlm-th *brnHeaderDef></hlm-th>
-    <hlm-td *brnCellDef="let element">
-      <button
-        hlmBtn
-        variant="ghost"
-        class="h-6 w-6 p-0.5"
-        align="end"
-        [brnMenuTriggerFor]="menu"
-      >
-        <hlm-icon class="h-4 w-4" name="lucideMoreHorizontal" />
-      </button>
-
-      <ng-template #menu>
-        <hlm-menu>
-          <hlm-menu-label>Actions</hlm-menu-label>
-          <hlm-menu-separator />
-          <hlm-menu-group>
+        <brn-column-def
+          name="postingDate"
+          class="max-sm:hidden max-md:block max-md:w-2/12 max-xl:hidden xl:w-2/12 justify-center text-center"
+        >
+          <hlm-th *brnHeaderDef truncate>
             <button
-              brnDialogTrigger
-              [brnDialogTriggerFor]="editDialog"
-              (click)="selectTransaction(element)"
+              hlmBtn
+              class="p-0"
+              size="sm"
+              variant="ghost"
+              (click)="handleDateSortChange()"
             >
-              Edit
+              Date
+              <hlm-icon class="ml-3" size="sm" name="lucideArrowUpDown" />
             </button>
-          </hlm-menu-group>
-          <hlm-menu-separator />
-          <hlm-menu-group>
+          </hlm-th>
+          <hlm-td *brnCellDef="let element">
+            {{ element.postingDate | date }}
+          </hlm-td>
+        </brn-column-def>
+
+        <brn-column-def
+          name="beneficiary"
+          class="w-5/12 sm:w-3/12 xl:w-2/12 justify-start text-start"
+        >
+          <hlm-th *brnHeaderDef truncate>Beneficiary</hlm-th>
+          <hlm-td *brnCellDef="let element" truncate>
+            {{ element.beneficiary | titlecase }}
+          </hlm-td>
+        </brn-column-def>
+
+        <brn-column-def name="details" class="max-lg:hidden lg:w-2/12">
+          <hlm-th *brnHeaderDef>Details</hlm-th>
+          <hlm-td *brnCellDef="let element">
+            {{ element.details | titlecase }}
+          </hlm-td>
+        </brn-column-def>
+
+        <brn-column-def name="account" class="w-2/12 md:w-3/12 lg:w-2/12">
+          <hlm-th *brnHeaderDef class="text-start">Account</hlm-th>
+          <hlm-td *brnCellDef="let element">
+            <span class="flex align-middle">
+              <brn-hover-card>
+                <hlm-icon class="ml-0 pl-0" size="lg" name="lucideWallet" brnHoverCardTrigger/>
+                <hlm-hover-card-content *brnHoverCardContent class="w-80">
+                  <h3 class="text-md">Accounts Name: {{ element.account.name }}</h3>
+                  <p class="text-md">Account Type: Cash</p>
+                </hlm-hover-card-content>
+              </brn-hover-card>
+              
+            </span>
+          </hlm-td>
+        </brn-column-def>
+
+        <brn-column-def
+          name="amount"
+          class="w-2/12 md:w-3/12 lg:w-2/12 justify-start text-start"
+        >
+          <hlm-th *brnHeaderDef>Amount</hlm-th>
+          <hlm-td
+            class="text-start font-medium tabular-nums"
+            *brnCellDef="let element"
+            [ngClass]="element.type === 'income' ? 'text-green-400' : ''"
+          >
+            {{ element.amount | number : "1.2-2" }} {{ element.currency }}
+          </hlm-td>
+        </brn-column-def>
+
+        <brn-column-def name="actions" class="w-1/12 justify-center">
+          <hlm-th *brnHeaderDef></hlm-th>
+          <hlm-td *brnCellDef="let element">
             <button
-              brnDialogTrigger
-              [brnDialogTriggerFor]="deleteDialog"
-              (click)="selectTransaction(element)"
+              hlmBtn
+              variant="ghost"
+              class="h-6 w-6 p-0.5"
+              align="end"
+              [brnMenuTriggerFor]="menu"
             >
-              Delete
+              <hlm-icon class="h-4 w-4" name="lucideMoreHorizontal" />
             </button>
-          </hlm-menu-group>
-        </hlm-menu>
-      </ng-template>
-    </hlm-td>
-  </brn-column-def>
 
-  <div
-    class="text-muted-foreground flex items-center justify-center p-20"
-    brnNoDataRow
-  >
-    No data
-  </div>
-</brn-table>
+            <ng-template #menu>
+              <hlm-menu>
+                <hlm-menu-label>Actions</hlm-menu-label>
+                <hlm-menu-separator />
+                <hlm-menu-group>
+                  <button
+                    brnDialogTrigger
+                    [brnDialogTriggerFor]="editDialog"
+                    (click)="selectTransaction(element)"
+                  >
+                    Edit
+                  </button>
+                </hlm-menu-group>
+                <hlm-menu-separator />
+                <hlm-menu-group>
+                  <button
+                    brnDialogTrigger
+                    [brnDialogTriggerFor]="deleteDialog"
+                    (click)="selectTransaction(element)"
+                  >
+                    Delete
+                  </button>
+                </hlm-menu-group>
+              </hlm-menu>
+            </ng-template>
+          </hlm-td>
+        </brn-column-def>
 
-<div
-  class="mt-4 flex flex-col justify-between sm:flex-row sm:items-center"
-  *brnPaginator="
-    let ctx;
-    totalElements: _totalElements();
-    pageSize: _pageSize();
-    onStateChange: _onStateChange
-  "
->
-  <div class="mt-2 flex sm:mt-0">
-    <brn-select
-      class="inline-block"
-      placeholder="{{ _availablePageSizes[0] }}"
-      [(ngModel)]="_pageSize"
-    >
-      <hlm-select-trigger class="w-15 mr-1 inline-flex h-9">
-        <hlm-select-value />
-      </hlm-select-trigger>
-      <hlm-select-content>
-        @for (size of _availablePageSizes; track size) {
-        <hlm-option [value]="size">
-          {{ size === 10000 ? "All" : size }}
-        </hlm-option>
-        }
-      </hlm-select-content>
-    </brn-select>
+        <div
+          class="text-muted-foreground flex items-center justify-center p-20"
+          brnNoDataRow
+        >
+          No data
+        </div>
+      </brn-table>
 
-    <div class="flex space-x-1">
-      <button
-        size="sm"
-        variant="outline"
-        hlmBtn
-        [disabled]="!ctx.decrementable()"
-        (click)="ctx.decrement()"
+      <div
+        class="mt-4 flex flex-col justify-between sm:flex-row sm:items-center"
+        *brnPaginator="
+          let ctx;
+          totalElements: _totalElements();
+          pageSize: _pageSize();
+          onStateChange: _onStateChange
+        "
       >
-        Previous
-      </button>
-      <button
-        size="sm"
-        variant="outline"
-        hlmBtn
-        [disabled]="!ctx.incrementable()"
-        (click)="ctx.increment()"
-      >
-        Next
-      </button>
+        <div class="mt-2 flex sm:mt-0">
+          <brn-select
+            class="inline-block"
+            placeholder="{{ _availablePageSizes[0] }}"
+            [(ngModel)]="_pageSize"
+          >
+            <hlm-select-trigger class="w-15 mr-1 inline-flex h-9">
+              <hlm-select-value />
+            </hlm-select-trigger>
+            <hlm-select-content>
+              @for (size of _availablePageSizes; track size) {
+              <hlm-option [value]="size">
+                {{ size === 10000 ? "All" : size }}
+              </hlm-option>
+              }
+            </hlm-select-content>
+          </brn-select>
+
+          <div class="flex space-x-1">
+            <button
+              size="sm"
+              variant="outline"
+              hlmBtn
+              [disabled]="!ctx.decrementable()"
+              (click)="ctx.decrement()"
+            >
+              Previous
+            </button>
+            <button
+              size="sm"
+              variant="outline"
+              hlmBtn
+              [disabled]="!ctx.incrementable()"
+              (click)="ctx.increment()"
+            >
+              Next
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="w-full border-border mt-4 overflow-auto">
+        <canvas
+          class="w-full min-h-72 overflow-auto"
+          baseChart
+          [type]="lineChartType"
+          [datasets]="lineChartData"
+          [labels]="lineChartLabels"
+          [plugins]="lineChartPlugins"
+          [legend]="lineChartLegend"
+          [options]="lineChartOptions"
+        ></canvas>
+      </div>
+    </div>
+    <div class="hidden md:flex flex-col justify-between gap-4 md:col-span-1">
+      <div class="w-full h-6/12">
+        <canvas
+          baseChart
+          [type]="pieChartType"
+          [datasets]="pieChartDataExpenses"
+          [labels]="pieChartLabelsExpenses"
+          [plugins]="pieChartPlugins"
+          [legend]="pieChartLegend"
+          [options]="pieChartOptionsExpenses"
+        ></canvas>
+      </div>
+      <div class="w-full h-6/12">
+        <canvas
+          baseChart
+          [type]="pieChartType"
+          [datasets]="pieChartDataIncome"
+          [labels]="pieChartLabelsIncome"
+          [plugins]="pieChartPlugins"
+          [legend]="pieChartLegend"
+          [options]="pieChartOptionsIncome"
+        ></canvas>
+      </div>
     </div>
   </div>
-</div>
+</ng-template>
 
 <hlm-dialog #newTransactionDialog>
   <hlm-dialog-content class="sm:max-w-[425px]" *brnDialogContent="let ctx">
@@ -408,7 +480,7 @@
                 size="sm"
                 name="lucideWallet"
               />
-              {{ newTransaction.account.name }}
+              {{ selectedCashTransaction.account.name }}
             </span>
           </hlm-select-trigger>
           <hlm-select-content>

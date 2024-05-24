@@ -23,7 +23,7 @@ export class AuthComponent {
       this.authService.login(email, password).subscribe({
         next: (response) => {
           localStorage.setItem('token', response.token);
-          this.router.navigate(['/transactions']);
+          this.router.navigate(['/dashboard']);
         },
         error: (error) => {
           console.error('Login failed', error);

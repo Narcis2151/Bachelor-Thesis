@@ -1,0 +1,201 @@
+<div class="flex w-full h-full" *ngIf="isLoading; else DashBoardTemplate">
+  <hlm-spinner class="justify-center align-middle"></hlm-spinner>
+</div>
+
+<ng-template #DashBoardTemplate>
+  <div class="flex flex-col h-full md:grid md:grid-cols-3 md:gap-4 w-full">
+    <div class="md:col-span-2 flex flex-col h-full">
+      <hlm-table class="w-full border-border mt-4 flex-grow overflow-visible">
+        <hlm-trow>
+          <hlm-th class="w-3/12 md:w-2/12 justify-center text-center"
+            >Category</hlm-th
+          >
+          <hlm-th class="max-md:hidden w-2/12 justify-center text-center"
+            >Posting Date</hlm-th
+          >
+          <hlm-th class="w-6/12 sm:w-4/12 md:w-4/12 lg:w-2/12">Beneficiary</hlm-th>
+          <hlm-th class="max-lg:hidden lg:w-2/12">Details</hlm-th>
+          <hlm-th class="w-4/12 sm:w-3/12 justify-start text-start">Amount</hlm-th>
+          <hlm-th class="max-sm:hidden w-2/12 text-start">Account</hlm-th>
+        </hlm-trow>
+        @for (cashTransaction of tableCashTransactions; track
+        cashTransaction._id) {
+        <hlm-trow>
+          <hlm-td class="w-3/12 md:w-2/12 justify-center text-center">
+            <div
+              class="w-full h-full flex justify-center text-center align-middle"
+            >
+              <hlm-icon
+                class="ml-2"
+                size="lg"
+                [name]="cashTransaction.category.icon"
+              />
+            </div>
+          </hlm-td>
+          <hlm-td class="max-md:hidden w-2/12 justify-center text-center">
+            {{ cashTransaction.postingDate | date }}
+          </hlm-td>
+          <hlm-td class="w-6/12 sm:w-4/12 md:w-4/12 lg:w-2/12">{{
+            cashTransaction.beneficiary | titlecase
+          }}</hlm-td>
+          <hlm-td class="max-lg:hidden lg:w-2/12">{{
+            cashTransaction.details
+          }}</hlm-td>
+          <hlm-td
+            class="w-4/12 sm:w-3/12 justify-start text-start font-medium tabular-nums"
+            [ngClass]="
+              cashTransaction.type === 'income' ? 'text-green-400' : ''
+            "
+            >{{ cashTransaction.amount | number : "1.2-2" }}
+            {{ cashTransaction.currency }}</hlm-td
+          >
+          <hlm-td class="max-sm:hidden w-2/12">
+            <span class="flex align-middle">
+              <brn-hover-card>
+                <hlm-icon
+                  class="ml-0 pl-0"
+                  size="lg"
+                  name="lucideWallet"
+                  brnHoverCardTrigger
+                />
+                <hlm-hover-card-content *brnHoverCardContent class="w-80">
+                  <h3 class="text-md">
+                    Accounts Name: {{ cashTransaction.account.name }}
+                  </h3>
+                  <p class="text-md">Account Type: Cash</p>
+                </hlm-hover-card-content>
+              </brn-hover-card>
+            </span>
+          </hlm-td>
+        </hlm-trow>
+        }
+        <hlm-trow
+          class="bg-muted/50 hover:bg-muted flex items-center justify-center"
+        >
+          <hlm-td class="flex items-center justify-center" colspan="4">
+            <a class="text-primary hover:underline" href="/transactions"
+              >View More</a
+            >
+          </hlm-td>
+        </hlm-trow>
+      </hlm-table>
+
+      <hlm-table class="w-full border-border mt-8 flex-grow overflow-visible">
+        <hlm-trow>
+          <hlm-th class="w-3/12 md:w-2/12 justify-center text-center"
+            >Category</hlm-th
+          >
+          <hlm-th class="max-md:hidden w-2/12 justify-center text-center"
+            >Reset Date</hlm-th
+          >
+          <hlm-th class="w-6/12 sm:w-4/12 justify-start text-start"
+            >Spent</hlm-th
+          >
+          <hlm-th class="w-4/12 sm:w-3/12 justify-start text-start">Available</hlm-th>
+          <hlm-th class="max-sm:hidden w-1/12 justify-center text-center"
+            >Shared</hlm-th
+          >
+        </hlm-trow>
+        @for (budget of tableBudgets; track budget._id) {
+        <hlm-trow>
+          <hlm-td class="w-3/12 md:w-2/12 justify-center text-center">
+            <div
+              class="w-full h-full flex justify-center text-center align-middle"
+            >
+              <hlm-icon class="ml-2" size="lg" [name]="budget.category.icon" />
+            </div>
+          </hlm-td>
+          <hlm-td class="max-md:hidden w-2/12 justify-center text-center">
+            {{ budget.resetDate | date }}
+          </hlm-td>
+          <hlm-td
+            class="w-6/12 sm:w-4/12 justify-start text-start font-medium tabular-nums h-full px-4"
+          >
+            <div
+              class="relative flex text-start justify-start w-full h-full overflow-visible group"
+            >
+              <brn-progress
+                hlmProgressIndicator
+                aria-labelledby="loading"
+                class="w-full bg-base-200 h-6 flex justify-start text-start"
+                [value]="100"
+              >
+                <div
+                  class="bg-primary h-6 rounded-full text-white text-xs flex items-start justify-start"
+                  [ngStyle]="{
+                    width:
+                      (budget.userSpentAmount / budget.amountAvailable) * 100 +
+                      '%'
+                  }"
+                ></div>
+              </brn-progress>
+              <div
+                class="absolute h-full justify-start inset-0 bg-gray-100 text-center text-gray-700 rounded-badge p-0 opacity-0 group-hover:opacity-100 transition-opacity w-full sm:w-auto sm:max-w-sm text-xs whitespace-normal"
+              >
+                Spent: {{ budget.userSpentAmount | number : "1.2-2" }}
+                {{ budget.currency }}, Remaining:
+                {{
+                  budget.amountAvailable - budget.userSpentAmount
+                    | number : "1.2-2"
+                }}
+                {{ budget.currency }}
+              </div>
+            </div>
+          </hlm-td>
+          <hlm-td
+            class="w-4/12 sm:w-3/12 justify-start text-start font-medium tabular-nums"
+            >{{ budget.amountAvailable | number : "1.2-2" }}
+            {{ budget.currency }}
+          </hlm-td>
+          <hlm-td
+            class="max-sm:hidden w-1/12 justify-center text-center font-medium tabular-nums"
+          >
+            <div class="w-full h-full text-center">
+              <hlm-icon
+                class="ml-2"
+                size="lg"
+                [name]="budget.category.isShared ? 'lucideUsers' : 'lucideUser'"
+              />
+            </div>
+          </hlm-td>
+        </hlm-trow>
+        }
+        <hlm-trow
+          class="bg-muted/50 hover:bg-muted flex items-center justify-center"
+        >
+          <hlm-td class="flex items-center justify-center" colspan="4">
+            <a class="text-primary hover:underline" href="/budgets"
+              >View More</a
+            >
+          </hlm-td>
+        </hlm-trow>
+      </hlm-table>
+    </div>
+
+    <div class="hidden md:flex flex-col justify-between gap-4 md:col-span-1">
+      <div class="w-full mt-4 h-6/12">
+        <canvas
+          baseChart
+          [type]="pieChartType"
+          [datasets]="pieChartDataExpenses"
+          [labels]="pieChartLabelsExpenses"
+          [plugins]="pieChartPlugins"
+          [legend]="pieChartLegend"
+          [options]="pieChartOptionsExpenses"
+        ></canvas>
+      </div>
+
+      <div class="w-full mt-8 h-6/12">
+        <canvas
+          baseChart
+          [type]="pieChartType"
+          [datasets]="pieChartDataBudgets"
+          [labels]="pieChartLabelsBudgets"
+          [plugins]="pieChartPlugins"
+          [legend]="pieChartLegend"
+          [options]="pieChartOptionsBudgets"
+        ></canvas>
+      </div>
+    </div>
+  </div>
+</ng-template>

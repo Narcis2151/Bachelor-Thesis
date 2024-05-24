@@ -20,7 +20,6 @@
 
     <brn-table
       hlm
-      stickyHeader
       class="w-full border-border mt-10 block h-[335px] overflow-auto"
       [dataSource]="_filteredSortedPaginatedFuturePayments()"
       [displayedColumns]="_cashFuturePaymentsAllDisplayedColumns()"
@@ -242,7 +241,6 @@
 
     <brn-table
       hlm
-      stickyHeader
       class="w-full border-border mt-10 block h-[335px] overflow-auto"
       [dataSource]="_filteredSortedPaginatedRecurrentPayments()"
       [displayedColumns]="_cashRecurrentPaymensAllDisplayedColumns()"
@@ -788,19 +786,6 @@
       </div>
 
       <div class="items-center grid grid-cols-4 gap-4">
-        <label hlmLabel for="recurrenceEnd" class="text-right"
-          >Recurrency End (Optional)</label
-        >
-        <input
-          type="date"
-          hlmInput
-          id="recurrenceEnd"
-          [(ngModel)]="newCashRecurrentPayment.recurrenceEnd"
-          class="col-span-3"
-        />
-      </div>
-
-      <div class="items-center grid grid-cols-4 gap-4">
         <label hlmLabel for="beneficiary" class="text-right">Beneficiary</label>
         <input
           hlmInput
@@ -912,19 +897,6 @@
         hlmInput
         id="recurrenceStart"
         [(ngModel)]="selectedCashRecurrentPayment.recurrenceStart"
-        class="col-span-3"
-      />
-    </div>
-
-    <div class="items-center grid grid-cols-4 gap-4">
-      <label hlmLabel for="recurrenceEnd" class="text-right"
-        >Recurrency End (Optional)</label
-      >
-      <input
-        type="date"
-        hlmInput
-        id="recurrenceEnd"
-        [(ngModel)]="selectedCashRecurrentPayment.recurrenceEnd"
         class="col-span-3"
       />
     </div>

@@ -52,7 +52,6 @@ export class PaymentsListComponent {
     currency: Currency.RON,
     recurrence: 'monthly',
     recurrenceStart: new Date(),
-    recurrenceEnd: new Date(),
     account: this.cashAccounts[0],
     category: this.categories[0],
   };
@@ -169,7 +168,6 @@ export class PaymentsListComponent {
       currency: Currency.RON,
       recurrence: 'daily',
       recurrenceStart: new Date(),
-      recurrenceEnd: new Date(),
       account: this.cashAccounts[0],
       category: this.categories[0],
     };
@@ -191,11 +189,6 @@ export class PaymentsListComponent {
       'yyyy-MM-dd',
       'en-US'
     );
-    this.selectedCashRecurrentPayment.recurrenceEnd = this.selectedCashRecurrentPayment.recurrenceEnd ? formatDate(
-      new Date(this.selectedCashRecurrentPayment.recurrenceEnd),
-      'yyyy-MM-dd',
-      'en-US'
-    ) : '';
   }
 
   protected saveCashFuturePayment() {
@@ -346,8 +339,8 @@ export class PaymentsListComponent {
     return [...Payments]
       .sort(
         (p1, p2) =>
-          (sort === 'ASC' ? 1 : -1) *
-          (Number(p1.postingDate) - Number(p2.postingDate))
+          String(p1.postingDate).localeCompare(String(p2.postingDate)) *
+          (sort === 'ASC' ? 1 : -1)
       )
       .slice(start, end);
   });
@@ -364,8 +357,9 @@ export class PaymentsListComponent {
       return [...Payments]
         .sort(
           (p1, p2) =>
-            (sort === 'ASC' ? 1 : -1) *
-            (Number(p1.nextPaymentDate) - Number(p2.nextPaymentDate))
+            String(p1.nextPaymentDate).localeCompare(
+              String(p2.nextPaymentDate)
+            ) * (sort === 'ASC' ? 1 : -1)
         )
         .slice(start, end);
     }

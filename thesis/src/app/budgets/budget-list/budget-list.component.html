@@ -1,182 +1,227 @@
-<div class="flex flex-col justify-between gap-4 sm:flex-row">
-  <input
-    hlmInput
-    class="w-full md:w-80"
-    placeholder="Filter budgets..."
-    [ngModel]="_budgetsFilter()"
-    (ngModelChange)="_rawFilterInput.set($event)"
-  />
-  <button
-    hlmBtn
-    brnDialogTrigger
-    [brnDialogTriggerFor]="newDialog"
-    class="justify-center rounded-sm text-white hover:text-gray-400"
-  >
-    New
-  </button>
+<div class="flex w-full h-full" *ngIf="isLoading; else BudgetsList">
+  <hlm-spinner class="justify-center align-middle"></hlm-spinner>
 </div>
 
-<brn-table
-  hlm
-  stickyHeader
-  class="w-full border-border mt-10 block h-8/12 overflow-auto"
-  [dataSource]="_filteredSortedPaginatedBudgets()"
-  [displayedColumns]="_allDisplayedColumns()"
-  [trackBy]="_trackBy"
->
-  <brn-column-def name="category" class="w-3/12 md:w-2/12 justify-center">
-    <hlm-th truncate *brnHeaderDef class="text-center">Category</hlm-th>
-    <hlm-td
-      truncate
-      *brnCellDef="let element"
-      class="justify-center text-center"
-    >
-      <div class="w-full h-full flex justify-center text-center align-middle">
-        <hlm-icon class="ml-2" size="lg" [name]="element.category.icon" />
-      </div>
-    </hlm-td>
-  </brn-column-def>
-
-  <brn-column-def
-    name="resetDate"
-    class="max-md:hidden w-2/12 justify-start text-start"
-  >
-    <hlm-th *brnHeaderDef truncate>
-      <button
-        hlmBtn
-        class="p-0"
-        size="sm"
-        variant="ghost"
-        (click)="handleDateSortChange()"
-      >
-        Reset Date
-        <hlm-icon class="ml-2" size="sm" name="lucideArrowUpDown" />
-      </button>
-    </hlm-th>
-    <hlm-td *brnCellDef="let element">
-      {{ element.resetDate | date }}
-    </hlm-td>
-  </brn-column-def>
-
-  <brn-column-def
-    name="progress"
-    class="w-5/12 sm:w-4/12 justify-start text-start"
-  >
-    <hlm-th *brnHeaderDef>Spent</hlm-th>
-    <hlm-td
-      class="text-start justify-start font-medium tabular-nums h-full px-4"
-      *brnCellDef="let element"
-    >
-      <div
-        class="relative flex text-start justify-start w-full h-full overflow-visible group"
-      >
-        <brn-progress
-          hlmProgressIndicator
-          aria-labelledby="loading"
-          class="w-full bg-base-200 h-6 flex justify-start text-start"
-          [value]="100"
-        >
-          <div
-            class="bg-primary h-6 rounded-full text-white text-xs flex items-start justify-start"
-            [ngStyle]="{
-              width:
-                (element.userSpentAmount / element.amountAvailable) * 100 + '%'
-            }"
-          ></div>
-        </brn-progress>
-        <div
-          class="absolute h-full justify-start inset-0 bg-gray-100 text-center text-gray-700 rounded-badge p-0 opacity-0 group-hover:opacity-100 transition-opacity w-full sm:w-auto sm:max-w-sm text-xs whitespace-normal"
-        >
-          Spent: {{ element.userSpentAmount | number : "1.2-2" }}
-          {{ element.currency }}, Remaining:
-          {{
-            element.amountAvailable - element.userSpentAmount | number : "1.2-2"
-          }}
-          {{ element.currency }}
-        </div>
-      </div>
-    </hlm-td>
-  </brn-column-def>
-
-  <brn-column-def
-    name="amountAvailable"
-    class="w-3/12 md:w-2/12 justify-start text-start"
-  >
-    <hlm-th *brnHeaderDef>Available Amount</hlm-th>
-    <hlm-td
-      class="text-start font-medium tabular-nums"
-      *brnCellDef="let element"
-    >
-      {{ element.amountAvailable | number : "1.2-2" }} {{ element.currency }}
-    </hlm-td>
-  </brn-column-def>
-
-  <brn-column-def name="isShared" class="max-sm:hidden w-1/12 justify-center">
-    <hlm-th *brnHeaderDef>Shared</hlm-th>
-    <hlm-td
-      class="text-start font-medium tabular-nums"
-      *brnCellDef="let element"
-    >
-      <div class="w-full h-full flex justify-center text-center">
-        <hlm-icon
-          class="ml-2"
-          size="lg"
-          [name]="element.category.isShared ? 'lucideUsers' : 'lucideUser'"
+<ng-template #BudgetsList>
+  <div class="flex flex-col h-full md:grid md:grid-cols-3 md:gap-4 w-full">
+    <div class="md:col-span-2 flex flex-col h-full">
+      <div class="flex flex-col justify-between gap-4 sm:flex-row">
+        <input
+          hlmInput
+          class="w-full md:w-80"
+          placeholder="Filter budgets..."
+          [ngModel]="_budgetsFilter()"
+          (ngModelChange)="_rawFilterInput.set($event)"
         />
+        <button
+          hlmBtn
+          brnDialogTrigger
+          [brnDialogTriggerFor]="newDialog"
+          class="justify-center rounded-sm text-white hover:text-gray-400"
+        >
+          New
+        </button>
       </div>
-    </hlm-td>
-  </brn-column-def>
 
-  <brn-column-def name="actions" class="w-1/12 justify-center">
-    <hlm-th *brnHeaderDef></hlm-th>
-    <hlm-td *brnCellDef="let element">
-      <button
-        hlmBtn
-        variant="ghost"
-        class="h-6 w-6 p-0.5"
-        align="end"
-        [brnMenuTriggerFor]="menu"
+      <brn-table
+        hlm
+        class="w-full border-border mt-4 flex-grow overflow-auto"
+        [dataSource]="_filteredSortedPaginatedBudgets()"
+        [displayedColumns]="_allDisplayedColumns()"
+        [trackBy]="_trackBy"
       >
-        <hlm-icon class="h-4 w-4" name="lucideMoreHorizontal" />
-      </button>
-
-      <ng-template #menu>
-        <hlm-menu>
-          <hlm-menu-label>Actions</hlm-menu-label>
-          <hlm-menu-separator />
-          <hlm-menu-group>
-            <button
-              brnDialogTrigger
-              [brnDialogTriggerFor]="editDialog"
-              (click)="selectBudget(element)"
+        <brn-column-def name="category" class="w-3/12 sm:w-2/12 xl:w-1/12 justify-center">
+          <hlm-th *brnHeaderDef class="text-center">Category</hlm-th>
+          <hlm-td *brnCellDef="let element" class="justify-center text-center">
+            <div
+              class="w-full h-full flex justify-center text-center align-middle"
             >
-              Edit
-            </button>
-          </hlm-menu-group>
-          <hlm-menu-separator />
-          <hlm-menu-group>
-            <hlm-menu-group>
-              <button
-                brnDialogTrigger
-                [brnDialogTriggerFor]="deleteDialog"
-                (click)="selectBudget(element)"
-              >
-                Delete
-              </button>
-            </hlm-menu-group>
-          </hlm-menu-group>
-        </hlm-menu>
-      </ng-template>
-    </hlm-td>
-  </brn-column-def>
+              <hlm-icon class="ml-2" size="lg" [name]="element.category.icon" />
+            </div>
+          </hlm-td>
+        </brn-column-def>
 
-  <div
-    class="text-muted-foreground flex items-center justify-center p-20"
-    brnNoDataRow
-  >
-    No data
+        <brn-column-def
+          name="resetDate"
+          class="max-sm:hidden max-md:block max-md:w-2/12 max-xl:hidden xl:w-2/12 justify-center text-center"
+        >
+          <hlm-th *brnHeaderDef>
+            <button
+              hlmBtn
+              class="p-0"
+              size="sm"
+              variant="ghost"
+              (click)="handleDateSortChange()"
+            >
+              Reset Date
+              <hlm-icon class="ml-2" size="sm" name="lucideArrowUpDown" />
+            </button>
+          </hlm-th>
+          <hlm-td *brnCellDef="let element">
+            {{ element.resetDate | date }}
+          </hlm-td>
+        </brn-column-def>
+
+        <brn-column-def
+          name="progress"
+          class="max-sm:w-5/12 sm:w-3/12 md:w-4/12 lg:w-5/12 justify-start text-start"
+        >
+          <hlm-th *brnHeaderDef>Spent</hlm-th>
+          <hlm-td
+            class="text-start justify-start font-medium tabular-nums h-full px-4"
+            *brnCellDef="let element"
+          >
+            <div
+              class="relative flex text-start justify-start w-full h-full overflow-visible group"
+            >
+              <brn-progress
+                hlmProgressIndicator
+                aria-labelledby="loading"
+                class="w-full bg-base-200 h-6 flex justify-start text-start"
+                [value]="100"
+              >
+                <div
+                  class="bg-primary h-6 rounded-full text-white text-xs flex items-start justify-start"
+                  [ngStyle]="{
+                    width:
+                      (element.userSpentAmount / element.amountAvailable) *
+                        100 +
+                      '%'
+                  }"
+                ></div>
+              </brn-progress>
+              <div
+                class="absolute h-full justify-start inset-0 bg-gray-100 text-center text-gray-700 rounded-badge p-0 opacity-0 group-hover:opacity-100 transition-opacity w-full sm:w-auto sm:max-w-sm text-xs whitespace-normal"
+              >
+                Spent: {{ element.userSpentAmount | number : "1.2-2" }}
+                {{ element.currency }}, Remaining:
+                {{
+                  element.amountAvailable - element.userSpentAmount
+                    | number : "1.2-2"
+                }}
+                {{ element.currency }}
+              </div>
+            </div>
+          </hlm-td>
+        </brn-column-def>
+
+        <brn-column-def
+          name="amountAvailable"
+          class="w-3/12 sm:w-2/12 md:w-3/12 lg:w-2/12 justify-start text-start"
+        >
+          <hlm-th *brnHeaderDef truncate>Available</hlm-th>
+          <hlm-td
+            class="text-start font-medium tabular-nums"
+            *brnCellDef="let element"
+          >
+            {{ element.amountAvailable | number : "1.2-2" }}
+            {{ element.currency }}
+          </hlm-td>
+        </brn-column-def>
+
+        <brn-column-def
+          name="isShared"
+          class="max-sm:hidden sm:w-2/12 xl:w-1/12 justify-center"
+        >
+          <hlm-th *brnHeaderDef>Shared</hlm-th>
+          <hlm-td
+            class="text-center"
+            *brnCellDef="let element"
+          >
+            <div
+              class="w-full h-full flex justify-center text-center align-middle"
+            >
+              <hlm-icon
+                class="ml-2"
+                size="lg"
+                [name]="
+                  element.category.isShared ? 'lucideUsers' : 'lucideUser'
+                "
+              />
+            </div>
+          </hlm-td>
+        </brn-column-def>
+
+        <brn-column-def name="actions" class="w-1/12 justify-center">
+          <hlm-th *brnHeaderDef></hlm-th>
+          <hlm-td *brnCellDef="let element">
+            <button
+              hlmBtn
+              variant="ghost"
+              class="h-6 w-6 p-0.5"
+              align="end"
+              [brnMenuTriggerFor]="menu"
+            >
+              <hlm-icon class="h-4 w-4" name="lucideMoreHorizontal" />
+            </button>
+
+            <ng-template #menu>
+              <hlm-menu>
+                <hlm-menu-label>Actions</hlm-menu-label>
+                <hlm-menu-separator />
+                <hlm-menu-group>
+                  <button
+                    brnDialogTrigger
+                    [brnDialogTriggerFor]="editDialog"
+                    (click)="selectBudget(element)"
+                  >
+                    Edit
+                  </button>
+                </hlm-menu-group>
+                <hlm-menu-separator />
+                <hlm-menu-group>
+                  <hlm-menu-group>
+                    <button
+                      brnDialogTrigger
+                      [brnDialogTriggerFor]="deleteDialog"
+                      (click)="selectBudget(element)"
+                    >
+                      Delete
+                    </button>
+                  </hlm-menu-group>
+                </hlm-menu-group>
+              </hlm-menu>
+            </ng-template>
+          </hlm-td>
+        </brn-column-def>
+
+        <div
+          class="text-muted-foreground flex items-center justify-center p-20"
+          brnNoDataRow
+        >
+          No data
+        </div>
+      </brn-table>
+
+      <div class="w-full border-border mt-4 overflow-auto">
+        <canvas
+          class="w-full min-h-72 overflow-auto"
+          baseChart
+          [type]="barChartType"
+          [datasets]="barChartData"
+          [labels]="barChartLabels"
+          [plugins]="barChartPlugins"
+          [legend]="barChartLegend"
+          [options]="barChartOptions"
+        ></canvas>
+      </div>
+    </div>
+
+    <div class="hidden md:flex flex-col justify-between gap-4 md:col-span-1">
+      <div class="w-full h-6/12">
+        <canvas
+          baseChart
+          [type]="pieChartType"
+          [datasets]="pieChartData"
+          [labels]="pieChartLabels"
+          [plugins]="pieChartPlugins"
+          [legend]="pieChartLegend"
+          [options]="pieChartOptions"
+        ></canvas>
+      </div>
+    </div>
   </div>
-</brn-table>
+</ng-template>
 
 <hlm-dialog #newDialog>
   <hlm-dialog-content class="sm:max-w-[425px]" *brnDialogContent="let ctx">

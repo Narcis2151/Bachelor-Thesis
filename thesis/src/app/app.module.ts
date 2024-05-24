@@ -132,6 +132,8 @@ import {
   withDefaultRegisterables,
   BaseChartDirective,
 } from 'ng2-charts';
+import { DashboardPageComponent } from './dashboard/pages/dashboard-page/dashboard-page.component';
+import { DashboardComponent } from './dashboard/dashboard/dashboard.component';
 
 @NgModule({
   declarations: [
@@ -151,6 +153,8 @@ import {
     PaymentsListComponent,
     PaymentsPageComponent,
     PaymentsNavigationComponent,
+    DashboardPageComponent,
+    DashboardComponent,
   ],
   imports: [
     BaseChartDirective,
