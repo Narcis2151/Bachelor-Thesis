@@ -3,8 +3,8 @@
 </div>
 
 <ng-template #BudgetsList>
-  <div class="flex flex-col md:flex-row justify-between gap-4">
-    <div class="md:w-8/12 w-full h-6/12">
+  <div class="flex flex-col h-full md:grid md:grid-cols-3 md:gap-4 w-full">
+    <div class="md:col-span-2 flex flex-col h-full">
       <div class="flex flex-col justify-between gap-4 sm:flex-row">
         <input
           hlmInput
@@ -25,18 +25,14 @@
 
       <brn-table
         hlm
-        class="w-full border-border mt-10 block h-8/12 overflow-auto"
+        class="w-full border-border mt-4 flex-grow overflow-auto"
         [dataSource]="_filteredSortedPaginatedBudgets()"
         [displayedColumns]="_allDisplayedColumns()"
         [trackBy]="_trackBy"
       >
-        <brn-column-def name="category" class="w-3/12 md:w-2/12 justify-center">
-          <hlm-th truncate *brnHeaderDef class="text-center">Category</hlm-th>
-          <hlm-td
-            truncate
-            *brnCellDef="let element"
-            class="justify-center text-center"
-          >
+        <brn-column-def name="category" class="w-3/12 sm:w-2/12 xl:w-1/12 justify-center">
+          <hlm-th *brnHeaderDef class="text-center">Category</hlm-th>
+          <hlm-td *brnCellDef="let element" class="justify-center text-center">
             <div
               class="w-full h-full flex justify-center text-center align-middle"
             >
@@ -47,9 +43,9 @@
 
         <brn-column-def
           name="resetDate"
-          class="max-md:hidden w-2/12 justify-start text-start"
+          class="max-sm:hidden max-md:block max-md:w-2/12 max-xl:hidden xl:w-2/12 justify-center text-center"
         >
-          <hlm-th *brnHeaderDef truncate>
+          <hlm-th *brnHeaderDef>
             <button
               hlmBtn
               class="p-0"
@@ -68,7 +64,7 @@
 
         <brn-column-def
           name="progress"
-          class="w-5/12 sm:w-4/12 justify-start text-start"
+          class="max-sm:w-5/12 sm:w-3/12 md:w-4/12 lg:w-5/12 justify-start text-start"
         >
           <hlm-th *brnHeaderDef>Spent</hlm-th>
           <hlm-td
@@ -88,7 +84,8 @@
                   class="bg-primary h-6 rounded-full text-white text-xs flex items-start justify-start"
                   [ngStyle]="{
                     width:
-                      (element.userSpentAmount / element.amountAvailable) * 100 +
+                      (element.userSpentAmount / element.amountAvailable) *
+                        100 +
                       '%'
                   }"
                 ></div>
@@ -110,9 +107,9 @@
 
         <brn-column-def
           name="amountAvailable"
-          class="w-3/12 md:w-2/12 justify-start text-start"
+          class="w-3/12 sm:w-2/12 md:w-3/12 lg:w-2/12 justify-start text-start"
         >
-          <hlm-th *brnHeaderDef>Available Amount</hlm-th>
+          <hlm-th *brnHeaderDef truncate>Available</hlm-th>
           <hlm-td
             class="text-start font-medium tabular-nums"
             *brnCellDef="let element"
@@ -124,18 +121,22 @@
 
         <brn-column-def
           name="isShared"
-          class="max-sm:hidden w-1/12 justify-center"
+          class="max-sm:hidden sm:w-2/12 xl:w-1/12 justify-center"
         >
           <hlm-th *brnHeaderDef>Shared</hlm-th>
           <hlm-td
-            class="text-start font-medium tabular-nums"
+            class="text-center"
             *brnCellDef="let element"
           >
-            <div class="w-full h-full flex justify-center text-center">
+            <div
+              class="w-full h-full flex justify-center text-center align-middle"
+            >
               <hlm-icon
                 class="ml-2"
                 size="lg"
-                [name]="element.category.isShared ? 'lucideUsers' : 'lucideUser'"
+                [name]="
+                  element.category.isShared ? 'lucideUsers' : 'lucideUser'
+                "
               />
             </div>
           </hlm-td>
@@ -191,14 +192,24 @@
           No data
         </div>
       </brn-table>
+
+      <div class="w-full border-border mt-4 overflow-auto">
+        <canvas
+          class="w-full min-h-72 overflow-auto"
+          baseChart
+          [type]="barChartType"
+          [datasets]="barChartData"
+          [labels]="barChartLabels"
+          [plugins]="barChartPlugins"
+          [legend]="barChartLegend"
+          [options]="barChartOptions"
+        ></canvas>
+      </div>
     </div>
 
-    <div
-      class="hidden md:flex md:w-4/12 flex-col justify-center items-center gap-4 h-6/12"
-    >
-      <div class="hidden md:flex justify-center w-8/12 h-4/12">
+    <div class="hidden md:flex flex-col justify-between gap-4 md:col-span-1">
+      <div class="w-full h-6/12">
         <canvas
-          class="justify-center text-center pie-chart w-10/12 h-4/12"
           baseChart
           [type]="pieChartType"
           [datasets]="pieChartData"
@@ -208,21 +219,6 @@
           [options]="pieChartOptions"
         ></canvas>
       </div>
-    </div>
-  </div>
-
-  <div class="md:w-8/12 w-full mt-4 h-6/12">
-    <div class="justify-center flex grid-cols-4">
-      <canvas
-        class="justify-center line-chart w-10/12 h-6/12"
-        baseChart
-        [type]="barChartType"
-        [datasets]="barChartData"
-        [labels]="barChartLabels"
-        [plugins]="barChartPlugins"
-        [legend]="barChartLegend"
-        [options]="barChartOptions"
-      ></canvas>
     </div>
   </div>
 </ng-template>

@@ -33,7 +33,7 @@ export class BudgetListComponent {
   protected availableCategories: Category[] = [];
 
   public pieChartOptions: ChartOptions = {
-    responsive: true,
+    responsive: false,
   };
   public pieChartLabels: string[] = [];
   public pieChartLegend = true;
@@ -43,6 +43,8 @@ export class BudgetListComponent {
 
   public barChartOptions: ChartOptions = {
     responsive: true,
+    maintainAspectRatio: false,
+    aspectRatio: 4,
   };
   public barChartLabels: string[] = [];
   public barChartLegend = true;

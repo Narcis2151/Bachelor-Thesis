@@ -111,7 +111,16 @@
         <brn-column-def name="account" class="w-2/12 md:w-3/12 lg:w-2/12">
           <hlm-th *brnHeaderDef class="text-start">Account</hlm-th>
           <hlm-td *brnCellDef="let element">
-            {{ element.account.name | titlecase }}
+            <span class="flex align-middle">
+              <brn-hover-card>
+                <hlm-icon class="ml-0 pl-0" size="lg" name="lucideWallet" brnHoverCardTrigger/>
+                <hlm-hover-card-content *brnHoverCardContent class="w-80">
+                  <h3 class="text-md">Accounts Name: {{ element.account.name }}</h3>
+                  <p class="text-md">Account Type: Cash</p>
+                </hlm-hover-card-content>
+              </brn-hover-card>
+              
+            </span>
           </hlm-td>
         </brn-column-def>
 
