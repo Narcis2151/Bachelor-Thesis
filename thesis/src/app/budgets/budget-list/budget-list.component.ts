@@ -34,6 +34,13 @@ export class BudgetListComponent {
 
   public pieChartOptions: ChartOptions = {
     responsive: false,
+    plugins: {
+      title: {
+        display: true,
+        text: 'Budgeted amount',
+        fullSize: true,
+      },
+    },
   };
   public pieChartLabels: string[] = [];
   public pieChartLegend = true;
@@ -45,6 +52,13 @@ export class BudgetListComponent {
     responsive: true,
     maintainAspectRatio: false,
     aspectRatio: 4,
+    plugins: {
+      title: {
+        display: true,
+        text: 'Spent amount',
+        fullSize: true,
+      },
+    },
   };
   public barChartLabels: string[] = [];
   public barChartLegend = true;

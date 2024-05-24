@@ -23,16 +23,31 @@ export class DashboardComponent {
   tableCashTransactions: CashTransaction[] = [];
   cashTransactions: CashTransaction[] = [];
 
-  public pieChartOptions: ChartOptions = {
+  public pieChartOptionsExpenses: ChartOptions = {
     responsive: false,
+    plugins: {
+      title: {
+        display: true,
+        text: 'Expenses',
+        fullSize: true,
+      },
+    },
+  };
+  public pieChartOptionsBudgets: ChartOptions = {
+    responsive: false,
+    plugins: {
+      title: {
+        display: true,
+        text: 'Budgets',
+        fullSize: true,
+      },
+    },
   };
   public pieChartLabelsExpenses: string[] = [];
-  public pieChartLabelsIncome: string[] = [];
   public pieChartLabelsBudgets: string[] = [];
   public pieChartLegend = true;
   public pieChartPlugins = [];
   public pieChartDataExpenses: any[] = [];
-  public pieChartDataIncome: any[] = [];
   public pieChartDataBudgets: any[] = [];
   public pieChartType: ChartType = 'pie';
 
@@ -89,36 +104,6 @@ export class DashboardComponent {
       {
         data: this.pieChartLabelsExpenses.map(
           (label) => expenseTotals[label] ?? 0
-        ),
-      },
-    ];
-
-    const incomeCategories = this.categories.filter((c) => c.type === 'income');
-    this.pieChartLabelsIncome = incomeCategories.map((c) => c.name);
-    const incomeTransactions = this.cashTransactions.filter(
-      (t) => t.type === 'income'
-    );
-    const incomeTotals = incomeTransactions.reduce<Record<string, number>>(
-      (trn, transaction) => {
-        const amount = transaction.amountEquivalent ?? 0;
-        if (amount > 0) {
-          if (trn[transaction.category.name]) {
-            trn[transaction.category.name] += amount;
-          } else {
-            trn[transaction.category.name] = amount;
-          }
-        }
-        return trn;
-      },
-      {}
-    );
-    this.pieChartLabelsIncome = this.pieChartLabelsIncome.filter(
-      (label) => incomeTotals[label]
-    );
-    this.pieChartDataIncome = [
-      {
-        data: this.pieChartLabelsIncome.map(
-          (label) => incomeTotals[label] ?? 0
         ),
       },
     ];

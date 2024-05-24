@@ -33,6 +33,13 @@ export class CashAccountListComponent {
 
   public pieChartOptions: ChartOptions = {
     responsive: false,
+    plugins: {
+      title: {
+        display: true,
+        text: 'Account Balances',
+        fullSize: true,
+      },
+    },
   };
   public pieChartLabels: string[] = [];
   public pieChartLegend = true;

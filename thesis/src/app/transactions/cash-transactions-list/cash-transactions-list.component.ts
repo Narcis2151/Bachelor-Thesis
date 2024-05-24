@@ -36,8 +36,25 @@ export class CashTransactionsListComponent {
   protected cashAccounts: CashAccount[] = [];
   protected newTransaction!: CashTransaction;
 
-  public pieChartOptions: ChartOptions = {
+  public pieChartOptionsExpenses: ChartOptions = {
     responsive: false,
+    plugins: {
+      title: {
+        display: true,
+        text: 'Expense Transactions',
+        fullSize: true,
+      },
+    },
+  };
+  public pieChartOptionsIncome: ChartOptions = {
+    responsive: false,
+    plugins: {
+      title: {
+        display: true,
+        text: 'Income Transactions',
+        fullSize: true,
+      },
+    },
   };
   public pieChartLabelsExpenses: string[] = [];
   public pieChartLabelsIncome: string[] = [];
@@ -54,6 +71,13 @@ export class CashTransactionsListComponent {
     responsive: true,
     maintainAspectRatio: false,
     aspectRatio: 4,
+    plugins: {
+      title: {
+        display: true,
+        text: 'Expenses Over Time',
+        fullSize: true,
+      },
+    },
   };
   public lineChartColors: any[] = [
     {
@@ -300,9 +324,9 @@ export class CashTransactionsListComponent {
     postingDate: { visible: true, label: 'Posting Date' },
     beneficiary: { visible: true, label: 'Beneficiary' },
     details: { visible: true, label: 'Details' },
-    account: { visible: true, label: 'Account' },
     amount: { visible: true, label: 'Amount' },
     currency: { visible: false, label: 'Currency' },
+    account: { visible: true, label: 'Account' },
     type: { visible: false },
   });
   protected readonly _allDisplayedColumns = computed(() => [
