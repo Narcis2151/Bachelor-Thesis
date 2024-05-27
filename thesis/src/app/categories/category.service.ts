@@ -72,7 +72,11 @@ export class CategoryService {
   }
 
   // Delete a category
-  deleteCategory(id: string): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  deleteCategory(id: string, replacementId: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`, {
+      body: {
+        replacementId: replacementId,
+      },
+    });
   }
 }

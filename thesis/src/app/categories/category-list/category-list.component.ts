@@ -24,8 +24,10 @@ export class CategoryListComponent implements OnInit {
   protected partnerEmail = '';
   protected partnershipError: string | null = null;
   protected allCategories: Category[] = [];
+  protected otherCategories: Category[] = [];
   protected availableIcons: string[] = [];
   protected selectedCategory!: Category;
+  protected selectedCategoryReplacement!: Category;
 
   protected newCategory: Category = {
     name: '',
@@ -116,7 +118,7 @@ export class CategoryListComponent implements OnInit {
 
   protected deleteCategory() {
     if (this.selectedCategory && this.selectedCategory._id) {
-      this.categoryService.deleteCategory(this.selectedCategory._id).subscribe({
+      this.categoryService.deleteCategory(this.selectedCategory._id, this.selectedCategoryReplacement._id!).subscribe({
         next: () => {
           this.allCategories = this.allCategories.filter(
             (t) => t._id !== this.selectedCategory!._id

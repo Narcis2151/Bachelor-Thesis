@@ -729,10 +729,24 @@
     <hlm-dialog-header>
       <h3 hlmAlertDialogTitle>Are you absolutely sure?</h3>
       <p hlmAlertDialogDescription>
-        This action cannot be undone. This will permanently delete your
-        category.
+        To delete this category, please select another category in which to move
+        the transactions.
       </p>
     </hlm-dialog-header>
+    <hlm-select [(ngModel)]="selectedCategoryReplacement" class="w-full">
+      <hlm-select-trigger class="w-full">
+        <hlm-select-value />
+      </hlm-select-trigger>
+      <hlm-select-content>
+        <hlm-option
+          *ngFor="let category of allCategories"
+          [value]="category"
+          [disabled]="category.name === selectedCategory.name"
+        >
+          {{ category.name }}
+        </hlm-option>
+      </hlm-select-content>
+    </hlm-select>
     <hlm-dialog-footer>
       <button hlmBtn variant="ghost" (click)="ctx.close()">Cancel</button>
       <button
