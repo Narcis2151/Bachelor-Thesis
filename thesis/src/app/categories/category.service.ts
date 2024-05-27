@@ -53,8 +53,9 @@ export class CategoryService {
 
   // Update a category's shared status
   updateCategoryShareStatus(category: Category): Observable<Category> {
+    console.log(category);
     return this.http.patch<Category>(`${this.apiUrl}/${category._id}/share`, {
-      isShared: category.isShared,
+      isShared: !category.isShared,
     });
   }
 

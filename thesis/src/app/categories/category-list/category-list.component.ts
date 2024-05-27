@@ -98,14 +98,19 @@ export class CategoryListComponent implements OnInit {
 
   protected updateShareCategory() {
     if (this.selectedCategory) {
-      const index = this.allCategories.findIndex(
-        (t) => t._id === this.selectedCategory!._id
-      );
-      if (index > -1) {
-        this.selectedCategory.isShared = !this.selectedCategory.isShared;
-        this.allCategories[index] = { ...this.selectedCategory };
-        this._Categories.set([...this.allCategories]);
-      }
+      this.categoryService
+        .updateCategoryShareStatus(this.selectedCategory)
+        .subscribe({
+          next: (updatedCategory) => {
+            const index = this.allCategories.findIndex(
+              (t) => t._id === updatedCategory._id
+            );
+            if (index > -1) {
+              this.allCategories[index] = { ...updatedCategory };
+              this._Categories.set([...this.allCategories]);
+            }
+          },
+        });
     }
   }
 
@@ -249,8 +254,8 @@ export class CategoryListComponent implements OnInit {
   }
 
   protected _hasSharedCategories = computed(() => {
-    const categories = this._Categories(); 
-    return categories.some((category) => category.isShared); 
+    const categories = this._Categories();
+    return categories.some((category) => category.isShared);
   });
 
   protected createPartnership(ctx: any) {
@@ -260,7 +265,7 @@ export class CategoryListComponent implements OnInit {
         sharedCategories: this.allCategories
           .filter((category) => category.isSelected)
           .map((category) => category._id)
-          .filter((id) => id !== undefined) 
+          .filter((id) => id !== undefined)
           .map((id) => id as string),
       };
       this.categoryService.createPartnership(createPartnershipDto).subscribe({
