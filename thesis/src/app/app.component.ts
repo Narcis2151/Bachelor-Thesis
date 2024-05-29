@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { initFlowbite } from 'flowbite';
+import { AuthService } from './auth/auth.service';
 
 
 @Component({
@@ -9,8 +10,11 @@ import { initFlowbite } from 'flowbite';
 })
 export class AppComponent {
   title = 'thesis';
-  
+
+  constructor(private authService: AuthService) {}
+
   ngOnInit() {
     initFlowbite();
+    this.authService.handleOAuthCallback();
   }
 }

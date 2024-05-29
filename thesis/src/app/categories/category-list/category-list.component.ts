@@ -31,7 +31,7 @@ export class CategoryListComponent implements OnInit {
 
   protected newCategory: Category = {
     name: '',
-    icon: '',
+    icon: this.availableIcons[0],
     type: 'expense',
   };
 
@@ -48,6 +48,7 @@ export class CategoryListComponent implements OnInit {
         this.partnershipStatus = categories.partnershipStatus;
         // this.isLoading = false;
         this._Categories.set(this.allCategories);
+        this.resetCategory();
       },
     });
   }
@@ -88,7 +89,7 @@ export class CategoryListComponent implements OnInit {
   protected resetCategory() {
     this.newCategory = {
       name: '',
-      icon: '',
+      icon: this.availableIcons[0],
       type: 'expense',
     };
   }
@@ -147,6 +148,7 @@ export class CategoryListComponent implements OnInit {
     icon: { visible: true, label: 'icon' },
     name: { visible: true, label: 'name' },
     isShared: { visible: true, label: 'isShared' },
+    isPending: { visible: false, label: 'isPending' },
     isEditing: { visible: false, label: 'isEditing' },
   });
   protected readonly _allDisplayedColumns = computed(() => [

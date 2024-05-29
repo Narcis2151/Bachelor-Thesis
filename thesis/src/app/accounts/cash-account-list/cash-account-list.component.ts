@@ -75,24 +75,31 @@ export class CashAccountListComponent {
   }
 
   private prepareChartData() {
-    const currencyTotals = this.cashAccounts.reduce<Record<string, number>>((acc, account) => {
+    const currencyTotals = this.cashAccounts.reduce<Record<string, number>>(
+      (acc, account) => {
         const balance = account.balanceEquivalent ?? 0;
-        if (balance > 0) { 
-            if (acc[account.currency]) {
-                acc[account.currency] += balance;
-            } else {
-                acc[account.currency] = balance;
-            }
+        if (balance > 0) {
+          if (acc[account.currency]) {
+            acc[account.currency] += balance;
+          } else {
+            acc[account.currency] = balance;
+          }
         }
         return acc;
-    }, {});
+      },
+      {}
+    );
 
     // Update chart data and labels based on the accumulated results
-    this.pieChartLabels = Object.keys(currencyTotals).filter(key => currencyTotals[key] > 0);
-    this.pieChartData = [{
-        data: this.pieChartLabels.map(label => currencyTotals[label])
-    }];
-}
+    this.pieChartLabels = Object.keys(currencyTotals).filter(
+      (key) => currencyTotals[key] > 0
+    );
+    this.pieChartData = [
+      {
+        data: this.pieChartLabels.map((label) => currencyTotals[label]),
+      },
+    ];
+  }
 
   protected resetNewCashAccount() {
     this.newCashAccount = {

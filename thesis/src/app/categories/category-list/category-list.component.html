@@ -439,6 +439,7 @@
           [ngModel]="_allCategoriesFilter()"
           (ngModelChange)="_rawFilterInput.set($event)"
         />
+
         <button
           hlmBtn
           brnDialogTrigger
@@ -541,14 +542,19 @@
         </brn-column-def>
 
         <brn-column-def name="isShared" class="w-2/12 justify-center">
-          <hlm-th *brnHeaderDef>Is Shared</hlm-th>
+          <hlm-th *brnHeaderDef>Shared</hlm-th>
           <hlm-td
             class="text-start font-medium tabular-nums"
             *brnCellDef="let element"
           >
-            <div class="w-full h-full flex justify-center text-center">
-              <hlm-icon class="ml-2" size="lg" name="lucideUsers" />
-            </div>
+            <span class="flex flex-row align-middle w-full justify-center text-center">
+              <div class="flex justify-center text-center h-full">
+                <hlm-icon class="ml-2" size="lg" name="lucideUsers" />
+              </div>
+              <div class="flex justify-end text-end h-full">
+                <hlm-icon class="ml-2" size="sm" name="lucideAlertCircle" />
+              </div>
+            </span>
           </hlm-td>
         </brn-column-def>
 
@@ -620,6 +626,10 @@
         <label hlmLabel for="name" class="text-right">Category Name</label>
         <input
           hlmInput
+          required
+          [ngClass]="{
+            'border-error': !newCategory.name && newCategory.name !== ''
+          }"
           id="name"
           [(ngModel)]="newCategory.name"
           class="col-span-3"
@@ -676,6 +686,7 @@
       <button
         hlmBtn
         class="text-white hover:text-gray-400"
+        [disabled]="!newCategory.name || !newCategory.type || !newCategory.icon"
         (click)="addCategory(); ctx.close()"
       >
         Save

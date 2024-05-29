@@ -192,6 +192,13 @@
         <label hlmLabel for="name" class="text-right">Account Name</label>
         <input
           hlmInput
+          required
+          #name="ngModel"
+          [ngClass]="{
+            'border-red-500':
+              (!newCashAccount.name || newCashAccount.name === '') &&
+              name.touched
+          }"
           id="name"
           [(ngModel)]="newCashAccount.name"
           class="col-span-3"
@@ -203,6 +210,11 @@
         <input
           type="number"
           hlmInput
+          #balance="ngModel"
+          required
+          [ngClass]="{
+            'border-red-500': !newCashAccount.balance && balance.touched
+          }"
           id="balance"
           [(ngModel)]="newCashAccount.balance"
           class="col-span-3"
@@ -213,6 +225,7 @@
         <label hlmLabel for="currency" class="text-right">Currency</label>
         <brn-select
           id="currency"
+          required
           [(ngModel)]="newCashAccount.currency"
           class="col-span-3"
         >
@@ -233,6 +246,13 @@
       <button
         hlmBtn
         class="text-white hover:text-gray-400"
+        [disabled]="
+          !newCashAccount.name ||
+          !newCashAccount.balance ||
+          !newCashAccount.currency ||
+          balance.invalid ||
+          name.invalid
+        "
         (click)="addCashAccount(); ctx.close()"
       >
         Save
@@ -255,6 +275,11 @@
       <input
         type="number"
         hlmInput
+        required
+        #balance="ngModel"
+        [ngClass]="{
+          'border-red-500': !selectedCashAccount.balance && balance.touched
+        }"
         id="balance"
         [(ngModel)]="selectedCashAccount.balance"
         class="col-span-3"
@@ -284,6 +309,11 @@
       <button
         hlmBtn
         class="text-white hover:text-gray-400"
+        [disabled]="
+          !selectedCashAccount.balance ||
+          !selectedCashAccount.currency ||
+          balance.invalid
+        "
         (click)="saveCashAccountBalance(); ctx.close()"
       >
         Save changes

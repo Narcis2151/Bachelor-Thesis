@@ -13,6 +13,8 @@ import { CategoryListComponent } from './categories/category-list/category-list.
 import { CategoryNavigationComponent } from './categories/category-navigation/category-navigation.component';
 import { CategoriesPageComponent } from './categories/pages/categories-page/categories-page.component';
 import { HlmButtonDirective } from '@spartan-ng/ui-button-helm';
+
+import { HlmBadgeDirective } from '@spartan-ng/ui-badge-helm';
 import { HlmCaptionComponent } from '../../components/libs/ui/ui-table-helm/src/lib/hlm-caption.component';
 import { HlmTableComponent } from '../../components/libs/ui/ui-table-helm/src/lib/hlm-table.component';
 import { HlmTdComponent } from '../../components/libs/ui/ui-table-helm/src/lib/hlm-td.component';
@@ -86,6 +88,7 @@ import {
   lucidePodcast,
   lucideUser,
   lucideUsers,
+  lucideAlertCircle,
 } from '@ng-icons/lucide';
 
 import { HlmButtonModule } from '@spartan-ng/ui-button-helm';
@@ -162,6 +165,7 @@ import { DashboardComponent } from './dashboard/dashboard/dashboard.component';
     BrnHoverCardContentDirective,
     BrnHoverCardTriggerDirective,
     HlmHoverCardContentComponent,
+    HlmBadgeDirective,
     BrnToggleDirective,
     HlmToggleDirective,
     BrnAlertDialogTriggerDirective,
@@ -250,6 +254,7 @@ import { DashboardComponent } from './dashboard/dashboard/dashboard.component';
       lucidePodcast,
       lucideUser,
       lucideUsers,
+      lucideAlertCircle,
     }),
     provideCharts(withDefaultRegisterables()),
   ],
