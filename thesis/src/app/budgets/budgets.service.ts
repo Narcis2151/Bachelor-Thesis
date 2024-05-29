@@ -28,8 +28,13 @@ export class BudgetsService {
   constructor(private http: HttpClient) {}
 
   // Fetch all cash transactions
-  getBudgets(): Observable<BudgetsResponse> {
-    return this.http.get<BudgetsResponse>(this.apiUrl);
+  getBudgets(page?: number, limit?: number): Observable<BudgetsResponse> {
+    return this.http.get<BudgetsResponse>(this.apiUrl, {
+      params: {
+        page: page !== undefined ? page.toString() : [],
+        limit: limit !== undefined ? limit.toString() : [],
+      },
+    });
   }
 
   getAvailableCategories(): Observable<Category[]> {

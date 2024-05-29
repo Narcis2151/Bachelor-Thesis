@@ -193,6 +193,56 @@
         </div>
       </brn-table>
 
+      <div
+      class="mt-4 flex flex-col justify-between sm:flex-row sm:items-center"
+      *brnPaginator="
+        let ctx;
+        totalElements: _totalElements();
+        pageSize: _pageSize();
+        onStateChange: _onStateChange
+      "
+    >
+      <div class="mt-2 flex sm:mt-0">
+        <brn-select
+          class="inline-block"
+          placeholder="{{ _availablePageSizes[0] }}"
+          [(ngModel)]="_pageSize"
+        >
+          <hlm-select-trigger class="w-15 mr-1 inline-flex h-9">
+            <hlm-select-value />
+          </hlm-select-trigger>
+          <hlm-select-content>
+            @for (size of _availablePageSizes; track size) {
+            <hlm-option [value]="size">
+              {{ size === 10000 ? "All" : size }}
+            </hlm-option>
+            }
+          </hlm-select-content>
+        </brn-select>
+
+        <div class="flex space-x-1">
+          <button
+            size="sm"
+            variant="outline"
+            hlmBtn
+            [disabled]="!ctx.decrementable()"
+            (click)="ctx.decrement()"
+          >
+            Previous
+          </button>
+          <button
+            size="sm"
+            variant="outline"
+            hlmBtn
+            [disabled]="!ctx.incrementable()"
+            (click)="ctx.increment()"
+          >
+            Next
+          </button>
+        </div>
+      </div>
+    </div>
+
       <div class="w-full border-border mt-4 overflow-auto">
         <canvas
           class="w-full min-h-72 overflow-auto"
