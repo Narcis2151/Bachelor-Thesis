@@ -47,7 +47,14 @@
         class="w-full md:w-80 h-10 text-white flex flex-row justify-between items-center"
         hlmBadge
       >
-        <p class="">{{ "Partnership Status: " + partnershipStatus }}</p>
+        <hlm-icon
+          name="lucideAlertCircle"
+          class="h-4 w-4"
+          *ngIf="partnershipStatus !== 'confimed'"
+        >
+        </hlm-icon>
+
+        <p class="">{{ "Partner Name: " + partnerName }}</p>
         <button
           hlmBtn
           variant="ghost"
@@ -912,13 +919,14 @@
         <hlm-select-value />
       </hlm-select-trigger>
       <hlm-select-content>
-        <hlm-option
-          *ngFor="let category of allCategories"
-          [value]="category"
-          [disabled]="category.name === selectedCategory.name"
-        >
-          {{ category.name }}
+        @for(category of otherCategories; track category) {
+        <hlm-option [value]="category">
+          <span class="flex flex-row items-center justify-stretch text-center">
+            <hlm-icon class="mr-2" size="sm" [name]="category.icon" />
+            {{ category.name }}
+          </span>
         </hlm-option>
+        }
       </hlm-select-content>
     </hlm-select>
     <hlm-dialog-footer>
@@ -926,6 +934,7 @@
       <button
         hlmBtn
         variant="destructive"
+        [disabled]="!selectedCategoryReplacement"
         (click)="deleteCategory(); ctx.close()"
       >
         Delete Category

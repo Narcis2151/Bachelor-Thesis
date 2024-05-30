@@ -127,6 +127,9 @@ export class CategoryListComponent implements OnInit, AfterViewInit {
   protected selectCategory(category: Category) {
     this.selectedCategory = { ...category };
     this.fetchCategoryIcons();
+    this.otherCategories = this.allCategories.filter(
+      (c) => c._id !== category._id
+    );
   }
 
   protected updateShareCategory() {
@@ -281,7 +284,7 @@ export class CategoryListComponent implements OnInit, AfterViewInit {
     _: number,
     p: Category
   ) => p._id;
-  
+
   protected readonly _totalElements = computed(
     () => this._filteredCategories().length
   );
