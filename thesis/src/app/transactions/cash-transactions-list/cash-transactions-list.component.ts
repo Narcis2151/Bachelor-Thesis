@@ -114,10 +114,10 @@ export class CashTransactionsListComponent {
     const expenseTransactions = this.cashTransactions.filter(
       (t) => t.category && t.type === 'expense'
     );
-    const expenseCategories = expenseTransactions.map((t) => t.category);
-    const uniqueExpenseCategories = [...new Set(expenseCategories)];
-
-    this.pieChartLabelsExpenses = uniqueExpenseCategories.map((c) => c!.name);
+    const expenseCategories = this.categories.filter(
+      (c) => c.type === 'expense'
+    );
+    this.pieChartLabelsExpenses = expenseCategories.map((c) => c.name);
     const expenseTotals = expenseTransactions.reduce<Record<string, number>>(
       (trn, transaction) => {
         const amount = transaction.amountEquivalent ?? 0;
@@ -147,9 +147,8 @@ export class CashTransactionsListComponent {
     const incomeTransactions = this.cashTransactions.filter(
       (t) => t.category && t.type === 'income'
     );
-    const incomeCategories = incomeTransactions.map((t) => t.category);
-    const uniqueIncomeCategories = [...new Set(incomeCategories)];
-    this.pieChartLabelsIncome = uniqueIncomeCategories.map((c) => c!.name);
+    const incomeCategories = this.categories.filter((c) => c.type === 'income');
+    this.pieChartLabelsIncome = incomeCategories.map((c) => c.name);
     const incomeTotals = incomeTransactions.reduce<Record<string, number>>(
       (trn, transaction) => {
         const amount = transaction.amountEquivalent ?? 0;
@@ -182,7 +181,6 @@ export class CashTransactionsListComponent {
       .sort((a, b) =>
         String(a.postingDate).localeCompare(String(b.postingDate))
       );
-    console.log(expenseTransactions);
 
     const lineChartData = expenseTransactions.reduce<{
       labels: string[];
@@ -205,7 +203,6 @@ export class CashTransactionsListComponent {
       },
       { labels: [], data: [] }
     );
-    console.log(lineChartData);
     this.lineChartLabels = lineChartData.labels;
     this.lineChartData = [
       {
@@ -216,7 +213,6 @@ export class CashTransactionsListComponent {
   }
 
   protected updateTransactionCategory(category: Category) {
-    console.log(this.selectedCashTransaction);
     if (this.selectedCashTransaction) {
       this.cashTransactionService
         .updateTransactionCategory(this.selectedCashTransaction, category)
@@ -359,7 +355,6 @@ export class CashTransactionsListComponent {
     const sort = this._dateSort();
     const start = this._displayedIndices().start;
     const end = this._displayedIndices().end + 1;
-    console.log(this._filteredCashTransactions())
     const CashTransactions = this._filteredCashTransactions();
     if (!sort) {
       return CashTransactions.slice(start, end);

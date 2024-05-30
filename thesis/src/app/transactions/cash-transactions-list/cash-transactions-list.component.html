@@ -48,7 +48,7 @@
                 class="ml-2"
                 size="lg"
                 [name]="
-                  element.category ? element.category.icon : 'lucideWallet'
+                  element.category ? element.category.icon : 'lucideAlertCircle'
                 "
               />
             </div>
@@ -60,7 +60,10 @@
                   @for (category of categories; track category) {
                   <button
                     hlmMenuItemRadio
-                    [checked]="element.category && category.name === element.category.name"
+                    [checked]="
+                      element.category &&
+                      category.name === element.category.name
+                    "
                     (triggered)="updateTransactionCategory(category)"
                   >
                     <hlm-menu-item-radio />
@@ -103,7 +106,11 @@
         >
           <hlm-th *brnHeaderDef truncate>Beneficiary</hlm-th>
           <hlm-td *brnCellDef="let element" truncate>
-            {{ element.beneficiary | titlecase }}
+            {{
+              element.beneficiary
+                ? element.beneficiary
+                : ("Unknown Beneficiary" | titlecase)
+            }}
           </hlm-td>
         </brn-column-def>
 
