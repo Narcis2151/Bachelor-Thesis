@@ -89,6 +89,7 @@ import {
   lucideUser,
   lucideUsers,
   lucideAlertCircle,
+  lucideArrowLeftRight,
 } from '@ng-icons/lucide';
 
 import { HlmButtonModule } from '@spartan-ng/ui-button-helm';
@@ -255,6 +256,7 @@ import { DashboardComponent } from './dashboard/dashboard/dashboard.component';
       lucideUser,
       lucideUsers,
       lucideAlertCircle,
+      lucideArrowLeftRight,
     }),
     provideCharts(withDefaultRegisterables()),
   ],

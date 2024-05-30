@@ -80,12 +80,12 @@ export class CashTransactionService {
   // Update a transactions's category
   updateTransactionCategory(
     cashTransaction: CashTransaction,
-    category: Category
+    category?: Category
   ): Observable<CashTransaction> {
     return this.http.patch<CashTransaction>(
       `${this.apiUrl}/${cashTransaction._id}/category`,
       {
-        category: category._id,
+        category: category ? category._id : null,
         type: cashTransaction.cashBank,
       }
     );

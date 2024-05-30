@@ -212,7 +212,7 @@ export class CashTransactionsListComponent {
     ];
   }
 
-  protected updateTransactionCategory(category: Category) {
+  protected updateTransactionCategory(category?: Category) {
     if (this.selectedCashTransaction) {
       this.cashTransactionService
         .updateTransactionCategory(this.selectedCashTransaction, category)
@@ -326,6 +326,7 @@ export class CashTransactionsListComponent {
     amount: { visible: true, label: 'Amount' },
     currency: { visible: false, label: 'Currency' },
     account: { visible: true, label: 'Account' },
+    isTransfer: { visible: false },
     type: { visible: false },
   });
   protected readonly _allDisplayedColumns = computed(() => [

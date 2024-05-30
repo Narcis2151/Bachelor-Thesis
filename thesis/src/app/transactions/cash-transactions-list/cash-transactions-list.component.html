@@ -48,7 +48,11 @@
                 class="ml-2"
                 size="lg"
                 [name]="
-                  element.category ? element.category.icon : 'lucideAlertCircle'
+                  element.category
+                    ? element.category.icon
+                    : element.isTransfer
+                    ? 'lucideArrowLeftRight'
+                    : 'lucideAlertCircle'
                 "
               />
             </div>
@@ -57,6 +61,22 @@
               <hlm-menu class="w-56">
                 <hlm-menu-label>Category</hlm-menu-label>
                 <hlm-menu-group>
+                  <button
+                    hlmMenuItemRadio
+                    [checked]="element.isTransfer"
+                    (triggered)="updateTransactionCategory()"
+                  >
+                    <hlm-menu-item-radio />
+                    <span class="flex align-middle">
+                      <hlm-icon
+                        class="mr-2"
+                        size="sm"
+                        name="lucideArrowLeftRight"
+                      />
+                      Transfer
+                    </span>
+                  </button>
+                  <hlm-menu-separator />
                   @for (category of categories; track category) {
                   <button
                     hlmMenuItemRadio
@@ -330,6 +350,12 @@
             </span>
           </hlm-select-trigger>
           <hlm-select-content>
+            <hlm-option value="transfer">
+              <span class="flex align-middle">
+                <hlm-icon class="mr-2" size="sm" name="lucideArrowLeftRight" />
+                Transfer
+              </span>
+            </hlm-option>
             <hlm-option *ngFor="let category of categories" [value]="category">
               <span class="flex align-middle">
                 <hlm-icon class="mr-2" size="sm" [name]="category.icon" />
