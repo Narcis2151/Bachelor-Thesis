@@ -1,3 +1,36 @@
+<hlm-alert-dialog #invitedDialog>
+  <hlm-alert-dialog-content *brnAlertDialogContent="let ctx">
+    <hlm-alert-dialog-header>
+      <h3 hlmAlertDialogTitle>
+        {{ "You have been invited to join a partnership by " + partnerName }}
+      </h3>
+      <p hlmAlertDialogDescription>
+        Categories to be shared:
+        <span *ngFor="let category of addedCategories; let i = index">
+          {{ category.name }}{{ i === addedCategories.length - 1 ? "" : ", " }}
+        </span>
+      </p>
+    </hlm-alert-dialog-header>
+    <hlm-alert-dialog-footer>
+      <button
+        hlmBtn
+        variant="secondary"
+        hlmAlertDialogAction
+        (click)="rejectPartnershipChanges(); ctx.close()"
+      >
+        Reject Changes
+      </button>
+      <button
+        hlmBtn
+        hlmAlertDialogAction
+        (click)="acceptPartnershipChanges(); ctx.close()"
+      >
+        Accept Changes
+      </button>
+    </hlm-alert-dialog-footer>
+  </hlm-alert-dialog-content>
+</hlm-alert-dialog>
+
 <div hlmTabsContent="all_categories" class="w-full overflow-x-auto mt-9">
   <section hlmCard class="border-hidden m-1">
     <div class="flex flex-col justify-between gap-4 sm:flex-row">
@@ -8,6 +41,42 @@
         [ngModel]="_allCategoriesFilter()"
         (ngModelChange)="_rawFilterInput.set($event)"
       />
+
+      <span
+        *ngIf="partnershipStatus"
+        class="w-full md:w-80 h-10 text-white flex flex-row justify-between items-center"
+        hlmBadge
+      >
+        <p class="">{{ "Partnership Status: " + partnershipStatus }}</p>
+        <button
+          hlmBtn
+          variant="ghost"
+          class="h-6 w-6 p-0.5"
+          align="end"
+          [brnMenuTriggerFor]="menu"
+        >
+          <hlm-icon class="h-4 w-4" name="lucideMoreHorizontal" />
+        </button>
+      </span>
+
+      <ng-template #menu>
+        <hlm-menu>
+          <hlm-menu-label>Actions</hlm-menu-label>
+          <hlm-menu-separator />
+          <hlm-menu-group>
+            <hlm-menu-group>
+              <button
+                hlmMenuItem
+                brnDialogTrigger
+                [brnDialogTriggerFor]="deletePartnershipDialog"
+              >
+                Exit Partnership
+              </button>
+            </hlm-menu-group>
+          </hlm-menu-group>
+        </hlm-menu>
+      </ng-template>
+
       <button
         hlmBtn
         brnDialogTrigger
@@ -115,11 +184,19 @@
           class="text-start font-medium tabular-nums"
           *brnCellDef="let element"
         >
-          <div class="w-full h-full flex justify-center text-center">
+          <div
+            class="flex justify-center text-center h-full flex-row items-center"
+          >
             <hlm-icon
-              class="ml-2"
+              class="ml-2 justify-self-center"
               size="lg"
               [name]="element.isShared ? 'lucideUsers' : 'lucideUser'"
+            />
+            <hlm-icon
+              *ngIf="element.isPending"
+              class="ml-2 justify-self-end"
+              size="sm"
+              name="lucideAlertCircle"
             />
           </div>
         </hlm-td>
@@ -190,6 +267,40 @@
         [ngModel]="_allCategoriesFilter()"
         (ngModelChange)="_rawFilterInput.set($event)"
       />
+      <span
+        *ngIf="partnershipStatus"
+        class="w-full md:w-80 h-10 text-white flex flex-row justify-between items-center"
+        hlmBadge
+      >
+        <p class="">{{ "Partnership Status: " + partnershipStatus }}</p>
+        <button
+          hlmBtn
+          variant="ghost"
+          class="h-6 w-6 p-0.5"
+          align="end"
+          [brnMenuTriggerFor]="menu"
+        >
+          <hlm-icon class="h-4 w-4" name="lucideMoreHorizontal" />
+        </button>
+      </span>
+
+      <ng-template #menu>
+        <hlm-menu>
+          <hlm-menu-label>Actions</hlm-menu-label>
+          <hlm-menu-separator />
+          <hlm-menu-group>
+            <hlm-menu-group>
+              <button
+                hlmMenuItem
+                brnDialogTrigger
+                [brnDialogTriggerFor]="deletePartnershipDialog"
+              >
+                Exit Partnership
+              </button>
+            </hlm-menu-group>
+          </hlm-menu-group>
+        </hlm-menu>
+      </ng-template>
       <button
         hlmBtn
         brnDialogTrigger
@@ -297,8 +408,16 @@
           class="text-start font-medium tabular-nums"
           *brnCellDef="let element"
         >
-          <div class="w-full h-full flex justify-center text-center">
+          <div
+            class="flex justify-stretch text-center h-full flex-row items-center"
+          >
             <hlm-icon class="ml-2" size="lg" name="lucideUser" />
+            <hlm-icon
+              *ngIf="element.isPending"
+              class="ml-2"
+              size="sm"
+              name="lucideAlertCircle"
+            />
           </div>
         </hlm-td>
       </brn-column-def>
@@ -439,7 +558,40 @@
           [ngModel]="_allCategoriesFilter()"
           (ngModelChange)="_rawFilterInput.set($event)"
         />
+        <span
+          *ngIf="partnershipStatus"
+          class="w-full md:w-80 h-10 text-white flex flex-row justify-between items-center"
+          hlmBadge
+        >
+          <p class="">{{ "Partnership Status: " + partnershipStatus }}</p>
+          <button
+            hlmBtn
+            variant="ghost"
+            class="h-6 w-6 p-0.5"
+            align="end"
+            [brnMenuTriggerFor]="menu"
+          >
+            <hlm-icon class="h-4 w-4" name="lucideMoreHorizontal" />
+          </button>
+        </span>
 
+        <ng-template #menu>
+          <hlm-menu>
+            <hlm-menu-label>Actions</hlm-menu-label>
+            <hlm-menu-separator />
+            <hlm-menu-group>
+              <hlm-menu-group>
+                <button
+                  hlmMenuItem
+                  brnDialogTrigger
+                  [brnDialogTriggerFor]="deletePartnershipDialog"
+                >
+                  Exit Partnership
+                </button>
+              </hlm-menu-group>
+            </hlm-menu-group>
+          </hlm-menu>
+        </ng-template>
         <button
           hlmBtn
           brnDialogTrigger
@@ -547,12 +699,19 @@
             class="text-start font-medium tabular-nums"
             *brnCellDef="let element"
           >
-            <span class="flex flex-row align-middle w-full justify-center text-center">
-              <div class="flex justify-center text-center h-full">
+            <span
+              class="flex flex-row align-middle w-full justify-center text-center"
+            >
+              <div
+                class="flex justify-stretch text-center h-full flex-row items-center"
+              >
                 <hlm-icon class="ml-2" size="lg" name="lucideUsers" />
-              </div>
-              <div class="flex justify-end text-end h-full">
-                <hlm-icon class="ml-2" size="sm" name="lucideAlertCircle" />
+                <hlm-icon
+                  *ngIf="element.isPending"
+                  class="ml-2"
+                  size="sm"
+                  name="lucideAlertCircle"
+                />
               </div>
             </span>
           </hlm-td>
@@ -636,6 +795,10 @@
         />
       </div>
 
+      <span *ngIf="categoryError" class="label-text text-error">{{
+        categoryError
+      }}</span>
+
       <div class="items-center grid grid-cols-4 gap-4">
         <label hlmLabel for="type" class="text-right">Type</label>
         <brn-select id="type" [(ngModel)]="newCategory.type" class="col-span-3">
@@ -687,7 +850,7 @@
         hlmBtn
         class="text-white hover:text-gray-400"
         [disabled]="!newCategory.name || !newCategory.type || !newCategory.icon"
-        (click)="addCategory(); ctx.close()"
+        (click)="addCategory(ctx)"
       >
         Save
       </button>
@@ -766,6 +929,28 @@
         (click)="deleteCategory(); ctx.close()"
       >
         Delete Category
+      </button>
+    </hlm-dialog-footer>
+  </hlm-dialog-content>
+</hlm-dialog>
+
+<hlm-dialog #deletePartnershipDialog>
+  <hlm-dialog-content *brnAlertDialogContent="let ctx">
+    <hlm-dialog-header>
+      <h3 hlmAlertDialogTitle>Are you absolutely sure?</h3>
+      <p hlmAlertDialogDescription>
+        You are about to exit this partnership. All shared categories will
+        become personal.
+      </p>
+    </hlm-dialog-header>
+    <hlm-dialog-footer>
+      <button hlmBtn variant="ghost" (click)="ctx.close()">Cancel</button>
+      <button
+        hlmBtn
+        variant="destructive"
+        (click)="deletePartnership(); ctx.close()"
+      >
+        Exit Partnership
       </button>
     </hlm-dialog-footer>
   </hlm-dialog-content>

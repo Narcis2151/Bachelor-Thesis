@@ -5,10 +5,13 @@ import {
   effect,
   signal,
   OnInit,
+  ViewChild,
+  AfterViewInit,
 } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { debounceTime } from 'rxjs';
 import { useBrnColumnManager } from '@spartan-ng/ui-table-brain';
+import { HlmAlertDialogComponent } from '@spartan-ng/ui-alertdialog-helm';
 
 import Category from './category.model';
 import { CategoryService, CreatePartnershipDto } from '../category.service';
@@ -18,17 +21,19 @@ import { CategoryService, CreatePartnershipDto } from '../category.service';
   templateUrl: './category-list.component.html',
   styleUrl: './category-list.component.scss',
 })
-export class CategoryListComponent implements OnInit {
-  // protected isLoading = false;
+export class CategoryListComponent implements OnInit, AfterViewInit {
   protected partnershipStatus: string | null = null;
   protected partnerEmail = '';
+  protected partnerName: string | null = null;
   protected partnershipError: string | null = null;
+  protected categoryError: string | null = null;
+  protected addedCategories: Category[] = [];
+  protected removedCategories: Category[] = [];
   protected allCategories: Category[] = [];
   protected otherCategories: Category[] = [];
   protected availableIcons: string[] = [];
   protected selectedCategory!: Category;
   protected selectedCategoryReplacement!: Category;
-
   protected newCategory: Category = {
     name: '',
     icon: this.availableIcons[0],
@@ -40,14 +45,29 @@ export class CategoryListComponent implements OnInit {
     this.fetchCategoryIcons();
   }
 
+  @ViewChild('invitedDialog') invitedDialog!: HlmAlertDialogComponent;
+
+  ngAfterViewInit() {
+    console.log(this.partnershipStatus);
+    if (this.partnershipStatus === 'invited') {
+      this.invitedDialog.open();
+    }
+  }
+
   protected loadCategories() {
     this.categoryService.getCategories().subscribe({
       next: (categories) => {
         console.log(categories);
         this.allCategories = categories.categories;
+        this.partnerName = categories.partnerName;
         this.partnershipStatus = categories.partnershipStatus;
-        // this.isLoading = false;
         this._Categories.set(this.allCategories);
+        this.addedCategories = categories.categories.filter(
+          (category) => category.isPending && category.isShared
+        );
+        this.removedCategories = categories.categories.filter(
+          (category) => category.isPending && !category.isShared
+        );
         this.resetCategory();
       },
     });
@@ -71,7 +91,7 @@ export class CategoryListComponent implements OnInit {
     });
   }
 
-  protected addCategory() {
+  protected addCategory(ctx: any) {
     this.categoryService.addCategory(this.newCategory).subscribe({
       next: (category) => {
         this.allCategories.push(category);
@@ -82,6 +102,16 @@ export class CategoryListComponent implements OnInit {
         ]);
         this.fetchCategoryIcons();
         this.resetCategory();
+        ctx.close();
+      },
+      error: (error) => {
+        console.error('Create category failed', error);
+        if (error.status === 400) {
+          this.categoryError = error.error.message;
+        } else {
+          this.categoryError =
+            error.error.message || 'An error occurred. Please try again later.';
+        }
       },
     });
   }
@@ -119,20 +149,34 @@ export class CategoryListComponent implements OnInit {
 
   protected deleteCategory() {
     if (this.selectedCategory && this.selectedCategory._id) {
-      this.categoryService.deleteCategory(this.selectedCategory._id, this.selectedCategoryReplacement._id!).subscribe({
-        next: () => {
-          this.allCategories = this.allCategories.filter(
-            (t) => t._id !== this.selectedCategory!._id
-          );
-          this._Categories.set([
-            ...this.allCategories.sort((a, b) =>
-              a._id && b._id ? b._id.localeCompare(a._id) : 0
-            ),
-          ]);
-          this.fetchCategoryIcons();
-        },
-      });
+      this.categoryService
+        .deleteCategory(
+          this.selectedCategory._id,
+          this.selectedCategoryReplacement._id!
+        )
+        .subscribe({
+          next: () => {
+            this.allCategories = this.allCategories.filter(
+              (t) => t._id !== this.selectedCategory!._id
+            );
+            this._Categories.set([
+              ...this.allCategories.sort((a, b) =>
+                a._id && b._id ? b._id.localeCompare(a._id) : 0
+              ),
+            ]);
+            this.fetchCategoryIcons();
+          },
+        });
     }
+  }
+
+  protected deletePartnership() {
+    this.categoryService.deletePartnership().subscribe({
+      next: () => {
+        this.partnershipStatus = null;
+        this.loadCategories();
+      },
+    });
   }
 
   protected readonly _rawFilterInput = signal('');
@@ -191,6 +235,7 @@ export class CategoryListComponent implements OnInit {
   });
 
   private readonly _nameSort = signal<'ASC' | 'DESC' | null>(null);
+
   protected readonly _filteredSortedPaginatedCategories = computed(() => {
     const sort = this._nameSort();
     const categories = this._filteredCategories();
@@ -236,6 +281,7 @@ export class CategoryListComponent implements OnInit {
     _: number,
     p: Category
   ) => p._id;
+  
   protected readonly _totalElements = computed(
     () => this._filteredCategories().length
   );
@@ -291,6 +337,22 @@ export class CategoryListComponent implements OnInit {
         },
       });
     }
+  }
+
+  protected acceptPartnershipChanges() {
+    this.categoryService.acceptPartnershipChanges().subscribe({
+      next: () => {
+        this.loadCategories();
+      },
+    });
+  }
+
+  protected rejectPartnershipChanges() {
+    this.categoryService.rejectPartnershipChanges().subscribe({
+      next: () => {
+        this.loadCategories();
+      },
+    });
   }
 
   protected emailIsValid(): boolean {
