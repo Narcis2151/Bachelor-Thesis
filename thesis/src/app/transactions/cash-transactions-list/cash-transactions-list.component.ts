@@ -111,28 +111,28 @@ export class CashTransactionsListComponent {
   }
 
   protected preparePieChartData() {
-    const expenseCategories = this.categories.filter(
-      (c) => c.type === 'expense'
-    );
-    this.pieChartLabelsExpenses = expenseCategories.map((c) => c.name);
     const expenseTransactions = this.cashTransactions.filter(
-      (t) => t.type === 'expense'
+      (t) => t.category && t.type === 'expense'
     );
+    const expenseCategories = expenseTransactions.map((t) => t.category);
+    const uniqueExpenseCategories = [...new Set(expenseCategories)];
+
+    this.pieChartLabelsExpenses = uniqueExpenseCategories.map((c) => c!.name);
     const expenseTotals = expenseTransactions.reduce<Record<string, number>>(
       (trn, transaction) => {
         const amount = transaction.amountEquivalent ?? 0;
         if (amount > 0) {
-          if (trn[transaction.category.name]) {
-            trn[transaction.category.name] += amount;
+          if (trn[transaction.category!.name]) {
+            trn[transaction.category!.name] += amount;
           } else {
-            trn[transaction.category.name] = amount;
+            trn[transaction.category!.name] = amount;
           }
         }
         return trn;
       },
       {}
     );
-    
+
     this.pieChartLabelsExpenses = this.pieChartLabelsExpenses.filter(
       (label) => expenseTotals[label]
     );
@@ -144,19 +144,20 @@ export class CashTransactionsListComponent {
       },
     ];
 
-    const incomeCategories = this.categories.filter((c) => c.type === 'income');
-    this.pieChartLabelsIncome = incomeCategories.map((c) => c.name);
     const incomeTransactions = this.cashTransactions.filter(
-      (t) => t.type === 'income'
+      (t) => t.category && t.type === 'income'
     );
+    const incomeCategories = incomeTransactions.map((t) => t.category);
+    const uniqueIncomeCategories = [...new Set(incomeCategories)];
+    this.pieChartLabelsIncome = uniqueIncomeCategories.map((c) => c!.name);
     const incomeTotals = incomeTransactions.reduce<Record<string, number>>(
       (trn, transaction) => {
         const amount = transaction.amountEquivalent ?? 0;
         if (amount > 0) {
-          if (trn[transaction.category.name]) {
-            trn[transaction.category.name] += amount;
+          if (trn[transaction.category!.name]) {
+            trn[transaction.category!.name] += amount;
           } else {
-            trn[transaction.category.name] = amount;
+            trn[transaction.category!.name] = amount;
           }
         }
         return trn;
@@ -177,7 +178,7 @@ export class CashTransactionsListComponent {
 
   protected prepareLineChartData() {
     const expenseTransactions = this.cashTransactions
-      .filter((t) => t.type === 'expense')
+      .filter((t) => t.type === 'expense' && t.postingDate)
       .sort((a, b) =>
         String(a.postingDate).localeCompare(String(b.postingDate))
       );
@@ -215,6 +216,7 @@ export class CashTransactionsListComponent {
   }
 
   protected updateTransactionCategory(category: Category) {
+    console.log(this.selectedCashTransaction);
     if (this.selectedCashTransaction) {
       this.cashTransactionService
         .updateTransactionCategory(this.selectedCashTransaction, category)
@@ -254,6 +256,7 @@ export class CashTransactionsListComponent {
       beneficiary: '',
       details: '',
       amount: 0,
+      cashBank: 'cash',
       type: 'expense',
       account: this.cashAccounts[0],
     };
@@ -342,7 +345,7 @@ export class CashTransactionsListComponent {
         (u) =>
           u.beneficiary.toLowerCase().includes(filter) ||
           u.details.toLowerCase().includes(filter) ||
-          u.category.name.toLowerCase().includes(filter) ||
+          (u.category && u.category.name.toLowerCase().includes(filter)) ||
           u.amount.toString().includes(filter) ||
           (u.currency?.toString() ?? '').includes(filter)
       );
@@ -356,6 +359,7 @@ export class CashTransactionsListComponent {
     const sort = this._dateSort();
     const start = this._displayedIndices().start;
     const end = this._displayedIndices().end + 1;
+    console.log(this._filteredCashTransactions())
     const CashTransactions = this._filteredCashTransactions();
     if (!sort) {
       return CashTransactions.slice(start, end);

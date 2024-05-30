@@ -28,7 +28,7 @@
               <hlm-icon
                 class="ml-2"
                 size="lg"
-                [name]="cashTransaction.category.icon"
+                [name]="cashTransaction.category ? cashTransaction.category.icon : 'lucideWallet'"
               />
             </div>
           </hlm-td>

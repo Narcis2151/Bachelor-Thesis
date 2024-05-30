@@ -10,7 +10,8 @@ type CashTransaction = {
   amount: number;
   currency?: Currency;
   postingDate: Date | string;  
-  category: Category;
+  category?: Category;
+  cashBank: 'cash' | 'bank';
   account: CashAccount;
   amountEquivalent?: number;
 };

@@ -86,6 +86,7 @@ export class CashTransactionService {
       `${this.apiUrl}/${cashTransaction._id}/category`,
       {
         category: category._id,
+        type: cashTransaction.cashBank,
       }
     );
   }

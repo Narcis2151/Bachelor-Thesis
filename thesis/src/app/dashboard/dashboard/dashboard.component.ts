@@ -18,7 +18,7 @@ export class DashboardComponent {
   isLoading = false;
   totalBudgetedAmount = 0;
   budgets: Budget[] = [];
-  tableBudgets: Budget[] = []; 
+  tableBudgets: Budget[] = [];
   categories: Category[] = [];
   tableCashTransactions: CashTransaction[] = [];
   cashTransactions: CashTransaction[] = [];
@@ -75,21 +75,21 @@ export class DashboardComponent {
   }
 
   protected preparePieChartDataTransactions() {
-    const expenseCategories = this.categories.filter(
-      (c) => c.type === 'expense'
-    );
-    this.pieChartLabelsExpenses = expenseCategories.map((c) => c.name);
     const expenseTransactions = this.cashTransactions.filter(
-      (t) => t.type === 'expense'
+      (t) => t.category && t.type === 'expense'
     );
+    const expenseCategories = expenseTransactions.map((t) => t.category);
+    const uniqueExpenseCategories = [...new Set(expenseCategories)];
+
+    this.pieChartLabelsExpenses = uniqueExpenseCategories.map((c) => c!.name);
     const expenseTotals = expenseTransactions.reduce<Record<string, number>>(
       (trn, transaction) => {
         const amount = transaction.amountEquivalent ?? 0;
         if (amount > 0) {
-          if (trn[transaction.category.name]) {
-            trn[transaction.category.name] += amount;
+          if (trn[transaction.category!.name]) {
+            trn[transaction.category!.name] += amount;
           } else {
-            trn[transaction.category.name] = amount;
+            trn[transaction.category!.name] = amount;
           }
         }
         return trn;
