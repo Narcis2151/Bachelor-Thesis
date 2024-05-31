@@ -2374,6 +2374,13 @@
   dependencies:
     tslib "^2.3.0"
 
+"@spartan-ng/ui-separator-brain@0.0.1-alpha.343":
+  version "0.0.1-alpha.343"
+  resolved "https://registry.yarnpkg.com/@spartan-ng/ui-separator-brain/-/ui-separator-brain-0.0.1-alpha.343.tgz#088f9b5fd42c0b8aa8a872a41ed2fc79d1d4b1fa"
+  integrity sha512-BjK5Q7XCu+dyZQcygabkSVS7yuivDy6J4Sq8Gjutd+cEZDwo9kUu9rFVmSIDNFWWyz0TsWl2Il1EhUJsvRbeNg==
+  dependencies:
+    tslib "^2.3.0"
+
 "@spartan-ng/ui-table-brain@0.0.1-alpha.343":
   version "0.0.1-alpha.343"
   resolved "https://registry.yarnpkg.com/@spartan-ng/ui-table-brain/-/ui-table-brain-0.0.1-alpha.343.tgz#11fd06a08c98fbb6d523289ed647029553d17594"

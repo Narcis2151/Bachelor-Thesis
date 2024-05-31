@@ -1,8 +1,191 @@
 <hlm-spinner *ngIf="isLoading; else CashAccountTemplate" />
 
 <ng-template #CashAccountTemplate>
+
   <div class="flex flex-col md:flex-row justify-between gap-4">
     <div class="md:w-8/12 w-full">
+      <h2 class="text-start ml-4">Cash Accounts</h2>
+      <brn-separator hlmSeparator class="my-4" />
+      <div class="flex flex-col justify-between gap-4 sm:flex-row">
+        <input
+          hlmInput
+          class="w-full md:w-80"
+          placeholder="Filter accounts..."
+          [ngModel]="_cashAccountsFilter()"
+          (ngModelChange)="_rawFilterInput.set($event)"
+        />
+        <button
+          hlmBtn
+          brnDialogTrigger
+          [brnDialogTriggerFor]="newDialog"
+          class="justify-center rounded-sm text-white hover:text-gray-400"
+        >
+          New
+        </button>
+      </div>
+
+      <brn-table
+        hlm
+        class="w-full border-border mt-10 block h-8/12 overflow-auto z-10"
+        [dataSource]="_filteredSortedPaginatedBudgets()"
+        [displayedColumns]="_allDisplayedColumns()"
+        [trackBy]="_trackBy"
+      >
+        <brn-column-def
+          name="icon"
+          class="w-2/12 md:w-1/12 justify-center text-center"
+        >
+          <hlm-th *brnHeaderDef class="justify-center text-center">Icon</hlm-th>
+          <hlm-td *brnCellDef="let element" class="justify-center text-center">
+            <div class="w-full h-full justify-center text-center">
+              <hlm-icon class="ml-0 pl-0" size="lg" name="lucideWallet" />
+            </div>
+          </hlm-td>
+        </brn-column-def>
+
+        <brn-column-def
+          name="name"
+          class="w-5/12 md:w-6/12 justify-start text-start"
+        >
+          <hlm-th *brnHeaderDef truncate>
+            <button
+              hlmBtn
+              class="p-0"
+              size="sm"
+              variant="ghost"
+              (click)="handleNameSortChange()"
+            >
+              Account Name
+              <hlm-icon class="ml-2" size="sm" name="lucideArrowUpDown" />
+            </button>
+          </hlm-th>
+
+          <hlm-td *brnCellDef="let element" class="flex items-center gap-2">
+            <ng-container *ngIf="element.isEditing; else viewMode">
+              <input
+                hlmInput
+                [(ngModel)]="element.name"
+                class="flex-1 w-full"
+                name="accountName"
+                required
+                (keyup.enter)="saveCashAccountName(element)"
+              />
+              <button
+                hlmBtn
+                class="text-end ml-auto p-1 hover:text-gray-600"
+                variant="ghost"
+                [disabled]="!element.name"
+                (click)="saveCashAccountName(element)"
+              >
+                Save
+              </button>
+            </ng-container>
+
+            <ng-template #viewMode>
+              {{ element.name }}
+              <button
+                class="text-end ml-auto p-1 hover:text-gray-600"
+                hlmBtn
+                variant="ghost"
+                (click)="toggleEditName(element)"
+              >
+                Edit
+              </button>
+            </ng-template>
+          </hlm-td>
+        </brn-column-def>
+
+        <brn-column-def name="balance" class="w-2/12 justify-start text-start">
+          <hlm-th *brnHeaderDef>Balance</hlm-th>
+          <hlm-td
+            class="text-start font-medium tabular-nums"
+            *brnCellDef="let element"
+          >
+            {{ element.balance | number : "1.2-2" }}
+          </hlm-td>
+        </brn-column-def>
+
+        <brn-column-def name="currency" class="w-2/12 justify-center">
+          <hlm-th *brnHeaderDef>Currency</hlm-th>
+          <hlm-td
+            class="text-start font-medium tabular-nums"
+            *brnCellDef="let element"
+          >
+            {{ element.currency }}
+          </hlm-td>
+        </brn-column-def>
+
+        <brn-column-def name="actions" class="w-1/12 justify-center">
+          <hlm-th *brnHeaderDef></hlm-th>
+          <hlm-td *brnCellDef="let element">
+            <button
+              hlmBtn
+              variant="ghost"
+              class="h-6 w-6 p-0.5"
+              align="end"
+              [brnMenuTriggerFor]="menu"
+            >
+              <hlm-icon class="h-4 w-4" name="lucideMoreHorizontal" />
+            </button>
+
+            <ng-template #menu>
+              <hlm-menu>
+                <hlm-menu-label>Actions</hlm-menu-label>
+                <hlm-menu-separator />
+                <hlm-menu-group>
+                  <button
+                    brnDialogTrigger
+                    [brnDialogTriggerFor]="editDialog"
+                    (click)="selectCashAccount(element)"
+                  >
+                    Edit
+                  </button>
+                </hlm-menu-group>
+                <hlm-menu-separator />
+                <hlm-menu-group>
+                  <hlm-menu-group>
+                    <button
+                      brnDialogTrigger
+                      [brnDialogTriggerFor]="deleteDialog"
+                      (click)="selectCashAccount(element)"
+                    >
+                      Delete
+                    </button>
+                  </hlm-menu-group>
+                </hlm-menu-group>
+              </hlm-menu>
+            </ng-template>
+          </hlm-td>
+        </brn-column-def>
+
+        <div
+          class="text-muted-foreground flex items-center justify-center p-20"
+          brnNoDataRow
+        >
+          No data
+        </div>
+      </brn-table>
+    </div>
+    <div class="md:w-4/12 w-full flex justify-center">
+      <div>
+        <canvas
+          baseChart
+          [type]="pieChartType"
+          [datasets]="pieChartData"
+          [labels]="pieChartLabels"
+          [plugins]="pieChartPlugins"
+          [legend]="pieChartLegend"
+          [options]="pieChartOptions"
+        >
+        </canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-20 flex flex-col md:flex-row justify-between gap-4">
+    <div class="md:w-8/12 w-full">
+      <h2 class="text-start ml-4">Bank Accounts</h2>
+      <brn-separator hlmSeparator class="my-4" />
       <div class="flex flex-col justify-between gap-4 sm:flex-row">
         <input
           hlmInput

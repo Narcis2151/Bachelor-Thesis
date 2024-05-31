@@ -91,7 +91,8 @@ import {
   lucideAlertCircle,
   lucideArrowLeftRight,
 } from '@ng-icons/lucide';
-
+import { HlmSeparatorDirective } from '@spartan-ng/ui-separator-helm';
+import { BrnSeparatorComponent } from '@spartan-ng/ui-separator-brain';
 import { HlmButtonModule } from '@spartan-ng/ui-button-helm';
 import {
   HlmCheckboxCheckIconComponent,
@@ -128,9 +129,6 @@ import { TransactionsPageComponent } from './transactions/pages/transactions-pag
 import { BudgetListComponent } from './budgets/budget-list/budget-list.component';
 import { BudgetsPageComponent } from './budgets/pages/budgets-page/budgets-page.component';
 import { JwtInterceptor } from './jwt.interceptor';
-import { PaymentsListComponent } from './payments/payments-list/payments-list.component';
-import { PaymentsPageComponent } from './payments/pages/payments-page/payments-page.component';
-import { PaymentsNavigationComponent } from './payments/payments-navigation/payments-navigation.component';
 import {
   provideCharts,
   withDefaultRegisterables,
@@ -154,14 +152,13 @@ import { DashboardComponent } from './dashboard/dashboard/dashboard.component';
     TransactionsPageComponent,
     BudgetListComponent,
     BudgetsPageComponent,
-    PaymentsListComponent,
-    PaymentsPageComponent,
-    PaymentsNavigationComponent,
     DashboardPageComponent,
     DashboardComponent,
   ],
   imports: [
     BaseChartDirective,
+    BrnSeparatorComponent,
+    HlmSeparatorDirective,
     BrnHoverCardComponent,
     BrnHoverCardContentDirective,
     BrnHoverCardTriggerDirective,
