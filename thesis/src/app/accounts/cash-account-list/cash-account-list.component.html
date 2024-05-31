@@ -424,8 +424,12 @@
       </div>
     </div>
 
+    <span *ngIf="cashAccountError" class="label-text text-error">{{
+      cashAccountError
+    }}</span>
+
     <hlm-dialog-footer>
-      <button hlmBtn variant="ghost" (click)="ctx.close()">Cancel</button>
+      <button hlmBtn variant="ghost" (click)="ctx.close(); cashAccountError = null">Cancel</button>
       <button
         hlmBtn
         class="text-white hover:text-gray-400"
@@ -436,7 +440,7 @@
           balance.invalid ||
           name.invalid
         "
-        (click)="addCashAccount(); ctx.close()"
+        (click)="addCashAccount(ctx)"
       >
         Save
       </button>
@@ -487,8 +491,12 @@
       </brn-select>
     </div>
 
+    <span *ngIf="cashAccountError" class="label-text text-error">{{
+      cashAccountError
+    }}</span>
+
     <hlm-dialog-footer>
-      <button hlmBtn variant="ghost" (click)="ctx.close()">Cancel</button>
+      <button hlmBtn variant="ghost" (click)="ctx.close(); cashAccountError = null">Cancel</button>
       <button
         hlmBtn
         class="text-white hover:text-gray-400"
@@ -497,7 +505,7 @@
           !selectedCashAccount.currency ||
           balance.invalid
         "
-        (click)="saveCashAccountBalance(); ctx.close()"
+        (click)="saveCashAccountBalance(ctx)"
       >
         Save changes
       </button>
@@ -514,7 +522,7 @@
       </p>
     </hlm-dialog-header>
     <hlm-dialog-footer>
-      <button hlmBtn variant="ghost" (click)="ctx.close()">Cancel</button>
+      <button hlmBtn variant="ghost" (click)="ctx.close(); cashAccountError = null">Cancel</button>
       <button
         hlmBtn
         variant="destructive"

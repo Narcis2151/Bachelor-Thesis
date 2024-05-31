@@ -30,7 +30,10 @@
         [displayedColumns]="_allDisplayedColumns()"
         [trackBy]="_trackBy"
       >
-        <brn-column-def name="category" class="w-3/12 sm:w-2/12 xl:w-1/12 justify-center">
+        <brn-column-def
+          name="category"
+          class="w-3/12 sm:w-2/12 xl:w-1/12 justify-center"
+        >
           <hlm-th *brnHeaderDef class="text-center">Category</hlm-th>
           <hlm-td *brnCellDef="let element" class="justify-center text-center">
             <div
@@ -124,10 +127,7 @@
           class="max-sm:hidden sm:w-2/12 xl:w-1/12 justify-center"
         >
           <hlm-th *brnHeaderDef>Shared</hlm-th>
-          <hlm-td
-            class="text-center"
-            *brnCellDef="let element"
-          >
+          <hlm-td class="text-center" *brnCellDef="let element">
             <div
               class="w-full h-full flex justify-center text-center align-middle"
             >
@@ -194,54 +194,54 @@
       </brn-table>
 
       <div
-      class="mt-4 flex flex-col justify-between sm:flex-row sm:items-center"
-      *brnPaginator="
-        let ctx;
-        totalElements: _totalElements();
-        pageSize: _pageSize();
-        onStateChange: _onStateChange
-      "
-    >
-      <div class="mt-2 flex sm:mt-0">
-        <brn-select
-          class="inline-block"
-          placeholder="{{ _availablePageSizes[0] }}"
-          [(ngModel)]="_pageSize"
-        >
-          <hlm-select-trigger class="w-15 mr-1 inline-flex h-9">
-            <hlm-select-value />
-          </hlm-select-trigger>
-          <hlm-select-content>
-            @for (size of _availablePageSizes; track size) {
-            <hlm-option [value]="size">
-              {{ size === 10000 ? "All" : size }}
-            </hlm-option>
-            }
-          </hlm-select-content>
-        </brn-select>
+        class="mt-4 flex flex-col justify-between sm:flex-row sm:items-center"
+        *brnPaginator="
+          let ctx;
+          totalElements: _totalElements();
+          pageSize: _pageSize();
+          onStateChange: _onStateChange
+        "
+      >
+        <div class="mt-2 flex sm:mt-0">
+          <brn-select
+            class="inline-block"
+            placeholder="{{ _availablePageSizes[0] }}"
+            [(ngModel)]="_pageSize"
+          >
+            <hlm-select-trigger class="w-15 mr-1 inline-flex h-9">
+              <hlm-select-value />
+            </hlm-select-trigger>
+            <hlm-select-content>
+              @for (size of _availablePageSizes; track size) {
+              <hlm-option [value]="size">
+                {{ size === 10000 ? "All" : size }}
+              </hlm-option>
+              }
+            </hlm-select-content>
+          </brn-select>
 
-        <div class="flex space-x-1">
-          <button
-            size="sm"
-            variant="outline"
-            hlmBtn
-            [disabled]="!ctx.decrementable()"
-            (click)="ctx.decrement()"
-          >
-            Previous
-          </button>
-          <button
-            size="sm"
-            variant="outline"
-            hlmBtn
-            [disabled]="!ctx.incrementable()"
-            (click)="ctx.increment()"
-          >
-            Next
-          </button>
+          <div class="flex space-x-1">
+            <button
+              size="sm"
+              variant="outline"
+              hlmBtn
+              [disabled]="!ctx.decrementable()"
+              (click)="ctx.decrement()"
+            >
+              Previous
+            </button>
+            <button
+              size="sm"
+              variant="outline"
+              hlmBtn
+              [disabled]="!ctx.incrementable()"
+              (click)="ctx.increment()"
+            >
+              Next
+            </button>
+          </div>
         </div>
       </div>
-    </div>
 
       <div class="w-full border-border mt-4 overflow-auto">
         <canvas
@@ -352,12 +352,18 @@
       </div>
     </div>
 
+    <span *ngIf="budgetError" class="label-text text-error">{{
+      budgetError
+    }}</span>
+
     <hlm-dialog-footer>
-      <button hlmBtn variant="ghost" (click)="ctx.close()">Cancel</button>
+      <button hlmBtn variant="ghost" (click)="ctx.close(); budgetError = null">
+        Cancel
+      </button>
       <button
         hlmBtn
         class="text-white hover:text-gray-400"
-        (click)="addBudget(); ctx.close()"
+        (click)="addBudget(ctx)"
       >
         Save
       </button>
@@ -414,12 +420,18 @@
       </brn-select>
     </div>
 
+    <span *ngIf="budgetError" class="label-text text-error">{{
+      budgetError
+    }}</span>
+
     <hlm-dialog-footer>
-      <button hlmBtn variant="ghost" (click)="ctx.close()">Cancel</button>
+      <button hlmBtn variant="ghost" (click)="ctx.close(); budgetError = null">
+        Cancel
+      </button>
       <button
         hlmBtn
         class="text-white hover:text-gray-400"
-        (click)="saveBudget(); ctx.close()"
+        (click)="saveBudget(ctx)"
       >
         Save changes
       </button>

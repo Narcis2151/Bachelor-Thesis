@@ -102,6 +102,7 @@ export class CategoryListComponent implements OnInit, AfterViewInit {
         ]);
         this.fetchCategoryIcons();
         this.resetCategory();
+        this.categoryError = null;
         ctx.close();
       },
       error: (error) => {
@@ -327,6 +328,7 @@ export class CategoryListComponent implements OnInit, AfterViewInit {
           this.partnerEmail = '';
           this.loadCategories();
           ctx.close();
+          this.partnershipError = null;
         },
         error: (error) => {
           console.error('Create partnership failed', error);

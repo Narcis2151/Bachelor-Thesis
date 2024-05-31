@@ -543,7 +543,13 @@
         </div>
 
         <hlm-dialog-footer>
-          <button hlmBtn variant="ghost" (click)="ctx.close()">Cancel</button>
+          <button
+            hlmBtn
+            variant="ghost"
+            (click)="ctx.close(); partnershipError = null"
+          >
+            Cancel
+          </button>
           <button
             hlmBtn
             (click)="createPartnership(ctx)"
@@ -802,10 +808,6 @@
         />
       </div>
 
-      <span *ngIf="categoryError" class="label-text text-error">{{
-        categoryError
-      }}</span>
-
       <div class="items-center grid grid-cols-4 gap-4">
         <label hlmLabel for="type" class="text-right">Type</label>
         <brn-select id="type" [(ngModel)]="newCategory.type" class="col-span-3">
@@ -851,8 +853,18 @@
       </div>
     </div>
 
+    <span *ngIf="categoryError" class="label-text text-error">{{
+      categoryError
+    }}</span>
+
     <hlm-dialog-footer>
-      <button hlmBtn variant="ghost" (click)="ctx.close()">Cancel</button>
+      <button
+        hlmBtn
+        variant="ghost"
+        (click)="ctx.close(); categoryError = null"
+      >
+        Cancel
+      </button>
       <button
         hlmBtn
         class="text-white hover:text-gray-400"

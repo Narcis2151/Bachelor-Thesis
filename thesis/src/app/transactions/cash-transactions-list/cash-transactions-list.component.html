@@ -350,13 +350,10 @@
             </span>
           </hlm-select-trigger>
           <hlm-select-content>
-            <hlm-option value="transfer">
-              <span class="flex align-middle">
-                <hlm-icon class="mr-2" size="sm" name="lucideArrowLeftRight" />
-                Transfer
-              </span>
-            </hlm-option>
-            <hlm-option *ngFor="let category of categories" [value]="category">
+            <hlm-option
+              *ngFor="let category of newTransactionCategories"
+              [value]="category"
+            >
               <span class="flex align-middle">
                 <hlm-icon class="mr-2" size="sm" [name]="category.icon" />
                 {{ category.name }}
@@ -454,12 +451,16 @@
       </div>
     </div>
 
+    <span *ngIf="transactionError" class="label-text text-error">{{
+      transactionError
+    }}</span>
+
     <hlm-dialog-footer>
-      <button hlmBtn variant="ghost" (click)="ctx.close()">Cancel</button>
+      <button hlmBtn variant="ghost" (click)="ctx.close(); transactionError = null">Cancel</button>
       <button
         hlmBtn
         class="text-white hover:text-gray-400"
-        (click)="addTransaction(); ctx.close()"
+        (click)="addTransaction(ctx)"
       >
         Save
       </button>
@@ -567,12 +568,16 @@
       </div>
     </div>
 
+    <span *ngIf="transactionError" class="label-text text-error">{{
+      transactionError
+    }}</span>
+
     <hlm-dialog-footer>
-      <button hlmBtn variant="ghost" (click)="ctx.close()">Cancel</button>
+      <button hlmBtn variant="ghost" (click)="ctx.close(); transactionError = null">Cancel</button>
       <button
         hlmBtn
         class="text-white hover:text-gray-400"
-        (click)="saveTransaction(); ctx.close()"
+        (click)="saveTransaction(ctx)"
       >
         Save changes
       </button>

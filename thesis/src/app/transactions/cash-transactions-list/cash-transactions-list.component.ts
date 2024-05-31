@@ -33,7 +33,9 @@ export class CashTransactionsListComponent {
   protected selectedCashTransaction!: CashTransaction;
   protected currencies = Object.values(Currency);
   protected categories: Category[] = [];
+  protected newTransactionCategories: Category[] = [];
   protected cashAccounts: CashAccount[] = [];
+  protected transactionError: string | null = null;
   protected newTransaction!: CashTransaction;
 
   public pieChartOptionsExpenses: ChartOptions = {
@@ -101,6 +103,12 @@ export class CashTransactionsListComponent {
     }).subscribe(({ categories, accounts, transactions }) => {
       this.isLoading = false;
       this.categories = categories.categories;
+      this.newTransactionCategories = this.categories;
+      this.newTransactionCategories.push({
+        name: 'Transfer',
+        icon: 'lucideArrowLeftRight',
+        type: 'income',
+      });
       this.cashAccounts = accounts;
       this.cashTransactions = transactions;
       this._CashTransactions.set(transactions);
@@ -179,7 +187,7 @@ export class CashTransactionsListComponent {
     const expenseTransactions = this.cashTransactions
       .filter((t) => t.type === 'expense' && t.postingDate)
       .sort((a, b) =>
-        String(a.postingDate).localeCompare(String(b.postingDate))
+        String(b.postingDate).localeCompare(String(a.postingDate))
       );
 
     const lineChartData = expenseTransactions.reduce<{
@@ -222,32 +230,51 @@ export class CashTransactionsListComponent {
           );
           if (index !== -1) {
             this.cashTransactions[index] = transaction;
-            this._CashTransactions.set([...this.cashTransactions.sort()]);
+            this._CashTransactions.set([
+              ...this.cashTransactions.sort((a, b) =>
+                String(b.postingDate).localeCompare(String(a.postingDate))
+              ),
+            ]);
           }
           this.preparePieChartData();
         });
     }
   }
 
-  protected addTransaction() {
+  protected addTransaction(ctx: any) {
     this.cashTransactionService
       .addCashTransaction(this.newTransaction)
-      .subscribe((transaction) => {
-        this.cashTransactions.push(transaction);
-        this.resetNewTransaction();
-        this._CashTransactions.set([
-          ...this.cashTransactions.sort((a, b) =>
-            String(a.postingDate).localeCompare(String(b.postingDate))
-          ),
-        ]);
-        this.preparePieChartData();
-        this.prepareLineChartData();
+      .subscribe({
+        next: (transaction) => {
+          this.cashTransactions.push(transaction);
+          this.resetNewTransaction();
+          this._CashTransactions.set([
+            ...this.cashTransactions.sort((a, b) =>
+              String(b.postingDate).localeCompare(String(a.postingDate))
+            ),
+          ]);
+          ctx.close();
+          this.transactionError = null;
+          this.preparePieChartData();
+          this.prepareLineChartData();
+        },
+        error: (error) => {
+          console.log(error);
+          if (error.status === 400) {
+            this.transactionError = error.error.message;
+          } else {
+            this.transactionError =
+              error.error.message ||
+              'An error occurred. Please try again later.';
+          }
+        },
       });
   }
 
   private resetNewTransaction() {
     this.newTransaction = {
-      category: this.categories[0],
+      category: undefined,
+      isTransfer: true,
       postingDate: formatDate(new Date(), 'yyyy-MM-dd', 'en-US'),
       beneficiary: '',
       details: '',
@@ -267,24 +294,38 @@ export class CashTransactionsListComponent {
     );
   }
 
-  protected saveTransaction() {
+  protected saveTransaction(ctx: any) {
     if (this.selectedCashTransaction) {
       this.cashTransactionService
         .updateTransaction(this.selectedCashTransaction)
-        .subscribe((transaction) => {
-          const index = this.cashTransactions.findIndex(
-            (t) => t._id === transaction._id
-          );
-          if (index !== -1) {
-            this.cashTransactions[index] = transaction;
-            this._CashTransactions.set([
-              ...this.cashTransactions.sort((a, b) =>
-                String(a.postingDate).localeCompare(String(b.postingDate))
-              ),
-            ]);
-          }
-          this.preparePieChartData();
-          this.prepareLineChartData();
+        .subscribe({
+          next: (transaction) => {
+            const index = this.cashTransactions.findIndex(
+              (t) => t._id === transaction._id
+            );
+            if (index !== -1) {
+              this.cashTransactions[index] = transaction;
+              this._CashTransactions.set([
+                ...this.cashTransactions.sort((a, b) =>
+                  String(b.postingDate).localeCompare(String(a.postingDate))
+                ),
+              ]);
+            }
+            ctx.close();
+            this.transactionError = null;
+            this.preparePieChartData();
+            this.prepareLineChartData();
+          },
+          error: (error) => {
+            console.log(error);
+            if (error.status === 400) {
+              this.transactionError = error.error.message;
+            } else {
+              this.transactionError =
+                error.error.message ||
+                'An error occurred. Please try again later.';
+            }
+          },
         });
     }
   }
@@ -292,14 +333,17 @@ export class CashTransactionsListComponent {
   protected deleteTransaction() {
     if (this.selectedCashTransaction && this.selectedCashTransaction._id) {
       this.cashTransactionService
-        .deleteCashTransaction(this.selectedCashTransaction._id)
+        .deleteCashTransaction(
+          this.selectedCashTransaction._id,
+          this.selectedCashTransaction.cashBank
+        )
         .subscribe(() => {
           this.cashTransactions = this.cashTransactions.filter(
             (t) => t._id !== this.selectedCashTransaction!._id
           );
           this._CashTransactions.set([
             ...this.cashTransactions.sort((a, b) =>
-              String(a.postingDate).localeCompare(String(b.postingDate))
+              String(b.postingDate).localeCompare(String(a.postingDate))
             ),
           ]);
         });

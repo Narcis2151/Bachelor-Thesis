@@ -9,13 +9,14 @@ import CashTransaction from './cash-transactions-list/cash-transaction.model';
 export interface CreateCashTransactionDto {
   _id?: string;
   type: 'income' | 'expense';
-  beneficiary: string;
+  // beneficiary: string;
   details: string;
   amount: number;
   currency?: Currency;
   postingDate: Date | string;
   account?: string;
   category?: string;
+  isTransfer?: boolean;
   isSelected?: boolean;
 }
 
@@ -48,12 +49,13 @@ export class CashTransactionService {
   ): Observable<CashTransaction> {
     const newCashTransaction: CreateCashTransactionDto = {
       type: cashTransaction.type,
-      beneficiary: cashTransaction.beneficiary,
+      // beneficiary: cashTransaction.beneficiary,
       details: cashTransaction.details,
       amount: cashTransaction.amount,
       currency: cashTransaction.currency,
       postingDate: cashTransaction.postingDate,
       category: cashTransaction.category?._id,
+      isTransfer: cashTransaction.category?._id ? false : true,
       account: cashTransaction.account?._id,
     };
     return this.http.post<CashTransaction>(this.apiUrl, newCashTransaction);
@@ -92,7 +94,9 @@ export class CashTransactionService {
   }
 
   // Delete a category
-  deleteCashTransaction(id: string): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  deleteCashTransaction(id: string, type: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`, {
+      body: { type: type },
+    });
   }
 }

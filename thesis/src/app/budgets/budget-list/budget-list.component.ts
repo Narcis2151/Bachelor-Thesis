@@ -8,7 +8,10 @@ import {
 import { formatDate } from '@angular/common';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { debounceTime, forkJoin } from 'rxjs';
-import { PaginatorState, useBrnColumnManager } from '@spartan-ng/ui-table-brain';
+import {
+  PaginatorState,
+  useBrnColumnManager,
+} from '@spartan-ng/ui-table-brain';
 
 import Budget from './budget.model';
 import Currency from '../../../../shared/account-currency';
@@ -27,6 +30,7 @@ export class BudgetListComponent {
   protected totalBudgetedAmount = 0;
   protected budgets: Budget[] = [];
   protected selectedBudget!: Budget;
+  protected budgetError: string | null = null;
   protected newBudget!: Budget;
   protected currencies = Object.values(Currency);
   protected categories: Category[] = [];
@@ -174,17 +178,30 @@ export class BudgetListComponent {
     });
   }
 
-  protected addBudget() {
-    this.budgetsService.addBudget(this.newBudget).subscribe((budget) => {
-      this.budgets.push(budget);
-      this._Budgets.set([
-        ...this.budgets.sort((a, b) =>
-          String(a.resetDate).localeCompare(String(b.resetDate))
-        ),
-      ]);
-      this.resetNewBudget();
-      this.getAvailableCategories();
-      this.preparePieChartData();
+  protected addBudget(ctx: any) {
+    this.budgetsService.addBudget(this.newBudget).subscribe({
+      next: (budget) => {
+        this.budgets.push(budget);
+        this._Budgets.set([
+          ...this.budgets.sort((a, b) =>
+            String(a.resetDate).localeCompare(String(b.resetDate))
+          ),
+        ]);
+        this.budgetError = null;
+        ctx.close();
+        this.resetNewBudget();
+        this.getAvailableCategories();
+        this.preparePieChartData();
+      },
+      error: (error) => {
+        console.log(error);
+        if (error.status === 400) {
+          this.budgetError = error.error.message;
+        } else {
+          this.budgetError =
+            error.error.message || 'An error occurred. Please try again later.';
+        }
+      },
     });
   }
 
@@ -214,18 +231,30 @@ export class BudgetListComponent {
     );
   }
 
-  protected saveBudget() {
+  protected saveBudget(ctx: any) {
     if (this.selectedBudget && this.selectedBudget._id) {
-      this.budgetsService
-        .updateBudget(this.selectedBudget)
-        .subscribe((budget) => {
+      this.budgetsService.updateBudget(this.selectedBudget).subscribe({
+        next: (budget) => {
           const index = this.budgets.findIndex((t) => t._id === budget._id);
           if (index !== -1) {
             this.budgets[index] = budget;
             this._Budgets.set([...this.budgets]);
+            ctx.any();
+            this.budgetError = null;
             this.preparePieChartData();
           }
-        });
+        },
+        error: (error) => {
+          console.log(error);
+          if (error.status === 400) {
+            this.budgetError = error.error.message;
+          } else {
+            this.budgetError =
+              error.error.message ||
+              'An error occurred. Please try again later.';
+          }
+        },
+      });
     }
   }
 
@@ -317,7 +346,6 @@ export class BudgetListComponent {
     endIndex,
   }: PaginatorState) =>
     this._displayedIndices.set({ start: startIndex, end: endIndex });
-
 
   constructor(
     private budgetsService: BudgetsService,
