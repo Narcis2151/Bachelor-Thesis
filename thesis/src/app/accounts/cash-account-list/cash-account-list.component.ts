@@ -24,6 +24,7 @@ export class CashAccountListComponent {
   isLoading = false;
   cashAccounts: CashAccount[] = [];
   selectedCashAccount!: CashAccount;
+  protected cashAccountError: string | null = null;
   protected readonly currencies = Object.values(Currency);
   protected newCashAccount: CashAccount = {
     name: '',
@@ -61,38 +62,56 @@ export class CashAccountListComponent {
     this.isLoading = false;
   }
 
-  protected addCashAccount() {
-    this.cashAccountService
-      .addCashAccount(this.newCashAccount)
-      .subscribe((account) => {
+  protected addCashAccount(ctx: any) {
+    this.cashAccountService.addCashAccount(this.newCashAccount).subscribe({
+      next: (account) => {
         this.cashAccounts.push(account);
         this.resetNewCashAccount();
         this._CashAccounts.set([
           ...this.cashAccounts.sort((a, b) => b.balance - a.balance),
         ]);
         this.prepareChartData();
-      });
+        ctx.close();
+        this.cashAccountError = null;
+      },
+      error: (error) => {
+        console.error('Account creation failed', error);
+        if (error.status === 400) {
+          this.cashAccountError = error.error.message;
+        } else {
+          this.cashAccountError =
+            error.error.message || 'An error occurred. Please try again later.';
+        }
+      },
+    });
   }
 
   private prepareChartData() {
-    const currencyTotals = this.cashAccounts.reduce<Record<string, number>>((acc, account) => {
+    const currencyTotals = this.cashAccounts.reduce<Record<string, number>>(
+      (acc, account) => {
         const balance = account.balanceEquivalent ?? 0;
-        if (balance > 0) { 
-            if (acc[account.currency]) {
-                acc[account.currency] += balance;
-            } else {
-                acc[account.currency] = balance;
-            }
+        if (balance > 0) {
+          if (acc[account.currency]) {
+            acc[account.currency] += balance;
+          } else {
+            acc[account.currency] = balance;
+          }
         }
         return acc;
-    }, {});
+      },
+      {}
+    );
 
     // Update chart data and labels based on the accumulated results
-    this.pieChartLabels = Object.keys(currencyTotals).filter(key => currencyTotals[key] > 0);
-    this.pieChartData = [{
-        data: this.pieChartLabels.map(label => currencyTotals[label])
-    }];
-}
+    this.pieChartLabels = Object.keys(currencyTotals).filter(
+      (key) => currencyTotals[key] > 0
+    );
+    this.pieChartData = [
+      {
+        data: this.pieChartLabels.map((label) => currencyTotals[label]),
+      },
+    ];
+  }
 
   protected resetNewCashAccount() {
     this.newCashAccount = {
@@ -124,21 +143,35 @@ export class CashAccountListComponent {
       });
   }
 
-  protected saveCashAccountBalance() {
+  protected saveCashAccountBalance(ctx: any) {
     if (this.selectedCashAccount) {
       this.cashAccountService
         .updateCashAccountBalance(this.selectedCashAccount)
-        .subscribe((account) => {
-          const index = this.cashAccounts.findIndex(
-            (acc) => acc._id === account._id
-          );
-          if (index !== -1) {
-            this.cashAccounts[index] = account;
-            this._CashAccounts.set([
-              ...this.cashAccounts.sort((a, b) => b.balance - a.balance),
-            ]);
-          }
-          this.prepareChartData();
+        .subscribe({
+          next: (account) => {
+            const index = this.cashAccounts.findIndex(
+              (acc) => acc._id === account._id
+            );
+            if (index !== -1) {
+              this.cashAccounts[index] = account;
+              this._CashAccounts.set([
+                ...this.cashAccounts.sort((a, b) => b.balance - a.balance),
+              ]);
+            }
+            ctx.close();
+            this.cashAccountError = null;
+            this.prepareChartData();
+          },
+          error: (error) => {
+            console.error('Update account balance failed', error);
+            if (error.status === 400) {
+              this.cashAccountError = error.error.message;
+            } else {
+              this.cashAccountError =
+                error.error.message ||
+                'An error occurred. Please try again later.';
+            }
+          },
         });
     }
   }

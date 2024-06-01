@@ -16,7 +16,16 @@ export interface CreateCashTransactionDto {
   postingDate: Date | string;
   account?: string;
   category?: string;
+  isTransfer?: boolean;
   isSelected?: boolean;
+}
+
+export interface FetchCategoryAmountsDto {
+  _id: string;
+  name: string;
+  type: 'income' | 'expense';
+  spent: number;
+  received: number;
 }
 
 @Injectable({
@@ -54,6 +63,7 @@ export class CashTransactionService {
       currency: cashTransaction.currency,
       postingDate: cashTransaction.postingDate,
       category: cashTransaction.category?._id,
+      isTransfer: cashTransaction.category?._id ? false : true,
       account: cashTransaction.account?._id,
     };
     return this.http.post<CashTransaction>(this.apiUrl, newCashTransaction);
@@ -80,18 +90,21 @@ export class CashTransactionService {
   // Update a transactions's category
   updateTransactionCategory(
     cashTransaction: CashTransaction,
-    category: Category
+    category?: Category
   ): Observable<CashTransaction> {
     return this.http.patch<CashTransaction>(
       `${this.apiUrl}/${cashTransaction._id}/category`,
       {
-        category: category._id,
+        category: category ? category._id : null,
+        type: cashTransaction.cashBank,
       }
     );
   }
 
   // Delete a category
-  deleteCashTransaction(id: string): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  deleteCashTransaction(id: string, type: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`, {
+      body: { type: type },
+    });
   }
 }

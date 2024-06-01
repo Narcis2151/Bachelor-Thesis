@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { AuthService } from './auth.service';
 import { Router } from '@angular/router';
+
+import { AuthService } from './auth.service';
 
 @Component({
   selector: 'app-auth',
@@ -13,6 +14,10 @@ export class AuthComponent {
 
   constructor(private authService: AuthService, private router: Router) {}
 
+  loginWithGoogle() {
+    window.location.href = 'http://localhost:3000/auth/google';
+  }
+  
   onSwitchMode() {
     this.loginMode = !this.loginMode;
   }

@@ -5,10 +5,13 @@ import {
   effect,
   signal,
   OnInit,
+  ViewChild,
+  AfterViewInit,
 } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { debounceTime } from 'rxjs';
 import { useBrnColumnManager } from '@spartan-ng/ui-table-brain';
+import { HlmAlertDialogComponent } from '@spartan-ng/ui-alertdialog-helm';
 
 import Category from './category.model';
 import { CategoryService, CreatePartnershipDto } from '../category.service';
@@ -19,17 +22,21 @@ import { CategoryService, CreatePartnershipDto } from '../category.service';
   styleUrl: './category-list.component.scss',
 })
 export class CategoryListComponent implements OnInit {
-  // protected isLoading = false;
   protected partnershipStatus: string | null = null;
   protected partnerEmail = '';
+  protected partnerName: string | null = null;
   protected partnershipError: string | null = null;
+  protected categoryError: string | null = null;
+  protected addedCategories: Category[] = [];
+  protected removedCategories: Category[] = [];
   protected allCategories: Category[] = [];
+  protected otherCategories: Category[] = [];
   protected availableIcons: string[] = [];
   protected selectedCategory!: Category;
-
+  protected selectedCategoryReplacement!: Category;
   protected newCategory: Category = {
     name: '',
-    icon: '',
+    icon: this.availableIcons[0],
     type: 'expense',
   };
 
@@ -38,14 +45,29 @@ export class CategoryListComponent implements OnInit {
     this.fetchCategoryIcons();
   }
 
+  @ViewChild('invitedDialog') invitedDialog!: HlmAlertDialogComponent;
+
   protected loadCategories() {
     this.categoryService.getCategories().subscribe({
       next: (categories) => {
         console.log(categories);
         this.allCategories = categories.categories;
+        this.partnerName = categories.partnerName;
         this.partnershipStatus = categories.partnershipStatus;
-        // this.isLoading = false;
         this._Categories.set(this.allCategories);
+        this.addedCategories = categories.categories.filter(
+          (category) => category.isPending && category.isShared
+        );
+        this.removedCategories = categories.categories.filter(
+          (category) => category.isPending && !category.isShared
+        );
+        this.resetCategory();
+        // Check partnershipStatus and open dialog if necessary
+        if (this.partnershipStatus === 'invited') {
+          setTimeout(() => {
+            this.invitedDialog.open();
+          }, 0); // Ensure dialog open call is after view init
+        }
       },
     });
   }
@@ -68,7 +90,7 @@ export class CategoryListComponent implements OnInit {
     });
   }
 
-  protected addCategory() {
+  protected addCategory(ctx: any) {
     this.categoryService.addCategory(this.newCategory).subscribe({
       next: (category) => {
         this.allCategories.push(category);
@@ -79,6 +101,17 @@ export class CategoryListComponent implements OnInit {
         ]);
         this.fetchCategoryIcons();
         this.resetCategory();
+        this.categoryError = null;
+        ctx.close();
+      },
+      error: (error) => {
+        console.error('Create category failed', error);
+        if (error.status === 400) {
+          this.categoryError = error.error.message;
+        } else {
+          this.categoryError =
+            error.error.message || 'An error occurred. Please try again later.';
+        }
       },
     });
   }
@@ -86,7 +119,7 @@ export class CategoryListComponent implements OnInit {
   protected resetCategory() {
     this.newCategory = {
       name: '',
-      icon: '',
+      icon: this.availableIcons[0],
       type: 'expense',
     };
   }
@@ -94,37 +127,59 @@ export class CategoryListComponent implements OnInit {
   protected selectCategory(category: Category) {
     this.selectedCategory = { ...category };
     this.fetchCategoryIcons();
+    this.otherCategories = this.allCategories.filter(
+      (c) => c._id !== category._id
+    );
   }
 
   protected updateShareCategory() {
     if (this.selectedCategory) {
-      const index = this.allCategories.findIndex(
-        (t) => t._id === this.selectedCategory!._id
-      );
-      if (index > -1) {
-        this.selectedCategory.isShared = !this.selectedCategory.isShared;
-        this.allCategories[index] = { ...this.selectedCategory };
-        this._Categories.set([...this.allCategories]);
-      }
+      this.categoryService
+        .updateCategoryShareStatus(this.selectedCategory)
+        .subscribe({
+          next: (updatedCategory) => {
+            const index = this.allCategories.findIndex(
+              (t) => t._id === updatedCategory._id
+            );
+            if (index > -1) {
+              this.allCategories[index] = { ...updatedCategory };
+              this._Categories.set([...this.allCategories]);
+            }
+          },
+        });
     }
   }
 
   protected deleteCategory() {
     if (this.selectedCategory && this.selectedCategory._id) {
-      this.categoryService.deleteCategory(this.selectedCategory._id).subscribe({
-        next: () => {
-          this.allCategories = this.allCategories.filter(
-            (t) => t._id !== this.selectedCategory!._id
-          );
-          this._Categories.set([
-            ...this.allCategories.sort((a, b) =>
-              a._id && b._id ? b._id.localeCompare(a._id) : 0
-            ),
-          ]);
-          this.fetchCategoryIcons();
-        },
-      });
+      this.categoryService
+        .deleteCategory(
+          this.selectedCategory._id,
+          this.selectedCategoryReplacement._id!
+        )
+        .subscribe({
+          next: () => {
+            this.allCategories = this.allCategories.filter(
+              (t) => t._id !== this.selectedCategory!._id
+            );
+            this._Categories.set([
+              ...this.allCategories.sort((a, b) =>
+                a._id && b._id ? b._id.localeCompare(a._id) : 0
+              ),
+            ]);
+            this.fetchCategoryIcons();
+          },
+        });
     }
+  }
+
+  protected deletePartnership() {
+    this.categoryService.deletePartnership().subscribe({
+      next: () => {
+        this.partnershipStatus = null;
+        this.loadCategories();
+      },
+    });
   }
 
   protected readonly _rawFilterInput = signal('');
@@ -140,6 +195,7 @@ export class CategoryListComponent implements OnInit {
     icon: { visible: true, label: 'icon' },
     name: { visible: true, label: 'name' },
     isShared: { visible: true, label: 'isShared' },
+    isPending: { visible: false, label: 'isPending' },
     isEditing: { visible: false, label: 'isEditing' },
   });
   protected readonly _allDisplayedColumns = computed(() => [
@@ -182,6 +238,7 @@ export class CategoryListComponent implements OnInit {
   });
 
   private readonly _nameSort = signal<'ASC' | 'DESC' | null>(null);
+
   protected readonly _filteredSortedPaginatedCategories = computed(() => {
     const sort = this._nameSort();
     const categories = this._filteredCategories();
@@ -227,6 +284,7 @@ export class CategoryListComponent implements OnInit {
     _: number,
     p: Category
   ) => p._id;
+
   protected readonly _totalElements = computed(
     () => this._filteredCategories().length
   );
@@ -249,8 +307,8 @@ export class CategoryListComponent implements OnInit {
   }
 
   protected _hasSharedCategories = computed(() => {
-    const categories = this._Categories(); 
-    return categories.some((category) => category.isShared); 
+    const categories = this._Categories();
+    return categories.some((category) => category.isShared);
   });
 
   protected createPartnership(ctx: any) {
@@ -260,7 +318,7 @@ export class CategoryListComponent implements OnInit {
         sharedCategories: this.allCategories
           .filter((category) => category.isSelected)
           .map((category) => category._id)
-          .filter((id) => id !== undefined) 
+          .filter((id) => id !== undefined)
           .map((id) => id as string),
       };
       this.categoryService.createPartnership(createPartnershipDto).subscribe({
@@ -269,6 +327,7 @@ export class CategoryListComponent implements OnInit {
           this.partnerEmail = '';
           this.loadCategories();
           ctx.close();
+          this.partnershipError = null;
         },
         error: (error) => {
           console.error('Create partnership failed', error);
@@ -282,6 +341,22 @@ export class CategoryListComponent implements OnInit {
         },
       });
     }
+  }
+
+  protected acceptPartnershipChanges() {
+    this.categoryService.acceptPartnershipChanges().subscribe({
+      next: () => {
+        this.loadCategories();
+      },
+    });
+  }
+
+  protected rejectPartnershipChanges() {
+    this.categoryService.rejectPartnershipChanges().subscribe({
+      next: () => {
+        this.loadCategories();
+      },
+    });
   }
 
   protected emailIsValid(): boolean {

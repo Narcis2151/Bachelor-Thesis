@@ -28,7 +28,7 @@
 
       <brn-table
         hlm
-        class="w-full border-border mt-4 flex-grow overflow-auto"
+        class="w-full border-border mt-4 h-[335px] flex-grow overflow-auto"
         [dataSource]="_filteredSortedPaginatedCashTransactions()"
         [displayedColumns]="_allDisplayedColumns()"
         [trackBy]="_trackBy"
@@ -44,17 +44,46 @@
             <div
               class="w-full h-full flex justify-center text-center align-middle"
             >
-              <hlm-icon class="ml-2" size="lg" [name]="element.category.icon" />
+              <hlm-icon
+                class="ml-2"
+                size="lg"
+                [name]="
+                  element.category
+                    ? element.category.icon
+                    : element.isTransfer
+                    ? 'lucideArrowLeftRight'
+                    : 'lucideAlertCircle'
+                "
+              />
             </div>
 
             <ng-template #menu>
               <hlm-menu class="w-56">
                 <hlm-menu-label>Category</hlm-menu-label>
                 <hlm-menu-group>
+                  <button
+                    hlmMenuItemRadio
+                    [checked]="element.isTransfer"
+                    (triggered)="updateTransactionCategory()"
+                  >
+                    <hlm-menu-item-radio />
+                    <span class="flex align-middle">
+                      <hlm-icon
+                        class="mr-2"
+                        size="sm"
+                        name="lucideArrowLeftRight"
+                      />
+                      Transfer
+                    </span>
+                  </button>
+                  <hlm-menu-separator />
                   @for (category of categories; track category) {
                   <button
                     hlmMenuItemRadio
-                    [checked]="category.name === element.category.name"
+                    [checked]="
+                      element.category &&
+                      category.name === element.category.name
+                    "
                     (triggered)="updateTransactionCategory(category)"
                   >
                     <hlm-menu-item-radio />
@@ -97,7 +126,11 @@
         >
           <hlm-th *brnHeaderDef truncate>Beneficiary</hlm-th>
           <hlm-td *brnCellDef="let element" truncate>
-            {{ element.beneficiary | titlecase }}
+            {{
+              element.beneficiary
+                ? element.beneficiary
+                : ("Unknown Beneficiary" | titlecase)
+            }}
           </hlm-td>
         </brn-column-def>
 
@@ -113,13 +146,19 @@
           <hlm-td *brnCellDef="let element">
             <span class="flex align-middle">
               <brn-hover-card>
-                <hlm-icon class="ml-0 pl-0" size="lg" name="lucideWallet" brnHoverCardTrigger/>
+                <hlm-icon
+                  class="ml-0 pl-0"
+                  size="lg"
+                  name="lucideWallet"
+                  brnHoverCardTrigger
+                />
                 <hlm-hover-card-content *brnHoverCardContent class="w-80">
-                  <h3 class="text-md">Accounts Name: {{ element.account.name }}</h3>
+                  <h3 class="text-md">
+                    Accounts Name: {{ element.account.name }}
+                  </h3>
                   <p class="text-md">Account Type: Cash</p>
                 </hlm-hover-card-content>
               </brn-hover-card>
-              
             </span>
           </hlm-td>
         </brn-column-def>
@@ -297,13 +336,24 @@
               <hlm-icon
                 class="mr-2"
                 size="sm"
-                [name]="newTransaction.category.icon"
+                [name]="
+                  newTransaction.category
+                    ? newTransaction.category.icon
+                    : 'lucideWallet'
+                "
               />
-              {{ newTransaction.category.name }}
+              {{
+                newTransaction.category
+                  ? newTransaction.category.name
+                  : "Select a category"
+              }}
             </span>
           </hlm-select-trigger>
           <hlm-select-content>
-            <hlm-option *ngFor="let category of categories" [value]="category">
+            <hlm-option
+              *ngFor="let category of newTransactionCategories"
+              [value]="category"
+            >
               <span class="flex align-middle">
                 <hlm-icon class="mr-2" size="sm" [name]="category.icon" />
                 {{ category.name }}
@@ -401,12 +451,16 @@
       </div>
     </div>
 
+    <span *ngIf="transactionError" class="label-text text-error">{{
+      transactionError
+    }}</span>
+
     <hlm-dialog-footer>
-      <button hlmBtn variant="ghost" (click)="ctx.close()">Cancel</button>
+      <button hlmBtn variant="ghost" (click)="ctx.close(); transactionError = null">Cancel</button>
       <button
         hlmBtn
         class="text-white hover:text-gray-400"
-        (click)="addTransaction(); ctx.close()"
+        (click)="addTransaction(ctx)"
       >
         Save
       </button>
@@ -514,12 +568,16 @@
       </div>
     </div>
 
+    <span *ngIf="transactionError" class="label-text text-error">{{
+      transactionError
+    }}</span>
+
     <hlm-dialog-footer>
-      <button hlmBtn variant="ghost" (click)="ctx.close()">Cancel</button>
+      <button hlmBtn variant="ghost" (click)="ctx.close(); transactionError = null">Cancel</button>
       <button
         hlmBtn
         class="text-white hover:text-gray-400"
-        (click)="saveTransaction(); ctx.close()"
+        (click)="saveTransaction(ctx)"
       >
         Save changes
       </button>

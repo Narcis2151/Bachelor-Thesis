@@ -75,6 +75,12 @@
       ],
       "@spartan-ng/ui-hovercard-helm": [
         "./components/ui-hovercard-helm/src/index.ts"
+      ],
+      "@spartan-ng/ui-badge-helm": [
+        "./components/ui-badge-helm/src/index.ts"
+      ],
+      "@spartan-ng/ui-separator-helm": [
+        "./components/ui-separator-helm/src/index.ts"
       ]
     }
   },

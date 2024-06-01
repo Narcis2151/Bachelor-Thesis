@@ -8,7 +8,10 @@ import {
 import { formatDate } from '@angular/common';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { debounceTime, forkJoin } from 'rxjs';
-import { useBrnColumnManager } from '@spartan-ng/ui-table-brain';
+import {
+  PaginatorState,
+  useBrnColumnManager,
+} from '@spartan-ng/ui-table-brain';
 
 import Budget from './budget.model';
 import Currency from '../../../../shared/account-currency';
@@ -27,6 +30,7 @@ export class BudgetListComponent {
   protected totalBudgetedAmount = 0;
   protected budgets: Budget[] = [];
   protected selectedBudget!: Budget;
+  protected budgetError: string | null = null;
   protected newBudget!: Budget;
   protected currencies = Object.values(Currency);
   protected categories: Category[] = [];
@@ -174,17 +178,30 @@ export class BudgetListComponent {
     });
   }
 
-  protected addBudget() {
-    this.budgetsService.addBudget(this.newBudget).subscribe((budget) => {
-      this.budgets.push(budget);
-      this._Budgets.set([
-        ...this.budgets.sort((a, b) =>
-          String(a.resetDate).localeCompare(String(b.resetDate))
-        ),
-      ]);
-      this.resetNewBudget();
-      this.getAvailableCategories();
-      this.preparePieChartData();
+  protected addBudget(ctx: any) {
+    this.budgetsService.addBudget(this.newBudget).subscribe({
+      next: (budget) => {
+        this.budgets.push(budget);
+        this._Budgets.set([
+          ...this.budgets.sort((a, b) =>
+            String(a.resetDate).localeCompare(String(b.resetDate))
+          ),
+        ]);
+        this.budgetError = null;
+        ctx.close();
+        this.resetNewBudget();
+        this.getAvailableCategories();
+        this.preparePieChartData();
+      },
+      error: (error) => {
+        console.log(error);
+        if (error.status === 400) {
+          this.budgetError = error.error.message;
+        } else {
+          this.budgetError =
+            error.error.message || 'An error occurred. Please try again later.';
+        }
+      },
     });
   }
 
@@ -214,18 +231,30 @@ export class BudgetListComponent {
     );
   }
 
-  protected saveBudget() {
+  protected saveBudget(ctx: any) {
     if (this.selectedBudget && this.selectedBudget._id) {
-      this.budgetsService
-        .updateBudget(this.selectedBudget)
-        .subscribe((budget) => {
+      this.budgetsService.updateBudget(this.selectedBudget).subscribe({
+        next: (budget) => {
           const index = this.budgets.findIndex((t) => t._id === budget._id);
           if (index !== -1) {
             this.budgets[index] = budget;
             this._Budgets.set([...this.budgets]);
+            ctx.any();
+            this.budgetError = null;
             this.preparePieChartData();
           }
-        });
+        },
+        error: (error) => {
+          console.log(error);
+          if (error.status === 400) {
+            this.budgetError = error.error.message;
+          } else {
+            this.budgetError =
+              error.error.message ||
+              'An error occurred. Please try again later.';
+          }
+        },
+      });
     }
   }
 
@@ -255,7 +284,9 @@ export class BudgetListComponent {
   private readonly _debouncedFilter = toSignal(
     toObservable(this._rawFilterInput).pipe(debounceTime(300))
   );
-  protected readonly _pageSize = signal(10000);
+  private readonly _displayedIndices = signal({ start: 0, end: 0 });
+  protected readonly _availablePageSizes = [5, 10, 20, 10000];
+  protected readonly _pageSize = signal(this._availablePageSizes[0]);
 
   protected readonly _brnColumnManager = useBrnColumnManager({
     category: { visible: true, label: 'category' },
@@ -288,9 +319,11 @@ export class BudgetListComponent {
   private readonly _dateSort = signal<'ASC' | 'DESC' | null>(null);
   protected readonly _filteredSortedPaginatedBudgets = computed(() => {
     const sort = this._dateSort();
+    const start = this._displayedIndices().start;
+    const end = this._displayedIndices().end + 1;
     const Budgets = this._filteredBudgets();
     if (!sort) {
-      return Budgets.slice(0, this._pageSize());
+      return Budgets.slice(start, end);
     }
     return [...Budgets]
       .sort(
@@ -308,6 +341,11 @@ export class BudgetListComponent {
   protected readonly _totalElements = computed(
     () => this._filteredBudgets().length
   );
+  protected readonly _onStateChange = ({
+    startIndex,
+    endIndex,
+  }: PaginatorState) =>
+    this._displayedIndices.set({ start: startIndex, end: endIndex });
 
   constructor(
     private budgetsService: BudgetsService,

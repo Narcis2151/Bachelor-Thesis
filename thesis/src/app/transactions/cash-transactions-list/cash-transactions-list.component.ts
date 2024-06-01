@@ -4,6 +4,7 @@ import {
   computed,
   effect,
   signal,
+  ChangeDetectorRef,
 } from '@angular/core';
 import { formatDate } from '@angular/common';
 import { ChartOptions, ChartType } from 'chart.js';
@@ -21,6 +22,7 @@ import CashTransaction from './cash-transaction.model';
 import { CategoryService } from '../../categories/category.service';
 import { CashAccountService } from '../../accounts/cash-account.service';
 import { CashTransactionService } from '../cash-transactions.service';
+import { FetchCategoryAmountsDto } from '../cash-transactions.service';
 
 @Component({
   selector: 'app-cash-transactions-list',
@@ -33,7 +35,9 @@ export class CashTransactionsListComponent {
   protected selectedCashTransaction!: CashTransaction;
   protected currencies = Object.values(Currency);
   protected categories: Category[] = [];
+  protected newTransactionCategories: Category[] = [];
   protected cashAccounts: CashAccount[] = [];
+  protected transactionError: string | null = null;
   protected newTransaction!: CashTransaction;
 
   public pieChartOptionsExpenses: ChartOptions = {
@@ -97,10 +101,16 @@ export class CashTransactionsListComponent {
     forkJoin({
       categories: this.categoryService.getCategories(),
       accounts: this.cashAccountService.getCashAccounts(),
-      transactions: this.cashTransactionService.getTransactions(),
+      transactions: this.cashTransactionService.getTransactions(1, 5),
     }).subscribe(({ categories, accounts, transactions }) => {
       this.isLoading = false;
       this.categories = categories.categories;
+      this.newTransactionCategories = this.categories;
+      this.newTransactionCategories.push({
+        name: 'Transfer',
+        icon: 'lucideArrowLeftRight',
+        type: 'income',
+      });
       this.cashAccounts = accounts;
       this.cashTransactions = transactions;
       this._CashTransactions.set(transactions);
@@ -112,30 +122,19 @@ export class CashTransactionsListComponent {
 
   protected preparePieChartData() {
     const expenseCategories = this.categories.filter(
-      (c) => c.type === 'expense'
+      (c) => c.type === 'expense' && c.userSpentAmount! > 0
     );
     this.pieChartLabelsExpenses = expenseCategories.map((c) => c.name);
-    const expenseTransactions = this.cashTransactions.filter(
-      (t) => t.type === 'expense'
-    );
-    const expenseTotals = expenseTransactions.reduce<Record<string, number>>(
-      (trn, transaction) => {
-        const amount = transaction.amountEquivalent ?? 0;
-        if (amount > 0) {
-          if (trn[transaction.category.name]) {
-            trn[transaction.category.name] += amount;
-          } else {
-            trn[transaction.category.name] = amount;
-          }
+    const expenseTotals = expenseCategories.reduce<Record<string, number>>(
+      (trn, category) => {
+        if (category.userSpentAmount! > 0) {
+          trn[category.name] = category.userSpentAmount!;
         }
         return trn;
       },
       {}
     );
-    
-    this.pieChartLabelsExpenses = this.pieChartLabelsExpenses.filter(
-      (label) => expenseTotals[label]
-    );
+
     this.pieChartDataExpenses = [
       {
         data: this.pieChartLabelsExpenses.map(
@@ -144,28 +143,20 @@ export class CashTransactionsListComponent {
       },
     ];
 
-    const incomeCategories = this.categories.filter((c) => c.type === 'income');
-    this.pieChartLabelsIncome = incomeCategories.map((c) => c.name);
-    const incomeTransactions = this.cashTransactions.filter(
-      (t) => t.type === 'income'
+    const incomeCategories = this.categories.filter(
+      (c) => c.type === 'income' && c.userReceivedAmount! > 0
     );
-    const incomeTotals = incomeTransactions.reduce<Record<string, number>>(
-      (trn, transaction) => {
-        const amount = transaction.amountEquivalent ?? 0;
-        if (amount > 0) {
-          if (trn[transaction.category.name]) {
-            trn[transaction.category.name] += amount;
-          } else {
-            trn[transaction.category.name] = amount;
-          }
+    this.pieChartLabelsIncome = incomeCategories.map((c) => c.name);
+    const incomeTotals = incomeCategories.reduce<Record<string, number>>(
+      (trn, category) => {
+        if (category.userReceivedAmount! > 0) {
+          trn[category.name] = category.userReceivedAmount!;
         }
         return trn;
       },
       {}
     );
-    this.pieChartLabelsIncome = this.pieChartLabelsIncome.filter(
-      (label) => incomeTotals[label]
-    );
+
     this.pieChartDataIncome = [
       {
         data: this.pieChartLabelsIncome.map(
@@ -177,11 +168,10 @@ export class CashTransactionsListComponent {
 
   protected prepareLineChartData() {
     const expenseTransactions = this.cashTransactions
-      .filter((t) => t.type === 'expense')
+      .filter((t) => t.type === 'expense' && t.postingDate)
       .sort((a, b) =>
-        String(a.postingDate).localeCompare(String(b.postingDate))
+        String(b.postingDate).localeCompare(String(a.postingDate))
       );
-    console.log(expenseTransactions);
 
     const lineChartData = expenseTransactions.reduce<{
       labels: string[];
@@ -204,7 +194,6 @@ export class CashTransactionsListComponent {
       },
       { labels: [], data: [] }
     );
-    console.log(lineChartData);
     this.lineChartLabels = lineChartData.labels;
     this.lineChartData = [
       {
@@ -214,46 +203,79 @@ export class CashTransactionsListComponent {
     ];
   }
 
-  protected updateTransactionCategory(category: Category) {
+  protected updateTransactionCategory(category?: Category) {
     if (this.selectedCashTransaction) {
-      this.cashTransactionService
-        .updateTransactionCategory(this.selectedCashTransaction, category)
-        .subscribe((transaction) => {
-          const index = this.cashTransactions.findIndex(
-            (t) => t._id === transaction._id
-          );
-          if (index !== -1) {
-            this.cashTransactions[index] = transaction;
-            this._CashTransactions.set([...this.cashTransactions.sort()]);
-          }
-          this.preparePieChartData();
-        });
+      forkJoin({
+        updateTransaction:
+          this.cashTransactionService.updateTransactionCategory(
+            this.selectedCashTransaction,
+            category
+          ),
+        categories: this.categoryService.getCategories(),
+      }).subscribe(({ updateTransaction, categories }) => {
+        const index = this.cashTransactions.findIndex(
+          (t) => t._id === updateTransaction._id
+        );
+        if (index !== -1) {
+          this.cashTransactions[index] = updateTransaction;
+          this._CashTransactions.set([
+            ...this.cashTransactions.sort((a, b) =>
+              String(b.postingDate).localeCompare(String(a.postingDate))
+            ),
+          ]);
+        }
+        console.log(categories.categories);
+        this.categories = categories.categories;
+        this.cdr.detectChanges();
+        this.preparePieChartData();
+      });
     }
   }
 
-  protected addTransaction() {
+  protected addTransaction(ctx: any) {
     this.cashTransactionService
       .addCashTransaction(this.newTransaction)
-      .subscribe((transaction) => {
-        this.cashTransactions.push(transaction);
-        this.resetNewTransaction();
-        this._CashTransactions.set([
-          ...this.cashTransactions.sort((a, b) =>
-            String(a.postingDate).localeCompare(String(b.postingDate))
-          ),
-        ]);
-        this.preparePieChartData();
-        this.prepareLineChartData();
+      .subscribe({
+        next: (transaction) => {
+          this.cashTransactions.push(transaction);
+          this.resetNewTransaction();
+          this._CashTransactions.set([
+            ...this.cashTransactions.sort((a, b) =>
+              String(b.postingDate).localeCompare(String(a.postingDate))
+            ),
+          ]);
+          ctx.close();
+          this.transactionError = null;
+          this.prepareLineChartData();
+        },
+        error: (error) => {
+          console.log(error);
+          if (error.status === 400) {
+            this.transactionError = error.error.message;
+          } else {
+            this.transactionError =
+              error.error.message ||
+              'An error occurred. Please try again later.';
+          }
+        },
       });
+
+    this.categoryService.getCategories().subscribe((categories) => {
+      this.categories = categories.categories;
+      this.cdr.detectChanges();
+      this.preparePieChartData();
+    });
   }
 
   private resetNewTransaction() {
     this.newTransaction = {
-      category: this.categories[0],
+      category: undefined,
+      isTransfer: true,
       postingDate: formatDate(new Date(), 'yyyy-MM-dd', 'en-US'),
       beneficiary: '',
       details: '',
       amount: 0,
+      cashBank: 'cash',
       type: 'expense',
       account: this.cashAccounts[0],
     };
@@ -268,24 +290,38 @@ export class CashTransactionsListComponent {
     );
   }
 
-  protected saveTransaction() {
+  protected saveTransaction(ctx: any) {
     if (this.selectedCashTransaction) {
       this.cashTransactionService
         .updateTransaction(this.selectedCashTransaction)
-        .subscribe((transaction) => {
-          const index = this.cashTransactions.findIndex(
-            (t) => t._id === transaction._id
-          );
-          if (index !== -1) {
-            this.cashTransactions[index] = transaction;
-            this._CashTransactions.set([
-              ...this.cashTransactions.sort((a, b) =>
-                String(a.postingDate).localeCompare(String(b.postingDate))
-              ),
-            ]);
-          }
-          this.preparePieChartData();
-          this.prepareLineChartData();
+        .subscribe({
+          next: (transaction) => {
+            const index = this.cashTransactions.findIndex(
+              (t) => t._id === transaction._id
+            );
+            if (index !== -1) {
+              this.cashTransactions[index] = transaction;
+              this._CashTransactions.set([
+                ...this.cashTransactions.sort((a, b) =>
+                  String(b.postingDate).localeCompare(String(a.postingDate))
+                ),
+              ]);
+            }
+            ctx.close();
+            this.transactionError = null;
+            this.preparePieChartData();
+            this.prepareLineChartData();
+          },
+          error: (error) => {
+            console.log(error);
+            if (error.status === 400) {
+              this.transactionError = error.error.message;
+            } else {
+              this.transactionError =
+                error.error.message ||
+                'An error occurred. Please try again later.';
+            }
+          },
         });
     }
   }
@@ -293,20 +329,28 @@ export class CashTransactionsListComponent {
   protected deleteTransaction() {
     if (this.selectedCashTransaction && this.selectedCashTransaction._id) {
       this.cashTransactionService
-        .deleteCashTransaction(this.selectedCashTransaction._id)
+        .deleteCashTransaction(
+          this.selectedCashTransaction._id,
+          this.selectedCashTransaction.cashBank
+        )
         .subscribe(() => {
           this.cashTransactions = this.cashTransactions.filter(
             (t) => t._id !== this.selectedCashTransaction!._id
           );
           this._CashTransactions.set([
             ...this.cashTransactions.sort((a, b) =>
-              String(a.postingDate).localeCompare(String(b.postingDate))
+              String(b.postingDate).localeCompare(String(a.postingDate))
             ),
           ]);
         });
-      this.preparePieChartData();
       this.prepareLineChartData();
     }
+
+    this.categoryService.getCategories().subscribe((categories) => {
+      this.categories = categories.categories;
+      this.cdr.detectChanges();
+      this.preparePieChartData();
+    });
   }
 
   protected readonly _rawFilterInput = signal('');
@@ -327,6 +371,7 @@ export class CashTransactionsListComponent {
     amount: { visible: true, label: 'Amount' },
     currency: { visible: false, label: 'Currency' },
     account: { visible: true, label: 'Account' },
+    isTransfer: { visible: false },
     type: { visible: false },
   });
   protected readonly _allDisplayedColumns = computed(() => [
@@ -342,7 +387,7 @@ export class CashTransactionsListComponent {
         (u) =>
           u.beneficiary.toLowerCase().includes(filter) ||
           u.details.toLowerCase().includes(filter) ||
-          u.category.name.toLowerCase().includes(filter) ||
+          (u.category && u.category.name.toLowerCase().includes(filter)) ||
           u.amount.toString().includes(filter) ||
           (u.currency?.toString() ?? '').includes(filter)
       );
@@ -383,6 +428,7 @@ export class CashTransactionsListComponent {
     this._displayedIndices.set({ start: startIndex, end: endIndex });
 
   constructor(
+    private cdr: ChangeDetectorRef,
     private cashTransactionService: CashTransactionService,
     private categoryService: CategoryService,
     private cashAccountService: CashAccountService
