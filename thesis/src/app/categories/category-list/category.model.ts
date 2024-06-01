@@ -3,6 +3,8 @@ type Category = {
   name: string;
   icon: string;
   type?: 'income' | 'expense';
+  userSpentAmount?: number;
+  userReceivedAmount?: number;
   isPending?: boolean;
   isShared?: boolean;
   isEditing?: boolean;

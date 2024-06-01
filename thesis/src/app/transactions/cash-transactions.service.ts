@@ -20,6 +20,14 @@ export interface CreateCashTransactionDto {
   isSelected?: boolean;
 }
 
+export interface FetchCategoryAmountsDto {
+  _id: string;
+  name: string;
+  type: 'income' | 'expense';
+  spent: number;
+  received: number;
+}
+
 @Injectable({
   providedIn: 'root',
 })

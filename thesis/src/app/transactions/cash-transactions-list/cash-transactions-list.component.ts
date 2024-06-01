@@ -21,6 +21,7 @@ import CashTransaction from './cash-transaction.model';
 import { CategoryService } from '../../categories/category.service';
 import { CashAccountService } from '../../accounts/cash-account.service';
 import { CashTransactionService } from '../cash-transactions.service';
+import { FetchCategoryAmountsDto } from '../cash-transactions.service';
 
 @Component({
   selector: 'app-cash-transactions-list',
@@ -99,7 +100,7 @@ export class CashTransactionsListComponent {
     forkJoin({
       categories: this.categoryService.getCategories(),
       accounts: this.cashAccountService.getCashAccounts(),
-      transactions: this.cashTransactionService.getTransactions(),
+      transactions: this.cashTransactionService.getTransactions(1, 5),
     }).subscribe(({ categories, accounts, transactions }) => {
       this.isLoading = false;
       this.categories = categories.categories;
@@ -119,31 +120,20 @@ export class CashTransactionsListComponent {
   }
 
   protected preparePieChartData() {
-    const expenseTransactions = this.cashTransactions.filter(
-      (t) => t.category && t.type === 'expense'
-    );
     const expenseCategories = this.categories.filter(
-      (c) => c.type === 'expense'
+      (c) => c.type === 'expense' && c.userSpentAmount! > 0
     );
     this.pieChartLabelsExpenses = expenseCategories.map((c) => c.name);
-    const expenseTotals = expenseTransactions.reduce<Record<string, number>>(
-      (trn, transaction) => {
-        const amount = transaction.amountEquivalent ?? 0;
-        if (amount > 0) {
-          if (trn[transaction.category!.name]) {
-            trn[transaction.category!.name] += amount;
-          } else {
-            trn[transaction.category!.name] = amount;
-          }
+    const expenseTotals = expenseCategories.reduce<Record<string, number>>(
+      (trn, category) => {
+        if (category.userSpentAmount! > 0) {
+          trn[category.name] = category.userSpentAmount!;
         }
         return trn;
       },
       {}
     );
 
-    this.pieChartLabelsExpenses = this.pieChartLabelsExpenses.filter(
-      (label) => expenseTotals[label]
-    );
     this.pieChartDataExpenses = [
       {
         data: this.pieChartLabelsExpenses.map(
@@ -152,28 +142,20 @@ export class CashTransactionsListComponent {
       },
     ];
 
-    const incomeTransactions = this.cashTransactions.filter(
-      (t) => t.category && t.type === 'income'
+    const incomeCategories = this.categories.filter(
+      (c) => c.type === 'income' && c.userReceivedAmount! > 0
     );
-    const incomeCategories = this.categories.filter((c) => c.type === 'income');
     this.pieChartLabelsIncome = incomeCategories.map((c) => c.name);
-    const incomeTotals = incomeTransactions.reduce<Record<string, number>>(
-      (trn, transaction) => {
-        const amount = transaction.amountEquivalent ?? 0;
-        if (amount > 0) {
-          if (trn[transaction.category!.name]) {
-            trn[transaction.category!.name] += amount;
-          } else {
-            trn[transaction.category!.name] = amount;
-          }
+    const incomeTotals = incomeCategories.reduce<Record<string, number>>(
+      (trn, category) => {
+        if (category.userReceivedAmount! > 0) {
+          trn[category.name] = category.userReceivedAmount!;
         }
         return trn;
       },
       {}
     );
-    this.pieChartLabelsIncome = this.pieChartLabelsIncome.filter(
-      (label) => incomeTotals[label]
-    );
+
     this.pieChartDataIncome = [
       {
         data: this.pieChartLabelsIncome.map(
@@ -237,6 +219,7 @@ export class CashTransactionsListComponent {
             ]);
           }
           this.preparePieChartData();
+          this.prepareLineChartData();
         });
     }
   }
