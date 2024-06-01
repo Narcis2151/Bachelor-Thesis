@@ -67,15 +67,11 @@ export class CategoryService {
   }
 
   acceptPartnershipChanges(): Observable<void> {
-    return this.http.patch<void>(`${this.apiUrl}/partnership/accept`, {
-      accept: true,
-    });
+    return this.http.patch<void>(`${this.apiUrl}/partnership/accept`, {});
   }
 
   rejectPartnershipChanges(): Observable<void> {
-    return this.http.patch<void>(`${this.apiUrl}/partnership/reject`, {
-      accept: false,
-    });
+    return this.http.patch<void>(`${this.apiUrl}/partnership/reject`, {});
   }
 
   deleteCategory(id: string, replacementId: string): Observable<void> {

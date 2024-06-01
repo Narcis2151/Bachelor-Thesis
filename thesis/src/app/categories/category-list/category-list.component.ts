@@ -21,7 +21,7 @@ import { CategoryService, CreatePartnershipDto } from '../category.service';
   templateUrl: './category-list.component.html',
   styleUrl: './category-list.component.scss',
 })
-export class CategoryListComponent implements OnInit, AfterViewInit {
+export class CategoryListComponent implements OnInit {
   protected partnershipStatus: string | null = null;
   protected partnerEmail = '';
   protected partnerName: string | null = null;
@@ -47,13 +47,6 @@ export class CategoryListComponent implements OnInit, AfterViewInit {
 
   @ViewChild('invitedDialog') invitedDialog!: HlmAlertDialogComponent;
 
-  ngAfterViewInit() {
-    console.log(this.partnershipStatus);
-    if (this.partnershipStatus === 'invited') {
-      this.invitedDialog.open();
-    }
-  }
-
   protected loadCategories() {
     this.categoryService.getCategories().subscribe({
       next: (categories) => {
@@ -69,6 +62,12 @@ export class CategoryListComponent implements OnInit, AfterViewInit {
           (category) => category.isPending && !category.isShared
         );
         this.resetCategory();
+        // Check partnershipStatus and open dialog if necessary
+        if (this.partnershipStatus === 'invited') {
+          setTimeout(() => {
+            this.invitedDialog.open();
+          }, 0); // Ensure dialog open call is after view init
+        }
       },
     });
   }

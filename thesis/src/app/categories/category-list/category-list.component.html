@@ -4,27 +4,25 @@
       <h3 hlmAlertDialogTitle>
         {{ "You have been invited to join a partnership by " + partnerName }}
       </h3>
-      <p hlmAlertDialogDescription>
-        Categories to be shared:
-        <span *ngFor="let category of addedCategories; let i = index">
-          {{ category.name }}{{ i === addedCategories.length - 1 ? "" : ", " }}
-        </span>
-      </p>
+      <p>Categories to be shared:</p>
+      <ul class="list-none pl-5">
+        <li *ngFor="let category of addedCategories">
+          <span class="flex align-middle">
+            <hlm-icon class="mr-2" size="sm" [name]="category.icon" />
+            {{ category.name }}
+          </span>
+        </li>
+      </ul>
     </hlm-alert-dialog-header>
     <hlm-alert-dialog-footer>
       <button
         hlmBtn
         variant="secondary"
-        hlmAlertDialogAction
         (click)="rejectPartnershipChanges(); ctx.close()"
       >
         Reject Changes
       </button>
-      <button
-        hlmBtn
-        hlmAlertDialogAction
-        (click)="acceptPartnershipChanges(); ctx.close()"
-      >
+      <button hlmBtn (click)="acceptPartnershipChanges(); ctx.close()">
         Accept Changes
       </button>
     </hlm-alert-dialog-footer>
@@ -50,7 +48,7 @@
         <hlm-icon
           name="lucideAlertCircle"
           class="h-4 w-4"
-          *ngIf="partnershipStatus !== 'confimed'"
+          *ngIf="partnershipStatus !== 'confirmed'"
         >
         </hlm-icon>
 
@@ -274,12 +272,20 @@
         [ngModel]="_allCategoriesFilter()"
         (ngModelChange)="_rawFilterInput.set($event)"
       />
+
       <span
         *ngIf="partnershipStatus"
         class="w-full md:w-80 h-10 text-white flex flex-row justify-between items-center"
         hlmBadge
       >
-        <p class="">{{ "Partnership Status: " + partnershipStatus }}</p>
+        <hlm-icon
+          name="lucideAlertCircle"
+          class="h-4 w-4"
+          *ngIf="partnershipStatus !== 'confirmed'"
+        >
+        </hlm-icon>
+
+        <p class="">{{ "Partner Name: " + partnerName }}</p>
         <button
           hlmBtn
           variant="ghost"
@@ -571,22 +577,30 @@
           [ngModel]="_allCategoriesFilter()"
           (ngModelChange)="_rawFilterInput.set($event)"
         />
+        
         <span
-          *ngIf="partnershipStatus"
-          class="w-full md:w-80 h-10 text-white flex flex-row justify-between items-center"
-          hlmBadge
+        *ngIf="partnershipStatus"
+        class="w-full md:w-80 h-10 text-white flex flex-row justify-between items-center"
+        hlmBadge
+      >
+        <hlm-icon
+          name="lucideAlertCircle"
+          class="h-4 w-4"
+          *ngIf="partnershipStatus !== 'confirmed'"
         >
-          <p class="">{{ "Partnership Status: " + partnershipStatus }}</p>
-          <button
-            hlmBtn
-            variant="ghost"
-            class="h-6 w-6 p-0.5"
-            align="end"
-            [brnMenuTriggerFor]="menu"
-          >
-            <hlm-icon class="h-4 w-4" name="lucideMoreHorizontal" />
-          </button>
-        </span>
+        </hlm-icon>
+
+        <p class="">{{ "Partner Name: " + partnerName }}</p>
+        <button
+          hlmBtn
+          variant="ghost"
+          class="h-6 w-6 p-0.5"
+          align="end"
+          [brnMenuTriggerFor]="menu"
+        >
+          <hlm-icon class="h-4 w-4" name="lucideMoreHorizontal" />
+        </button>
+      </span>
 
         <ng-template #menu>
           <hlm-menu>
