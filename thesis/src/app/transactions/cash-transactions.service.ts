@@ -9,7 +9,7 @@ import CashTransaction from './cash-transactions-list/cash-transaction.model';
 export interface CreateCashTransactionDto {
   _id?: string;
   type: 'income' | 'expense';
-  // beneficiary: string;
+  beneficiary: string;
   details: string;
   amount: number;
   currency?: Currency;
@@ -57,7 +57,7 @@ export class CashTransactionService {
   ): Observable<CashTransaction> {
     const newCashTransaction: CreateCashTransactionDto = {
       type: cashTransaction.type,
-      // beneficiary: cashTransaction.beneficiary,
+      beneficiary: cashTransaction.beneficiary,
       details: cashTransaction.details,
       amount: cashTransaction.amount,
       currency: cashTransaction.currency,

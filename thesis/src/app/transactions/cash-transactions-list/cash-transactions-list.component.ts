@@ -4,6 +4,7 @@ import {
   computed,
   effect,
   signal,
+  ChangeDetectorRef,
 } from '@angular/core';
 import { formatDate } from '@angular/common';
 import { ChartOptions, ChartType } from 'chart.js';
@@ -204,23 +205,30 @@ export class CashTransactionsListComponent {
 
   protected updateTransactionCategory(category?: Category) {
     if (this.selectedCashTransaction) {
-      this.cashTransactionService
-        .updateTransactionCategory(this.selectedCashTransaction, category)
-        .subscribe((transaction) => {
-          const index = this.cashTransactions.findIndex(
-            (t) => t._id === transaction._id
-          );
-          if (index !== -1) {
-            this.cashTransactions[index] = transaction;
-            this._CashTransactions.set([
-              ...this.cashTransactions.sort((a, b) =>
-                String(b.postingDate).localeCompare(String(a.postingDate))
-              ),
-            ]);
-          }
-          this.preparePieChartData();
-          this.prepareLineChartData();
-        });
+      forkJoin({
+        updateTransaction:
+          this.cashTransactionService.updateTransactionCategory(
+            this.selectedCashTransaction,
+            category
+          ),
+        categories: this.categoryService.getCategories(),
+      }).subscribe(({ updateTransaction, categories }) => {
+        const index = this.cashTransactions.findIndex(
+          (t) => t._id === updateTransaction._id
+        );
+        if (index !== -1) {
+          this.cashTransactions[index] = updateTransaction;
+          this._CashTransactions.set([
+            ...this.cashTransactions.sort((a, b) =>
+              String(b.postingDate).localeCompare(String(a.postingDate))
+            ),
+          ]);
+        }
+        console.log(categories.categories);
+        this.categories = categories.categories;
+        this.cdr.detectChanges();
+        this.preparePieChartData();
+      });
     }
   }
 
@@ -238,7 +246,6 @@ export class CashTransactionsListComponent {
           ]);
           ctx.close();
           this.transactionError = null;
-          this.preparePieChartData();
           this.prepareLineChartData();
         },
         error: (error) => {
@@ -252,6 +259,12 @@ export class CashTransactionsListComponent {
           }
         },
       });
+
+    this.categoryService.getCategories().subscribe((categories) => {
+      this.categories = categories.categories;
+      this.cdr.detectChanges();
+      this.preparePieChartData();
+    });
   }
 
   private resetNewTransaction() {
@@ -330,9 +343,14 @@ export class CashTransactionsListComponent {
             ),
           ]);
         });
-      this.preparePieChartData();
       this.prepareLineChartData();
     }
+
+    this.categoryService.getCategories().subscribe((categories) => {
+      this.categories = categories.categories;
+      this.cdr.detectChanges();
+      this.preparePieChartData();
+    });
   }
 
   protected readonly _rawFilterInput = signal('');
@@ -410,6 +428,7 @@ export class CashTransactionsListComponent {
     this._displayedIndices.set({ start: startIndex, end: endIndex });
 
   constructor(
+    private cdr: ChangeDetectorRef,
     private cashTransactionService: CashTransactionService,
     private categoryService: CategoryService,
     private cashAccountService: CashAccountService
