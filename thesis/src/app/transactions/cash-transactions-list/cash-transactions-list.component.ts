@@ -17,10 +17,10 @@ import {
 
 import Category from '../../categories/category-list/category.model';
 import Currency from '../../../../shared/account-currency';
-import CashAccount from '../../accounts/cash-account-list/cash-account.model';
+import CashAccount from '../../accounts/models/cash-account.model';
 import CashTransaction from './cash-transaction.model';
 import { CategoryService } from '../../categories/category.service';
-import { CashAccountService } from '../../accounts/cash-account.service';
+import { CashAccountService } from '../../accounts/services/cash-account.service';
 import { CashTransactionService } from '../cash-transactions.service';
 import { FetchCategoryAmountsDto } from '../cash-transactions.service';
 

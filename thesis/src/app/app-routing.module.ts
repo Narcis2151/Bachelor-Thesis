@@ -8,6 +8,7 @@ import { AccountsPageComponent } from './accounts/pages/accounts-page/accounts-p
 import { DashboardPageComponent } from './dashboard/pages/dashboard-page/dashboard-page.component';
 import { CategoriesPageComponent } from './categories/pages/categories-page/categories-page.component';
 import { TransactionsPageComponent } from './transactions/pages/transactions-page/transactions-page.component';
+import { NordigenCallbackComponent } from './accounts/nordigen-callback/nordigen-callback.component';
 
 const routes: Routes = [
   { path: 'auth', component: AuthComponent },
@@ -36,6 +37,7 @@ const routes: Routes = [
     component: DashboardPageComponent,
     canActivate: [AuthGuard],
   },
+  { path: 'callback', component: NordigenCallbackComponent },
   { path: '**', redirectTo: '/auth', pathMatch: 'full' },
 ];
 

@@ -1,6 +1,8 @@
 import {
+  AfterViewInit,
   Component,
   TrackByFunction,
+  ViewChild,
   computed,
   effect,
   signal,
@@ -11,9 +13,13 @@ import { useBrnColumnManager } from '@spartan-ng/ui-table-brain';
 
 import Currency from '../../../../shared/account-currency';
 
-import CashAccount from './cash-account.model';
-import { CashAccountService } from '../cash-account.service';
+import CashAccount from '../models/cash-account.model';
+import { CashAccountService } from '../services/cash-account.service';
 import { ChartOptions, ChartType } from 'chart.js';
+import { HlmDialogComponent } from '@spartan-ng/ui-dialog-helm';
+import { NordigenService } from '../services/nordigen.service';
+import Institution from '../models/institution.model';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-cash-account-list',
@@ -22,6 +28,8 @@ import { ChartOptions, ChartType } from 'chart.js';
 })
 export class CashAccountListComponent {
   isLoading = false;
+  institutions: any[] = [];
+  protected connectError: string | null = null;
   cashAccounts: CashAccount[] = [];
   selectedCashAccount!: CashAccount;
   protected cashAccountError: string | null = null;
@@ -48,8 +56,84 @@ export class CashAccountListComponent {
   public pieChartData: any[] = [];
   public pieChartType: ChartType = 'pie';
 
+  @ViewChild('connectDialog') connectDialog!: HlmDialogComponent;
+  @ViewChild('loadingDialog') loadingDialog!: HlmDialogComponent;
+
   ngOnInit() {
     this.loadCashAccounts();
+    this.loadInstitutions();
+    // Check for requisition_id in query params
+    this.route.queryParams.subscribe((params) => {
+      const requisitionId = params['requisition_id'];
+      if (requisitionId) {
+        this.checkRequisitionStatus(requisitionId);
+      }
+    });
+  }
+
+  protected loadInstitutions() {
+    this.nordigenService.getInstitutions().subscribe({
+      next: (institutions) => {
+        this.institutions = institutions;
+      },
+      error: (err) => {
+        console.error('Failed to load institutions', err);
+        this.connectError = 'Failed to load institutions';
+      },
+    });
+  }
+
+  protected connectBank(institution: Institution, ctx: any) {
+    this.nordigenService
+      .createRequisition(
+        'http://localhost:4200/callback',
+        institution.id,
+        institution.logo
+      )
+      .subscribe({
+        next: (requisition) => {
+          window.location.href = requisition.link;
+        },
+        error: (err) => {
+          console.error('Failed to create requisition', err);
+          this.connectError = 'Failed to create requisition';
+        },
+      });
+  }
+
+  protected checkRequisitionStatus(requisitionId: string) {
+    setTimeout(() => {
+      this.loadingDialog.open();
+    }, 0);
+    this.nordigenService.getRequisition(requisitionId).subscribe({
+      next: (requisition) => {
+        if (requisition.status === 'LN') {
+          console.log(requisition._id!);
+          this.importInitialData(requisition._id!);
+        } else {
+          this.loadingDialog.close({});
+          this.connectError = 'Requisition is not active';
+        }
+      },
+      error: (err) => {
+        console.error('Failed to check requisition status', err);
+        this.loadingDialog.close({});
+        this.connectError = 'Failed to check requisition status';
+      },
+    });
+  }
+
+  protected importInitialData(requisitionId: string) {
+    this.nordigenService.importData(requisitionId).subscribe({
+      next: () => {
+        this.loadingDialog.close({});
+      },
+      error: (err) => {
+        console.error('Failed to import data', err);
+        this.loadingDialog.close({});
+        this.connectError = 'Failed to import data';
+      },
+    });
   }
 
   protected loadCashAccounts() {
@@ -248,7 +332,12 @@ export class CashAccountListComponent {
     () => this._filteredCashAccounts().length
   );
 
-  constructor(private cashAccountService: CashAccountService) {
+  constructor(
+    private cashAccountService: CashAccountService,
+    private nordigenService: NordigenService,
+    private route: ActivatedRoute,
+    private router: Router
+  ) {
     effect(() => this._cashAccountsFilter.set(this._debouncedFilter() ?? ''), {
       allowSignalWrites: true,
     });

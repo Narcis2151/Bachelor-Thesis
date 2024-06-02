@@ -3,3 +3,5 @@ type Institution = {
   name: string;
   logo: string;
 };
+
+export default Institution;

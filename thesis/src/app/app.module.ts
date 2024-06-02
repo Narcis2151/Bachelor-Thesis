@@ -136,6 +136,7 @@ import {
 } from 'ng2-charts';
 import { DashboardPageComponent } from './dashboard/pages/dashboard-page/dashboard-page.component';
 import { DashboardComponent } from './dashboard/dashboard/dashboard.component';
+import { NordigenCallbackComponent } from './accounts/nordigen-callback/nordigen-callback.component';
 
 @NgModule({
   declarations: [
@@ -154,6 +155,7 @@ import { DashboardComponent } from './dashboard/dashboard/dashboard.component';
     BudgetsPageComponent,
     DashboardPageComponent,
     DashboardComponent,
+    NordigenCallbackComponent,
   ],
   imports: [
     BaseChartDirective,
