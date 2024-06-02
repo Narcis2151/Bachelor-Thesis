@@ -23,6 +23,10 @@ export class CategoryService {
 
   constructor(private http: HttpClient) {}
 
+  getDefaultCategories(): Observable<Category[]> {
+    return this.http.get<Category[]>(`${this.apiUrl}/default`);
+  }
+
   getCategories(): Observable<FetchCategoriesResponse> {
     return this.http.get<FetchCategoriesResponse>(this.apiUrl);
   }

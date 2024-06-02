@@ -8,7 +8,9 @@ import { Router } from '@angular/router';
 })
 export class AuthService {
   private loginUrl = 'http://localhost:3000/auth/login';
-  private registerUrl = 'http://localhost:3000/auth/register';
+  private registerUrl = 'http://localhost:3000/auth/check-registration';
+  private completeRegistrationUrl =
+    'http://localhost:3000/auth/complete-registration';
 
   constructor(private http: HttpClient, private router: Router) {}
 
@@ -20,7 +22,7 @@ export class AuthService {
       this.router.navigate(['/dashboard']);
     }
   }
-  
+
   login(email: string, password: string): Observable<any> {
     return this.http.post(this.loginUrl, { email, password });
   }
@@ -37,5 +39,9 @@ export class AuthService {
       password,
       confirmPassword,
     });
+  }
+
+  completeRegistration(userCompletionData: any): Observable<any> {
+    return this.http.post(this.completeRegistrationUrl, userCompletionData);
   }
 }
