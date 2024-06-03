@@ -2,17 +2,17 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-import CashAccount from '../models/cash-account.model';
+import CashAccount from '../models/account.model';
 
 @Injectable({
   providedIn: 'root',
 })
-export class CashAccountService {
+export class AccountsService {
   private apiUrl = 'http://localhost:3000/accounts';
 
   constructor(private http: HttpClient) {}
 
-  getCashAccounts(): Observable<CashAccount[]> {
+  getAccounts(): Observable<CashAccount[]> {
     return this.http.get<CashAccount[]>(this.apiUrl);
   }
 
@@ -36,7 +36,11 @@ export class CashAccountService {
     });
   }
 
-  deleteCashAccount(id: string): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  deleteAccount(id: string, type: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`, {
+      body: {
+        type
+      }
+    });
   }
 }

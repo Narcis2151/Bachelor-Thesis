@@ -1,6 +1,6 @@
-<hlm-spinner *ngIf="isLoading; else CashAccountTemplate" />
+<hlm-spinner *ngIf="isLoading; else AccountsTemplate" />
 
-<ng-template #CashAccountTemplate>
+<ng-template #AccountsTemplate>
   <div class="flex flex-col md:flex-row justify-between gap-4">
     <div class="md:w-8/12 w-full">
       <div class="flex flex-col justify-between gap-4 sm:flex-row">
@@ -8,7 +8,7 @@
           hlmInput
           class="w-full md:w-80"
           placeholder="Filter accounts..."
-          [ngModel]="_cashAccountsFilter()"
+          [ngModel]="_accountsFilter()"
           (ngModelChange)="_rawFilterInput.set($event)"
         />
         <button
@@ -37,13 +37,23 @@
         [trackBy]="_trackBy"
       >
         <brn-column-def
-          name="icon"
+          name="logo"
           class="w-2/12 md:w-1/12 justify-center text-center"
         >
           <hlm-th *brnHeaderDef class="justify-center text-center">Icon</hlm-th>
           <hlm-td *brnCellDef="let element" class="justify-center text-center">
             <div class="w-full h-full justify-center text-center">
-              <hlm-icon class="ml-0 pl-0" size="lg" name="lucideWallet" />
+              <img
+                *ngIf="element.logo"
+                [src]="element.logo"
+                class="w-12 h-12"
+              />
+              <hlm-icon
+                *ngIf="!element.logo"
+                class="ml-0 pl-0"
+                size="lg"
+                name="lucideWallet"
+              />
             </div>
           </hlm-td>
         </brn-column-def>
@@ -141,7 +151,7 @@
                   <button
                     brnDialogTrigger
                     [brnDialogTriggerFor]="editDialog"
-                    (click)="selectCashAccount(element)"
+                    (click)="selectAccount(element)"
                   >
                     Edit
                   </button>
@@ -152,7 +162,7 @@
                     <button
                       brnDialogTrigger
                       [brnDialogTriggerFor]="deleteDialog"
-                      (click)="selectCashAccount(element)"
+                      (click)="selectAccount(element)"
                     >
                       Delete
                     </button>
@@ -249,16 +259,12 @@
       </div>
     </div>
 
-    <span *ngIf="cashAccountError" class="label-text text-error">{{
-      cashAccountError
+    <span *ngIf="accountError" class="label-text text-error">{{
+      accountError
     }}</span>
 
     <hlm-dialog-footer>
-      <button
-        hlmBtn
-        variant="ghost"
-        (click)="ctx.close(); cashAccountError = null"
-      >
+      <button hlmBtn variant="ghost" (click)="ctx.close(); accountError = null">
         Cancel
       </button>
       <button
@@ -338,10 +344,10 @@
         required
         #balance="ngModel"
         [ngClass]="{
-          'border-red-500': !selectedCashAccount.balance && balance.touched
+          'border-red-500': !selectedAccount.balance && balance.touched
         }"
         id="balance"
-        [(ngModel)]="selectedCashAccount.balance"
+        [(ngModel)]="selectedAccount.balance"
         class="col-span-3"
       />
     </div>
@@ -350,7 +356,7 @@
       <label hlmLabel for="currency" class="text-right">Currency</label>
       <brn-select
         id="currency"
-        [(ngModel)]="selectedCashAccount.currency"
+        [(ngModel)]="selectedAccount.currency"
         class="col-span-3"
       >
         <hlm-select-trigger class="w-full">
@@ -364,24 +370,20 @@
       </brn-select>
     </div>
 
-    <span *ngIf="cashAccountError" class="label-text text-error">{{
-      cashAccountError
+    <span *ngIf="accountError" class="label-text text-error">{{
+      accountError
     }}</span>
 
     <hlm-dialog-footer>
-      <button
-        hlmBtn
-        variant="ghost"
-        (click)="ctx.close(); cashAccountError = null"
-      >
+      <button hlmBtn variant="ghost" (click)="ctx.close(); accountError = null">
         Cancel
       </button>
       <button
         hlmBtn
         class="text-white hover:text-gray-400"
         [disabled]="
-          !selectedCashAccount.balance ||
-          !selectedCashAccount.currency ||
+          !selectedAccount.balance ||
+          !selectedAccount.currency ||
           balance.invalid
         "
         (click)="saveCashAccountBalance(ctx)"
@@ -401,17 +403,13 @@
       </p>
     </hlm-dialog-header>
     <hlm-dialog-footer>
-      <button
-        hlmBtn
-        variant="ghost"
-        (click)="ctx.close(); cashAccountError = null"
-      >
+      <button hlmBtn variant="ghost" (click)="ctx.close(); accountError = null">
         Cancel
       </button>
       <button
         hlmBtn
         variant="destructive"
-        (click)="deleteCashAccount(); ctx.close()"
+        (click)="deleteAccount(); ctx.close()"
       >
         Delete Account
       </button>

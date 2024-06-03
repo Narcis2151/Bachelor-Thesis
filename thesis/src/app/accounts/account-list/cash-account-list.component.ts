@@ -1,5 +1,4 @@
 import {
-  AfterViewInit,
   Component,
   TrackByFunction,
   ViewChild,
@@ -7,40 +6,40 @@ import {
   effect,
   signal,
 } from '@angular/core';
-import { debounceTime } from 'rxjs';
+import { ActivatedRoute } from '@angular/router';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { debounceTime } from 'rxjs';
+import { ChartOptions, ChartType } from 'chart.js';
 import { useBrnColumnManager } from '@spartan-ng/ui-table-brain';
+import { HlmDialogComponent } from '@spartan-ng/ui-dialog-helm';
 
 import Currency from '../../../../shared/account-currency';
-
-import CashAccount from '../models/cash-account.model';
-import { CashAccountService } from '../services/cash-account.service';
-import { ChartOptions, ChartType } from 'chart.js';
-import { HlmDialogComponent } from '@spartan-ng/ui-dialog-helm';
-import { NordigenService } from '../services/nordigen.service';
+import Account from '../models/account.model';
 import Institution from '../models/institution.model';
-import { ActivatedRoute, Router } from '@angular/router';
+import { AccountsService } from '../services/accounts.service';
+import { NordigenService } from '../services/nordigen.service';
 
 @Component({
   selector: 'app-cash-account-list',
   templateUrl: './cash-account-list.component.html',
   styleUrl: './cash-account-list.component.scss',
 })
-export class CashAccountListComponent {
+export class AccountListComponent {
   isLoading = false;
   institutions: any[] = [];
-  protected connectError: string | null = null;
-  cashAccounts: CashAccount[] = [];
-  selectedCashAccount!: CashAccount;
-  protected cashAccountError: string | null = null;
-  protected readonly currencies = Object.values(Currency);
-  protected newCashAccount: CashAccount = {
+  connectError: string | null = null;
+  Accounts: Account[] = [];
+  selectedAccount!: Account;
+  accountError: string | null = null;
+  readonly currencies = Object.values(Currency);
+  newCashAccount: Account = {
     name: '',
+    cashBank: 'cash',
     currency: Currency.RON,
     balance: 0,
   };
 
-  public pieChartOptions: ChartOptions = {
+  pieChartOptions: ChartOptions = {
     responsive: false,
     plugins: {
       title: {
@@ -50,19 +49,18 @@ export class CashAccountListComponent {
       },
     },
   };
-  public pieChartLabels: string[] = [];
-  public pieChartLegend = true;
-  public pieChartPlugins = [];
-  public pieChartData: any[] = [];
-  public pieChartType: ChartType = 'pie';
+  pieChartLabels: string[] = [];
+  pieChartLegend = true;
+  pieChartPlugins = [];
+  pieChartData: any[] = [];
+  pieChartType: ChartType = 'pie';
 
   @ViewChild('connectDialog') connectDialog!: HlmDialogComponent;
   @ViewChild('loadingDialog') loadingDialog!: HlmDialogComponent;
 
   ngOnInit() {
-    this.loadCashAccounts();
+    this.loadAccounts();
     this.loadInstitutions();
-    // Check for requisition_id in query params
     this.route.queryParams.subscribe((params) => {
       const requisitionId = params['requisition_id'];
       if (requisitionId) {
@@ -71,7 +69,7 @@ export class CashAccountListComponent {
     });
   }
 
-  protected loadInstitutions() {
+  loadInstitutions() {
     this.nordigenService.getInstitutions().subscribe({
       next: (institutions) => {
         this.institutions = institutions;
@@ -83,7 +81,7 @@ export class CashAccountListComponent {
     });
   }
 
-  protected connectBank(institution: Institution, ctx: any) {
+  connectBank(institution: Institution, ctx: any) {
     this.nordigenService
       .createRequisition(
         'http://localhost:4200/callback',
@@ -101,7 +99,7 @@ export class CashAccountListComponent {
       });
   }
 
-  protected checkRequisitionStatus(requisitionId: string) {
+  checkRequisitionStatus(requisitionId: string) {
     setTimeout(() => {
       this.loadingDialog.open();
     }, 0);
@@ -123,7 +121,7 @@ export class CashAccountListComponent {
     });
   }
 
-  protected importInitialData(requisitionId: string) {
+  importInitialData(requisitionId: string) {
     this.nordigenService.importData(requisitionId).subscribe({
       next: () => {
         this.loadingDialog.close({});
@@ -136,34 +134,35 @@ export class CashAccountListComponent {
     });
   }
 
-  protected loadCashAccounts() {
+  loadAccounts() {
     this.isLoading = true;
-    this.cashAccountService.getCashAccounts().subscribe((accounts) => {
-      this.cashAccounts = accounts;
-      this._CashAccounts.set(accounts);
+    this.accountsService.getAccounts().subscribe((accounts) => {
+      console.log('Accounts', accounts);
+      this.Accounts = accounts;
+      this._Accounts.set(accounts);
       this.prepareChartData();
     });
     this.isLoading = false;
   }
 
-  protected addCashAccount(ctx: any) {
-    this.cashAccountService.addCashAccount(this.newCashAccount).subscribe({
+  addCashAccount(ctx: any) {
+    this.accountsService.addCashAccount(this.newCashAccount).subscribe({
       next: (account) => {
-        this.cashAccounts.push(account);
+        this.Accounts.push(account);
         this.resetNewCashAccount();
-        this._CashAccounts.set([
-          ...this.cashAccounts.sort((a, b) => b.balance - a.balance),
+        this._Accounts.set([
+          ...this.Accounts.sort((a, b) => b.balance - a.balance),
         ]);
         this.prepareChartData();
         ctx.close();
-        this.cashAccountError = null;
+        this.accountError = null;
       },
       error: (error) => {
         console.error('Account creation failed', error);
         if (error.status === 400) {
-          this.cashAccountError = error.error.message;
+          this.accountError = error.error.message;
         } else {
-          this.cashAccountError =
+          this.accountError =
             error.error.message || 'An error occurred. Please try again later.';
         }
       },
@@ -171,7 +170,7 @@ export class CashAccountListComponent {
   }
 
   private prepareChartData() {
-    const currencyTotals = this.cashAccounts.reduce<Record<string, number>>(
+    const currencyTotals = this.Accounts.reduce<Record<string, number>>(
       (acc, account) => {
         const balance = account.balanceEquivalent ?? 0;
         if (balance > 0) {
@@ -197,61 +196,58 @@ export class CashAccountListComponent {
     ];
   }
 
-  protected resetNewCashAccount() {
+  resetNewCashAccount() {
     this.newCashAccount = {
       name: '',
+      cashBank: 'cash',
       balance: 0,
       currency: Currency.RON,
     };
   }
 
-  protected selectCashAccount(cashAccount: CashAccount) {
-    this.selectedCashAccount = { ...cashAccount };
+  selectAccount(Account: Account) {
+    this.selectedAccount = { ...Account };
   }
 
-  protected toggleEditName(cashAccount: CashAccount): void {
-    cashAccount.isEditing = !cashAccount.isEditing;
+  toggleEditName(Account: Account): void {
+    Account.isEditing = !Account.isEditing;
   }
 
-  protected saveCashAccountName(cashAccount: CashAccount): void {
-    this.cashAccountService
-      .updateCashAccountName(cashAccount)
-      .subscribe((account) => {
-        const index = this.cashAccounts.findIndex(
-          (acc) => acc._id === account._id
-        );
-        if (index !== -1) {
-          this.cashAccounts[index] = account;
-          this._CashAccounts.set([...this.cashAccounts]);
-        }
-      });
+  saveCashAccountName(Account: Account): void {
+    this.accountsService.updateCashAccountName(Account).subscribe((account) => {
+      const index = this.Accounts.findIndex((acc) => acc._id === account._id);
+      if (index !== -1) {
+        this.Accounts[index] = account;
+        this._Accounts.set([...this.Accounts]);
+      }
+    });
   }
 
-  protected saveCashAccountBalance(ctx: any) {
-    if (this.selectedCashAccount) {
-      this.cashAccountService
-        .updateCashAccountBalance(this.selectedCashAccount)
+  saveCashAccountBalance(ctx: any) {
+    if (this.selectedAccount) {
+      this.accountsService
+        .updateCashAccountBalance(this.selectedAccount)
         .subscribe({
           next: (account) => {
-            const index = this.cashAccounts.findIndex(
+            const index = this.Accounts.findIndex(
               (acc) => acc._id === account._id
             );
             if (index !== -1) {
-              this.cashAccounts[index] = account;
-              this._CashAccounts.set([
-                ...this.cashAccounts.sort((a, b) => b.balance - a.balance),
+              this.Accounts[index] = account;
+              this._Accounts.set([
+                ...this.Accounts.sort((a, b) => b.balance - a.balance),
               ]);
             }
             ctx.close();
-            this.cashAccountError = null;
+            this.accountError = null;
             this.prepareChartData();
           },
           error: (error) => {
             console.error('Update account balance failed', error);
             if (error.status === 400) {
-              this.cashAccountError = error.error.message;
+              this.accountError = error.error.message;
             } else {
-              this.cashAccountError =
+              this.accountError =
                 error.error.message ||
                 'An error occurred. Please try again later.';
             }
@@ -260,62 +256,63 @@ export class CashAccountListComponent {
     }
   }
 
-  protected deleteCashAccount() {
-    if (this.selectedCashAccount && this.selectedCashAccount._id) {
-      this.cashAccountService
-        .deleteCashAccount(this.selectedCashAccount._id)
+  deleteAccount() {
+    if (this.selectedAccount && this.selectedAccount._id) {
+      this.accountsService
+        .deleteAccount(this.selectedAccount._id, this.selectedAccount.cashBank)
         .subscribe(() => {
-          this.cashAccounts = this.cashAccounts.filter(
-            (t) => t._id !== this.selectedCashAccount!._id
+          this.Accounts = this.Accounts.filter(
+            (t) => t._id !== this.selectedAccount!._id
           );
-          this._CashAccounts.set([
-            ...this.cashAccounts.sort((a, b) => b.balance - a.balance),
+          this._Accounts.set([
+            ...this.Accounts.sort((a, b) => b.balance - a.balance),
           ]);
           this.prepareChartData();
         });
     }
   }
 
-  protected readonly _rawFilterInput = signal('');
-  protected readonly _cashAccountsFilter = signal('');
+  readonly _rawFilterInput = signal('');
+  readonly _accountsFilter = signal('');
   private readonly _debouncedFilter = toSignal(
     toObservable(this._rawFilterInput).pipe(debounceTime(300))
   );
-  protected readonly _pageSize = signal(10000);
+  readonly _pageSize = signal(10000);
 
-  protected readonly _brnColumnManager = useBrnColumnManager({
-    icon: { visible: true, label: 'icon' },
+  readonly _brnColumnManager = useBrnColumnManager({
+    logo: { visible: true, label: 'logo' },
     name: { visible: true, label: 'name' },
     balance: { visible: true, label: 'balance' },
     currency: { visible: true, label: 'currency' },
     isEditing: { visible: false, label: 'isEditing' },
+    cashBank: { visible: false },
   });
-  protected readonly _allDisplayedColumns = computed(() => [
+  readonly _allDisplayedColumns = computed(() => [
     ...this._brnColumnManager.displayedColumns(),
     'actions',
   ]);
 
-  private readonly _CashAccounts = signal(this.cashAccounts);
-  private readonly _filteredCashAccounts = computed(() => {
-    const filter = this._cashAccountsFilter()?.trim()?.toLowerCase();
+  private readonly _Accounts = signal(this.Accounts);
+  private readonly _filteredAccounts = computed(() => {
+    const filter = this._accountsFilter()?.trim()?.toLowerCase();
     if (filter && filter.length > 0) {
-      return this._CashAccounts().filter(
+      return this._Accounts().filter(
         (u) =>
           u.name.toLowerCase().includes(filter) ||
           u.currency.toLowerCase().includes(filter) ||
           u.balance.toString().includes(filter)
       );
     }
-    return this._CashAccounts();
+    return this._Accounts();
   });
   private readonly _nameSort = signal<'ASC' | 'DESC' | null>(null);
-  protected readonly _filteredSortedPaginatedBudgets = computed(() => {
+  readonly _filteredSortedPaginatedBudgets = computed(() => {
     const sort = this._nameSort();
-    const CashAccounts = this._filteredCashAccounts();
+    const Accounts = this._filteredAccounts();
     if (!sort) {
-      return CashAccounts.slice(0, this._pageSize());
+      return Accounts.slice(0, this._pageSize());
     }
-    return [...CashAccounts]
+    return [...Accounts]
       .sort(
         (p1, p2) =>
           (sort === 'ASC' ? 1 : -1) *
@@ -324,26 +321,21 @@ export class CashAccountListComponent {
       .slice(0, this._pageSize());
   });
 
-  protected readonly _trackBy: TrackByFunction<CashAccount> = (
-    _: number,
-    p: CashAccount
-  ) => p._id;
-  protected readonly _totalElements = computed(
-    () => this._filteredCashAccounts().length
-  );
+  readonly _trackBy: TrackByFunction<Account> = (_: number, p: Account) =>
+    p._id;
+  readonly _totalElements = computed(() => this._filteredAccounts().length);
 
   constructor(
-    private cashAccountService: CashAccountService,
+    private accountsService: AccountsService,
     private nordigenService: NordigenService,
     private route: ActivatedRoute,
-    private router: Router
   ) {
-    effect(() => this._cashAccountsFilter.set(this._debouncedFilter() ?? ''), {
+    effect(() => this._accountsFilter.set(this._debouncedFilter() ?? ''), {
       allowSignalWrites: true,
     });
   }
 
-  protected handleNameSortChange() {
+  handleNameSortChange() {
     const sort = this._nameSort();
     if (sort === 'ASC') {
       this._nameSort.set('DESC');

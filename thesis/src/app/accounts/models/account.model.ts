@@ -1,14 +1,15 @@
 import Currency from "../../../../shared/account-currency";
-import Requisition from "./requisition.model";
 
-type BankAccount = {
+type Account = {
   _id?: string;
+  cashBank: 'cash' | 'bank';
   name: string;
-  requisition: Requisition;
   balance: number;
   currency: Currency;
-  balanceUpdatedAt: Date;
+  logo?: string;
+  balanceUpdatedAt?: Date;
   balanceEquivalent?: number;
+  isEditing?: boolean;
 };
 
-export default BankAccount;
+export default Account;

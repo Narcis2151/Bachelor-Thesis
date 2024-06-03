@@ -17,10 +17,10 @@ import {
 
 import Category from '../../categories/category-list/category.model';
 import Currency from '../../../../shared/account-currency';
-import CashAccount from '../../accounts/models/cash-account.model';
+import CashAccount from '../../accounts/models/account.model';
 import CashTransaction from './cash-transaction.model';
 import { CategoryService } from '../../categories/category.service';
-import { CashAccountService } from '../../accounts/services/cash-account.service';
+import { AccountsService } from '../../accounts/services/accounts.service';
 import { CashTransactionService } from '../cash-transactions.service';
 import { FetchCategoryAmountsDto } from '../cash-transactions.service';
 
@@ -100,7 +100,7 @@ export class CashTransactionsListComponent {
     this.isLoading = true;
     forkJoin({
       categories: this.categoryService.getCategories(),
-      accounts: this.cashAccountService.getCashAccounts(),
+      accounts: this.accountsService.getAccounts(),
       transactions: this.cashTransactionService.getTransactions(1, 5),
     }).subscribe(({ categories, accounts, transactions }) => {
       this.isLoading = false;
@@ -431,7 +431,7 @@ export class CashTransactionsListComponent {
     private cdr: ChangeDetectorRef,
     private cashTransactionService: CashTransactionService,
     private categoryService: CategoryService,
-    private cashAccountService: CashAccountService
+    private accountsService: AccountsService
   ) {
     effect(() => this._transactionsFilter.set(this._debouncedFilter() ?? ''), {
       allowSignalWrites: true,
