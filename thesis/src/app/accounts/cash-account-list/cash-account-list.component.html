@@ -18,7 +18,7 @@
           class="justify-center rounded-sm text-white hover:text-gray-400"
         >
           New Bank Account
-      </button>
+        </button>
         <button
           hlmBtn
           brnDialogTrigger
@@ -187,7 +187,7 @@
     </div>
   </div>
 </ng-template>
-      
+
 <hlm-dialog #newDialog>
   <hlm-dialog-content class="sm:max-w-[425px]" *brnDialogContent="let ctx">
     <hlm-dialog-header>
@@ -254,7 +254,13 @@
     }}</span>
 
     <hlm-dialog-footer>
-      <button hlmBtn variant="ghost" (click)="ctx.close(); cashAccountError = null">Cancel</button>
+      <button
+        hlmBtn
+        variant="ghost"
+        (click)="ctx.close(); cashAccountError = null"
+      >
+        Cancel
+      </button>
       <button
         hlmBtn
         class="text-white hover:text-gray-400"
@@ -274,24 +280,33 @@
 </hlm-dialog>
 
 <hlm-dialog #connectDialog>
-  <hlm-dialog-content class="sm:max-w-[425px]" *brnDialogContent="let ctx">
+  <hlm-dialog-content
+    class="sm:max-w-[425px] max-h-[500px]"
+    *brnDialogContent="let ctx"
+  >
     <hlm-dialog-header>
       <h3 hlmDialogTitle>Connect Bank Account</h3>
       <p hlmDialogDescription>Select your bank to connect.</p>
     </hlm-dialog-header>
 
-    <div class="py-4 grid gap-4">
-      <div *ngFor="let institution of institutions" class="flex items-center gap-4 cursor-pointer" (click)="connectBank(institution, ctx)">
-        <img [src]="institution.logo" alt="{{ institution.name }}" class="w-12 h-12"/>
+    <div class="py-4 grid gap-4 overflow-y-auto h-[400px]">
+      <div
+        *ngFor="let institution of institutions"
+        class="flex items-center gap-4 cursor-pointer"
+        (click)="connectBank(institution, ctx)"
+      >
+        <img
+          [src]="institution.logo"
+          alt="{{ institution.name }}"
+          class="w-12 h-12"
+        />
         <span>{{ institution.name }}</span>
       </div>
     </div>
 
-    <span *ngIf="connectError" class="label-text text-error">{{ connectError }}</span>
-
-    <hlm-dialog-footer>
-      <button hlmBtn variant="ghost" (click)="ctx.close(); connectError = null">Cancel</button>
-    </hlm-dialog-footer>
+    <span *ngIf="connectError" class="label-text text-error">{{
+      connectError
+    }}</span>
   </hlm-dialog-content>
 </hlm-dialog>
 
@@ -354,7 +369,13 @@
     }}</span>
 
     <hlm-dialog-footer>
-      <button hlmBtn variant="ghost" (click)="ctx.close(); cashAccountError = null">Cancel</button>
+      <button
+        hlmBtn
+        variant="ghost"
+        (click)="ctx.close(); cashAccountError = null"
+      >
+        Cancel
+      </button>
       <button
         hlmBtn
         class="text-white hover:text-gray-400"
@@ -380,7 +401,13 @@
       </p>
     </hlm-dialog-header>
     <hlm-dialog-footer>
-      <button hlmBtn variant="ghost" (click)="ctx.close(); cashAccountError = null">Cancel</button>
+      <button
+        hlmBtn
+        variant="ghost"
+        (click)="ctx.close(); cashAccountError = null"
+      >
+        Cancel
+      </button>
       <button
         hlmBtn
         variant="destructive"

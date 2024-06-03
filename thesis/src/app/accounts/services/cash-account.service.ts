@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+
 import CashAccount from '../models/cash-account.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CashAccountService {
-  private apiUrl = 'http://localhost:3000/cash-accounts';
+  private apiUrl = 'http://localhost:3000/accounts';
 
   constructor(private http: HttpClient) {}
 
