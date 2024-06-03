@@ -1,0 +1,70 @@
+<hlm-sheet side="right">
+  <button brnSheetTrigger class="btn btn-ghost btn-circle">
+    <div class="indicator">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="h-5 w-5"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+        />
+      </svg>
+      <span class="badge badge-xs badge-primary indicator-item"></span>
+    </div>
+  </button>
+  <hlm-sheet-content *brnSheetContent="let ctx">
+    <hlm-sheet-header>
+      <h3 hlmSheetTitle>Notifications</h3>
+      <p hlmSheetDescription>You have 3 unread notifications</p>
+    </hlm-sheet-header>
+    <div class="py-4 grid gap-4">
+      <div>
+        @for (notification of notifications; track notification._id) {
+        <div
+          class="mb-4 grid grid-cols-[25px_1fr] items-start pb-4 last:mb-0 last:pb-0"
+          [class.bg-gray-100]="notification.isRead"
+        >
+          <span
+            class="flex w-2 h-2 rounded-full translate-y-1 bg-sky-500"
+          ></span>
+          <div class="space-y-1 flex-grow">
+            <p class="text-sm font-medium leading-none">
+              {{ notification.title }}
+            </p>
+            <p class="text-sm text-muted-foreground">
+              {{ notification.message }}
+            </p>
+          </div>
+          <div class="flex space-x-2">
+            <button
+              *ngIf="!notification.isRead"
+              (click)="markAsRead(notification)"
+              class="btn btn-icon"
+            >
+              <hlm-icon size="base" name="lucideEye" />
+            </button>
+            <button
+              (click)="deleteNotification(notification)"
+              class="btn btn-icon"
+            >
+              <hlm-icon size="base" name="lucideX" />
+            </button>
+          </div>
+        </div>
+        }
+      </div>
+    </div>
+    <hlm-sheet-footer>
+      <button class="w-full" hlmBtn (click)="markAllAsRead()">
+        <hlm-icon size="sm" class="mr-2" name="lucideCheck" />
+        Mark all as read
+      </button>
+    </hlm-sheet-footer>
+  </hlm-sheet-content>
+</hlm-sheet>

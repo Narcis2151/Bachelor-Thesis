@@ -6,7 +6,6 @@ import {
   signal,
   OnInit,
   ViewChild,
-  AfterViewInit,
 } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { debounceTime } from 'rxjs';

@@ -12,9 +12,23 @@ import { NavigationComponent } from './navigation/navigation.component';
 import { CategoryListComponent } from './categories/category-list/category-list.component';
 import { CategoryNavigationComponent } from './categories/category-navigation/category-navigation.component';
 import { CategoriesPageComponent } from './categories/pages/categories-page/categories-page.component';
-import { HlmButtonDirective } from '@spartan-ng/ui-button-helm';
 
+import { HlmButtonDirective } from '@spartan-ng/ui-button-helm';
 import { HlmBadgeDirective } from '@spartan-ng/ui-badge-helm';
+
+import {
+  BrnSheetContentDirective,
+  BrnSheetTriggerDirective,
+} from '@spartan-ng/ui-sheet-brain';
+import {
+  HlmSheetComponent,
+  HlmSheetContentComponent,
+  HlmSheetDescriptionDirective,
+  HlmSheetFooterComponent,
+  HlmSheetHeaderComponent,
+  HlmSheetTitleDirective,
+} from '@spartan-ng/ui-sheet-helm';
+
 import { HlmCaptionComponent } from '../../components/libs/ui/ui-table-helm/src/lib/hlm-caption.component';
 import { HlmTableComponent } from '../../components/libs/ui/ui-table-helm/src/lib/hlm-table.component';
 import { HlmTdComponent } from '../../components/libs/ui/ui-table-helm/src/lib/hlm-td.component';
@@ -90,6 +104,9 @@ import {
   lucideUsers,
   lucideAlertCircle,
   lucideArrowLeftRight,
+  lucideX,
+  lucideEye,
+  lucideCheck,
 } from '@ng-icons/lucide';
 import { HlmSeparatorDirective } from '@spartan-ng/ui-separator-helm';
 import { BrnSeparatorComponent } from '@spartan-ng/ui-separator-brain';
@@ -137,6 +154,7 @@ import {
 import { DashboardPageComponent } from './dashboard/pages/dashboard-page/dashboard-page.component';
 import { DashboardComponent } from './dashboard/dashboard/dashboard.component';
 import { NordigenCallbackComponent } from './accounts/nordigen-callback/nordigen-callback.component';
+import { NotitificationsListComponent } from './navigation/notifications/notifications-list/notitifications-list.component';
 
 @NgModule({
   declarations: [
@@ -156,6 +174,7 @@ import { NordigenCallbackComponent } from './accounts/nordigen-callback/nordigen
     DashboardPageComponent,
     DashboardComponent,
     NordigenCallbackComponent,
+    NotitificationsListComponent,
   ],
   imports: [
     BaseChartDirective,
@@ -233,6 +252,14 @@ import { NordigenCallbackComponent } from './accounts/nordigen-callback/nordigen
     HlmCheckboxComponent,
     BrnSelectModule,
     HlmSelectModule,
+    HlmSheetComponent,
+    HlmSheetContentComponent,
+    HlmSheetDescriptionDirective,
+    HlmSheetFooterComponent,
+    HlmSheetHeaderComponent,
+    HlmSheetTitleDirective,
+    BrnSheetContentDirective,
+    BrnSheetTriggerDirective,
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
@@ -256,6 +283,9 @@ import { NordigenCallbackComponent } from './accounts/nordigen-callback/nordigen
       lucideUsers,
       lucideAlertCircle,
       lucideArrowLeftRight,
+      lucideX,
+      lucideEye,
+      lucideCheck
     }),
     provideCharts(withDefaultRegisterables()),
   ],
