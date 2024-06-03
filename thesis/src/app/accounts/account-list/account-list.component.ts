@@ -20,15 +20,16 @@ import { AccountsService } from '../services/accounts.service';
 import { NordigenService } from '../services/nordigen.service';
 
 @Component({
-  selector: 'app-cash-account-list',
-  templateUrl: './cash-account-list.component.html',
-  styleUrl: './cash-account-list.component.scss',
+  selector: 'app-account-list',
+  templateUrl: './account-list.component.html',
+  styleUrl: './account-list.component.scss',
 })
 export class AccountListComponent {
   isLoading = false;
   institutions: any[] = [];
   connectError: string | null = null;
-  Accounts: Account[] = [];
+  accounts: Account[] = [];
+  cashAccounts: Account[] = [];
   selectedAccount!: Account;
   accountError: string | null = null;
   readonly currencies = Object.values(Currency);
@@ -137,8 +138,9 @@ export class AccountListComponent {
   loadAccounts() {
     this.isLoading = true;
     this.accountsService.getAccounts().subscribe((accounts) => {
-      console.log('Accounts', accounts);
-      this.Accounts = accounts;
+      console.log('accounts', accounts);
+      this.accounts = accounts;
+      this.cashAccounts = accounts.filter((a) => a.cashBank === 'cash');
       this._Accounts.set(accounts);
       this.prepareChartData();
     });
@@ -148,10 +150,10 @@ export class AccountListComponent {
   addCashAccount(ctx: any) {
     this.accountsService.addCashAccount(this.newCashAccount).subscribe({
       next: (account) => {
-        this.Accounts.push(account);
+        this.accounts.push(account);
         this.resetNewCashAccount();
         this._Accounts.set([
-          ...this.Accounts.sort((a, b) => b.balance - a.balance),
+          ...this.accounts.sort((a, b) => b.balance - a.balance),
         ]);
         this.prepareChartData();
         ctx.close();
@@ -170,7 +172,7 @@ export class AccountListComponent {
   }
 
   private prepareChartData() {
-    const currencyTotals = this.Accounts.reduce<Record<string, number>>(
+    const currencyTotals = this.accounts.reduce<Record<string, number>>(
       (acc, account) => {
         const balance = account.balanceEquivalent ?? 0;
         if (balance > 0) {
@@ -215,10 +217,10 @@ export class AccountListComponent {
 
   saveCashAccountName(Account: Account): void {
     this.accountsService.updateCashAccountName(Account).subscribe((account) => {
-      const index = this.Accounts.findIndex((acc) => acc._id === account._id);
+      const index = this.accounts.findIndex((acc) => acc._id === account._id);
       if (index !== -1) {
-        this.Accounts[index] = account;
-        this._Accounts.set([...this.Accounts]);
+        this.accounts[index] = account;
+        this._Accounts.set([...this.accounts]);
       }
     });
   }
@@ -229,13 +231,13 @@ export class AccountListComponent {
         .updateCashAccountBalance(this.selectedAccount)
         .subscribe({
           next: (account) => {
-            const index = this.Accounts.findIndex(
+            const index = this.accounts.findIndex(
               (acc) => acc._id === account._id
             );
             if (index !== -1) {
-              this.Accounts[index] = account;
+              this.accounts[index] = account;
               this._Accounts.set([
-                ...this.Accounts.sort((a, b) => b.balance - a.balance),
+                ...this.accounts.sort((a, b) => b.balance - a.balance),
               ]);
             }
             ctx.close();
@@ -261,11 +263,11 @@ export class AccountListComponent {
       this.accountsService
         .deleteAccount(this.selectedAccount._id, this.selectedAccount.cashBank)
         .subscribe(() => {
-          this.Accounts = this.Accounts.filter(
+          this.accounts = this.accounts.filter(
             (t) => t._id !== this.selectedAccount!._id
           );
           this._Accounts.set([
-            ...this.Accounts.sort((a, b) => b.balance - a.balance),
+            ...this.accounts.sort((a, b) => b.balance - a.balance),
           ]);
           this.prepareChartData();
         });
@@ -292,7 +294,7 @@ export class AccountListComponent {
     'actions',
   ]);
 
-  private readonly _Accounts = signal(this.Accounts);
+  private readonly _Accounts = signal(this.accounts);
   private readonly _filteredAccounts = computed(() => {
     const filter = this._accountsFilter()?.trim()?.toLowerCase();
     if (filter && filter.length > 0) {
@@ -308,11 +310,11 @@ export class AccountListComponent {
   private readonly _nameSort = signal<'ASC' | 'DESC' | null>(null);
   readonly _filteredSortedPaginatedBudgets = computed(() => {
     const sort = this._nameSort();
-    const Accounts = this._filteredAccounts();
+    const accounts = this._filteredAccounts();
     if (!sort) {
-      return Accounts.slice(0, this._pageSize());
+      return accounts.slice(0, this._pageSize());
     }
-    return [...Accounts]
+    return [...accounts]
       .sort(
         (p1, p2) =>
           (sort === 'ASC' ? 1 : -1) *
@@ -328,7 +330,7 @@ export class AccountListComponent {
   constructor(
     private accountsService: AccountsService,
     private nordigenService: NordigenService,
-    private route: ActivatedRoute,
+    private route: ActivatedRoute
   ) {
     effect(() => this._accountsFilter.set(this._debouncedFilter() ?? ''), {
       allowSignalWrites: true,

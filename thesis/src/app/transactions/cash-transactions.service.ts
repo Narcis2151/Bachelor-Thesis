@@ -32,7 +32,7 @@ export interface FetchCategoryAmountsDto {
   providedIn: 'root',
 })
 export class CashTransactionService {
-  private apiUrl = 'http://localhost:3000/cash-transactions';
+  private apiUrl = 'http://localhost:3000/transactions';
 
   constructor(private http: HttpClient) {}
 

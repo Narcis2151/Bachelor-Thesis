@@ -121,7 +121,7 @@ import { HlmHoverCardContentComponent } from '@spartan-ng/ui-hovercard-helm';
 
 import { CalendarModule } from 'primeng/calendar';
 
-import { AccountListComponent } from './accounts/account-list/cash-account-list.component';
+import { AccountListComponent } from './accounts/account-list/account-list.component';
 import { AccountsPageComponent } from './accounts/pages/accounts-page/accounts-page.component';
 import { DecimalPipe, TitleCasePipe } from '@angular/common';
 import { CashTransactionsListComponent } from './transactions/cash-transactions-list/cash-transactions-list.component';

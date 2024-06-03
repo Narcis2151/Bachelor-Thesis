@@ -240,6 +240,7 @@
                   <button
                     hlmMenuItem
                     brnDialogTrigger
+                    [disabled]="allCategories.length === 1"
                     [brnDialogTriggerFor]="deleteDialog"
                     (click)="selectCategory(element)"
                   >
@@ -468,6 +469,7 @@
                   <button
                     hlmMenuItem
                     brnDialogTrigger
+                    [disabled]="allCategories.length === 1"
                     [brnDialogTriggerFor]="deleteDialog"
                     (click)="selectCategory(element)"
                   >
@@ -777,6 +779,7 @@
                     <button
                       hlmMenuItem
                       brnDialogTrigger
+                      [disabled]="allCategories.length === 1"
                       [brnDialogTriggerFor]="deleteDialog"
                       (click)="selectCategory(element)"
                     >

@@ -149,6 +149,7 @@
                 <hlm-menu-separator />
                 <hlm-menu-group>
                   <button
+                    hlmMenuItem
                     brnDialogTrigger
                     [brnDialogTriggerFor]="editDialog"
                     (click)="selectAccount(element)"
@@ -160,7 +161,9 @@
                 <hlm-menu-group>
                   <hlm-menu-group>
                     <button
+                      hlmMenuItem
                       brnDialogTrigger
+                      [disabled]="cashAccounts.length === 1"
                       [brnDialogTriggerFor]="deleteDialog"
                       (click)="selectAccount(element)"
                     >
