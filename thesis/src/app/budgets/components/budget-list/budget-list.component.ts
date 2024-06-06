@@ -77,7 +77,6 @@ export class BudgetListComponent implements OnInit {
 
   protected loadBudgets() {
     this.isLoading = true;
-    console.log('Loading budgets');
     this.budgetsService.getBudgets().subscribe((budgets) => {
       this.budgets = budgets.budgets;
       this.totalBudgetedAmount = budgets.totalBudgetedAmount;
