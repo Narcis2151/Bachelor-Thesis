@@ -21,7 +21,9 @@
   <hlm-sheet-content *brnSheetContent="let ctx">
     <hlm-sheet-header>
       <h3 hlmSheetTitle>Notifications</h3>
-      <p hlmSheetDescription>You have 3 unread notifications</p>
+      <p hlmSheetDescription>
+        {{ "You have " + notifications.length + " unread notifications" }}
+      </p>
     </hlm-sheet-header>
     <div class="py-4 grid gap-4">
       <div>

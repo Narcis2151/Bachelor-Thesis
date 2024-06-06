@@ -3,9 +3,9 @@ import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from './auth.service';
 import { HlmDialogComponent } from '@spartan-ng/ui-dialog-helm';
-import { CategoryService } from '../categories/category.service';
+import { CategoriesService } from '../categories/services/categories.service';
 import CurrencyEnum from '../../../shared/account-currency';
-import Category from '../categories/category-list/category.model';
+import Category from '../categories/components/category-list/category.model';
 
 @Component({
   selector: 'app-auth',
@@ -33,7 +33,7 @@ export class AuthComponent {
 
   constructor(
     private authService: AuthService,
-    private categoryService: CategoryService,
+    private categoriesService: CategoriesService,
     private router: Router
   ) {}
 
@@ -42,7 +42,7 @@ export class AuthComponent {
   }
 
   loadCategories() {
-    this.categoryService.getDefaultCategories().subscribe({
+    this.categoriesService.getDefaultCategories().subscribe({
       next: (categories) => {
         this.categories = categories;
       },

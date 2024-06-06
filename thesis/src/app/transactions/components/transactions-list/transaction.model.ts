@@ -1,8 +1,8 @@
-import Currency from '../../../../shared/account-currency';
-import CashAccount from '../../accounts/models/account.model';
-import Category from '../../categories/category-list/category.model';
+import Currency from '../../../../../shared/account-currency';
+import CashAccount from '../../../accounts/models/account.model';
+import Category from '../../../categories/components/category-list/category.model';
 
-type CashTransaction = {
+type Transaction = {
   _id?: string;
   type: 'expense' | 'income';
   beneficiary: string;
@@ -17,4 +17,4 @@ type CashTransaction = {
   amountEquivalent?: number;
 };
 
-export default CashTransaction;
+export default Transaction;

@@ -1,5 +1,5 @@
-import Currency from "../../../../shared/account-currency";
-import Category from "../../categories/category-list/category.model";  
+import Currency from "../../../../../shared/account-currency";
+import Category from "../../../categories/components/category-list/category.model";  
 
 type Budget = {
   _id?: string;
@@ -7,8 +7,9 @@ type Budget = {
   amountAvailable: number;
   amountAvailableEquivalent?: number;
   currency: Currency;
-  userSpentAmount: number;
-  partnerSpentAmount: number;
+  exchangeRate?: number;
+  userSpentAmount?: number;
+  partnerSpentAmount?: number;
   startDate: Date | string;
   resetDate: Date | string;
   active?: boolean;

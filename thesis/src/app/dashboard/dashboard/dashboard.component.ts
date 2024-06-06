@@ -2,12 +2,12 @@ import { Component } from '@angular/core';
 import { forkJoin } from 'rxjs';
 import { ChartOptions, ChartType } from 'chart.js';
 
-import { BudgetsService } from '../../budgets/budgets.service';
-import { CategoryService } from '../../categories/category.service';
-import { CashTransactionService } from '../../transactions/cash-transactions.service';
-import Budget from '../../budgets/budget-list/budget.model';
-import Category from '../../categories/category-list/category.model';
-import CashTransaction from '../../transactions/cash-transactions-list/cash-transaction.model';
+import { BudgetsService } from '../../budgets/services/budgets.service';
+import { CategoriesService } from '../../categories/services/categories.service';
+import { TransactionsService } from '../../transactions/services/transactions.service';
+import Budget from '../../budgets/components/budget-list/budget.model';
+import Category from '../../categories/components/category-list/category.model';
+import CashTransaction from '../../transactions/components/transactions-list/transaction.model';
 
 @Component({
   selector: 'app-dashboard',
@@ -63,7 +63,7 @@ export class DashboardComponent {
       budgets: this.budgetsService.getBudgets(),
     }).subscribe(({ categories, transactions, budgets }) => {
       this.isLoading = false;
-      this.categories = categories.categories;
+      this.categories = categories;
       this.budgets = budgets.budgets;
       this.tableBudgets = budgets.budgets.slice(0, 5);
       this.totalBudgetedAmount = budgets.totalBudgetedAmount;
@@ -127,8 +127,8 @@ export class DashboardComponent {
   }
 
   constructor(
-    private cashTransactionsService: CashTransactionService,
+    private cashTransactionsService: TransactionsService,
     private budgetsService: BudgetsService,
-    private categoriesService: CategoryService
+    private categoriesService: CategoriesService
   ) {}
 }

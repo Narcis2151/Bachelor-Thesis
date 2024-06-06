@@ -13,11 +13,11 @@ import { ChartOptions, ChartType } from 'chart.js';
 import { useBrnColumnManager } from '@spartan-ng/ui-table-brain';
 import { HlmDialogComponent } from '@spartan-ng/ui-dialog-helm';
 
-import Currency from '../../../../shared/account-currency';
-import Account from '../models/account.model';
-import Institution from '../models/institution.model';
-import { AccountsService } from '../services/accounts.service';
-import { NordigenService } from '../services/nordigen.service';
+import Currency from '../../../../../shared/account-currency';
+import Account from '../../models/account.model';
+import Institution from '../../models/institution.model';
+import { AccountsService } from '../../services/accounts.service';
+import { NordigenService } from '../../services/nordigen.service';
 
 @Component({
   selector: 'app-account-list',

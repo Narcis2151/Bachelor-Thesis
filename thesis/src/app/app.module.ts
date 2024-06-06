@@ -9,8 +9,8 @@ import { AuthComponent } from './auth/auth.component';
 
 import { LoadingSpinnerComponent } from './common/loading-spinner/loading-spinner.component';
 import { NavigationComponent } from './navigation/navigation.component';
-import { CategoryListComponent } from './categories/category-list/category-list.component';
-import { CategoryNavigationComponent } from './categories/category-navigation/category-navigation.component';
+import { CategoryListComponent } from './categories/components/category-list/category-list.component';
+import { CategoryNavigationComponent } from './categories/components/category-navigation/category-navigation.component';
 import { CategoriesPageComponent } from './categories/pages/categories-page/categories-page.component';
 
 import { HlmButtonDirective } from '@spartan-ng/ui-button-helm';
@@ -138,12 +138,12 @@ import { HlmHoverCardContentComponent } from '@spartan-ng/ui-hovercard-helm';
 
 import { CalendarModule } from 'primeng/calendar';
 
-import { AccountListComponent } from './accounts/account-list/account-list.component';
+import { AccountListComponent } from './accounts/components/account-list/account-list.component';
 import { AccountsPageComponent } from './accounts/pages/accounts-page/accounts-page.component';
 import { DecimalPipe, TitleCasePipe } from '@angular/common';
-import { CashTransactionsListComponent } from './transactions/cash-transactions-list/cash-transactions-list.component';
+import { TransactionsListComponent } from './transactions/components/transactions-list/transactions-list.component';
 import { TransactionsPageComponent } from './transactions/pages/transactions-page/transactions-page.component';
-import { BudgetListComponent } from './budgets/budget-list/budget-list.component';
+import { BudgetListComponent } from './budgets/components/budget-list/budget-list.component';
 import { BudgetsPageComponent } from './budgets/pages/budgets-page/budgets-page.component';
 import { JwtInterceptor } from './jwt.interceptor';
 import {
@@ -153,7 +153,7 @@ import {
 } from 'ng2-charts';
 import { DashboardPageComponent } from './dashboard/pages/dashboard-page/dashboard-page.component';
 import { DashboardComponent } from './dashboard/dashboard/dashboard.component';
-import { NordigenCallbackComponent } from './accounts/nordigen-callback/nordigen-callback.component';
+import { NordigenCallbackComponent } from './accounts/components/nordigen-callback/nordigen-callback.component';
 import { NotitificationsListComponent } from './navigation/notifications/notifications-list/notitifications-list.component';
 
 @NgModule({
@@ -167,7 +167,7 @@ import { NotitificationsListComponent } from './navigation/notifications/notific
     CategoriesPageComponent,
     AccountListComponent,
     AccountsPageComponent,
-    CashTransactionsListComponent,
+    TransactionsListComponent,
     TransactionsPageComponent,
     BudgetListComponent,
     BudgetsPageComponent,

@@ -124,7 +124,7 @@
                   class="bg-primary h-6 rounded-full text-white text-xs flex items-start justify-start"
                   [ngStyle]="{
                     width:
-                      (budget.userSpentAmount / budget.amountAvailable) * 100 +
+                      (budget.userSpentAmount! / budget.amountAvailable) * 100 +
                       '%'
                   }"
                 ></div>
@@ -135,7 +135,7 @@
                 Spent: {{ budget.userSpentAmount | number : "1.2-2" }}
                 {{ budget.currency }}, Remaining:
                 {{
-                  budget.amountAvailable - budget.userSpentAmount
+                  budget.amountAvailable - budget.userSpentAmount!
                     | number : "1.2-2"
                 }}
                 {{ budget.currency }}

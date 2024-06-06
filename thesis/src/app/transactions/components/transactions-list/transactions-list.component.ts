@@ -15,30 +15,29 @@ import {
   useBrnColumnManager,
 } from '@spartan-ng/ui-table-brain';
 
-import Category from '../../categories/category-list/category.model';
-import Currency from '../../../../shared/account-currency';
-import CashAccount from '../../accounts/models/account.model';
-import CashTransaction from './cash-transaction.model';
-import { CategoryService } from '../../categories/category.service';
-import { AccountsService } from '../../accounts/services/accounts.service';
-import { CashTransactionService } from '../cash-transactions.service';
-import { FetchCategoryAmountsDto } from '../cash-transactions.service';
+import Category from '../../../categories/components/category-list/category.model';
+import Currency from '../../../../../shared/account-currency';
+import CashAccount from '../../../accounts/models/account.model';
+import Transaction from './transaction.model';
+import { CategoriesService } from '../../../categories/services/categories.service';
+import { AccountsService } from '../../../accounts/services/accounts.service';
+import { TransactionsService } from '../../services/transactions.service';
 
 @Component({
-  selector: 'app-cash-transactions-list',
-  templateUrl: './cash-transactions-list.component.html',
-  styleUrl: './cash-transactions-list.component.scss',
+  selector: 'app-transactions-list',
+  templateUrl: './transactions-list.component.html',
+  styleUrl: './transactions-list.component.scss',
 })
-export class CashTransactionsListComponent {
+export class TransactionsListComponent {
   protected isLoading = false;
-  protected cashTransactions: CashTransaction[] = [];
-  protected selectedCashTransaction!: CashTransaction;
+  protected cashTransactions: Transaction[] = [];
+  protected selectedCashTransaction!: Transaction;
   protected currencies = Object.values(Currency);
   protected categories: Category[] = [];
   protected newTransactionCategories: Category[] = [];
   protected cashAccounts: CashAccount[] = [];
   protected transactionError: string | null = null;
-  protected newTransaction!: CashTransaction;
+  protected newTransaction!: Transaction;
 
   public pieChartOptionsExpenses: ChartOptions = {
     responsive: false,
@@ -99,12 +98,12 @@ export class CashTransactionsListComponent {
   protected loadCashTransactions() {
     this.isLoading = true;
     forkJoin({
-      categories: this.categoryService.getCategories(),
+      categories: this.categoriesService.getCategories(),
       accounts: this.accountsService.getAccounts(),
-      transactions: this.cashTransactionService.getTransactions(1, 5),
+      transactions: this.transactionsService.getTransactions(),
     }).subscribe(({ categories, accounts, transactions }) => {
       this.isLoading = false;
-      this.categories = categories.categories;
+      this.categories = categories;
       this.newTransactionCategories = this.categories;
       this.newTransactionCategories.push({
         name: 'Transfer',
@@ -113,7 +112,11 @@ export class CashTransactionsListComponent {
       });
       this.cashAccounts = accounts;
       this.cashTransactions = transactions;
-      this._CashTransactions.set(transactions);
+      this._CashTransactions.set(
+        transactions.sort((a, b) =>
+          String(b.postingDate).localeCompare(String(a.postingDate))
+        )
+      );
       this.resetNewTransaction();
       this.preparePieChartData();
       this.prepareLineChartData();
@@ -205,65 +208,59 @@ export class CashTransactionsListComponent {
 
   protected updateTransactionCategory(category?: Category) {
     if (this.selectedCashTransaction) {
-      forkJoin({
-        updateTransaction:
-          this.cashTransactionService.updateTransactionCategory(
-            this.selectedCashTransaction,
-            category
-          ),
-        categories: this.categoryService.getCategories(),
-      }).subscribe(({ updateTransaction, categories }) => {
-        const index = this.cashTransactions.findIndex(
-          (t) => t._id === updateTransaction._id
-        );
-        if (index !== -1) {
-          this.cashTransactions[index] = updateTransaction;
-          this._CashTransactions.set([
-            ...this.cashTransactions.sort((a, b) =>
-              String(b.postingDate).localeCompare(String(a.postingDate))
-            ),
-          ]);
-        }
-        console.log(categories.categories);
-        this.categories = categories.categories;
-        this.cdr.detectChanges();
-        this.preparePieChartData();
-      });
+      this.transactionsService
+        .updateTransactionCategory(this.selectedCashTransaction, category)
+        .subscribe((updateTransaction) => {
+          const index = this.cashTransactions.findIndex(
+            (t) => t._id === updateTransaction._id
+          );
+          if (index !== -1) {
+            this.cashTransactions[index] = updateTransaction;
+            this._CashTransactions.set([
+              ...this.cashTransactions.sort((a, b) =>
+                String(b.postingDate).localeCompare(String(a.postingDate))
+              ),
+            ]);
+          }
+          this.categoriesService.getCategories().subscribe((categories) => {
+            this.categories = categories;
+            setTimeout(() => {
+              this.preparePieChartData();
+            }, 0);
+          });
+        });
     }
   }
 
   protected addTransaction(ctx: any) {
-    this.cashTransactionService
-      .addCashTransaction(this.newTransaction)
-      .subscribe({
-        next: (transaction) => {
-          this.cashTransactions.push(transaction);
-          this.resetNewTransaction();
-          this._CashTransactions.set([
-            ...this.cashTransactions.sort((a, b) =>
-              String(b.postingDate).localeCompare(String(a.postingDate))
-            ),
-          ]);
-          ctx.close();
-          this.transactionError = null;
-          this.prepareLineChartData();
-        },
-        error: (error) => {
-          console.log(error);
-          if (error.status === 400) {
-            this.transactionError = error.error.message;
-          } else {
-            this.transactionError =
-              error.error.message ||
-              'An error occurred. Please try again later.';
-          }
-        },
-      });
-
-    this.categoryService.getCategories().subscribe((categories) => {
-      this.categories = categories.categories;
-      this.cdr.detectChanges();
-      this.preparePieChartData();
+    this.transactionsService.addCashTransaction(this.newTransaction).subscribe({
+      next: (transaction) => {
+        this.prepareLineChartData();
+        this.cashTransactions.push(transaction);
+        this.resetNewTransaction();
+        this._CashTransactions.set([
+          ...this.cashTransactions.sort((a, b) =>
+            String(b.postingDate).localeCompare(String(a.postingDate))
+          ),
+        ]);
+        ctx.close();
+        this.transactionError = null;
+        this.categoriesService.getCategories().subscribe((categories) => {
+          this.categories = categories;
+          setTimeout(() => {
+            this.preparePieChartData();
+          }, 0);
+        });
+      },
+      error: (error) => {
+        console.log(error);
+        if (error.status === 400) {
+          this.transactionError = error.error.message;
+        } else {
+          this.transactionError =
+            error.error.message || 'An error occurred. Please try again later.';
+        }
+      },
     });
   }
 
@@ -281,7 +278,7 @@ export class CashTransactionsListComponent {
     };
   }
 
-  protected selectTransaction(transaction: CashTransaction) {
+  protected selectTransaction(transaction: Transaction) {
     this.selectedCashTransaction = { ...transaction };
     this.selectedCashTransaction.postingDate = formatDate(
       new Date(this.selectedCashTransaction.postingDate),
@@ -292,10 +289,11 @@ export class CashTransactionsListComponent {
 
   protected saveTransaction(ctx: any) {
     if (this.selectedCashTransaction) {
-      this.cashTransactionService
+      this.transactionsService
         .updateTransaction(this.selectedCashTransaction)
         .subscribe({
           next: (transaction) => {
+            this.prepareLineChartData();
             const index = this.cashTransactions.findIndex(
               (t) => t._id === transaction._id
             );
@@ -309,8 +307,12 @@ export class CashTransactionsListComponent {
             }
             ctx.close();
             this.transactionError = null;
-            this.preparePieChartData();
-            this.prepareLineChartData();
+            this.categoriesService.getCategories().subscribe((categories) => {
+              this.categories = categories;
+              setTimeout(() => {
+                this.preparePieChartData();
+              }, 0);
+            });
           },
           error: (error) => {
             console.log(error);
@@ -328,12 +330,13 @@ export class CashTransactionsListComponent {
 
   protected deleteTransaction() {
     if (this.selectedCashTransaction && this.selectedCashTransaction._id) {
-      this.cashTransactionService
+      this.transactionsService
         .deleteCashTransaction(
           this.selectedCashTransaction._id,
           this.selectedCashTransaction.cashBank
         )
         .subscribe(() => {
+          this.prepareLineChartData();
           this.cashTransactions = this.cashTransactions.filter(
             (t) => t._id !== this.selectedCashTransaction!._id
           );
@@ -342,15 +345,14 @@ export class CashTransactionsListComponent {
               String(b.postingDate).localeCompare(String(a.postingDate))
             ),
           ]);
+          this.categoriesService.getCategories().subscribe((categories) => {
+            this.categories = categories;
+            setTimeout(() => {
+              this.preparePieChartData();
+            }, 0);
+          });
         });
-      this.prepareLineChartData();
     }
-
-    this.categoryService.getCategories().subscribe((categories) => {
-      this.categories = categories.categories;
-      this.cdr.detectChanges();
-      this.preparePieChartData();
-    });
   }
 
   protected readonly _rawFilterInput = signal('');
@@ -414,9 +416,9 @@ export class CashTransactionsListComponent {
       .slice(start, end);
   });
 
-  protected readonly _trackBy: TrackByFunction<CashTransaction> = (
+  protected readonly _trackBy: TrackByFunction<Transaction> = (
     _: number,
-    p: CashTransaction
+    p: Transaction
   ) => p._id;
   protected readonly _totalElements = computed(
     () => this._filteredCashTransactions().length
@@ -428,9 +430,8 @@ export class CashTransactionsListComponent {
     this._displayedIndices.set({ start: startIndex, end: endIndex });
 
   constructor(
-    private cdr: ChangeDetectorRef,
-    private cashTransactionService: CashTransactionService,
-    private categoryService: CategoryService,
+    private transactionsService: TransactionsService,
+    private categoriesService: CategoriesService,
     private accountsService: AccountsService
   ) {
     effect(() => this._transactionsFilter.set(this._debouncedFilter() ?? ''), {

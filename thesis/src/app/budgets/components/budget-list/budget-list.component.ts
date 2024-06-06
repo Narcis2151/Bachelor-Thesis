@@ -1,5 +1,6 @@
 import {
   Component,
+  OnInit,
   TrackByFunction,
   computed,
   effect,
@@ -14,10 +15,10 @@ import {
 } from '@spartan-ng/ui-table-brain';
 
 import Budget from './budget.model';
-import Currency from '../../../../shared/account-currency';
-import Category from '../../categories/category-list/category.model';
-import { BudgetsService } from '../budgets.service';
-import { CategoryService } from '../../categories/category.service';
+import Currency from '../../../../../shared/account-currency';
+import Category from '../../../categories/components/category-list/category.model';
+import { BudgetsService } from '../../services/budgets.service';
+import { CategoriesService } from '../../../categories/services/categories.service';
 import { ChartOptions, ChartType } from 'chart.js';
 
 @Component({
@@ -25,7 +26,7 @@ import { ChartOptions, ChartType } from 'chart.js';
   templateUrl: './budget-list.component.html',
   styleUrl: './budget-list.component.scss',
 })
-export class BudgetListComponent {
+export class BudgetListComponent implements OnInit {
   protected isLoading = false;
   protected totalBudgetedAmount = 0;
   protected budgets: Budget[] = [];
@@ -76,20 +77,29 @@ export class BudgetListComponent {
 
   protected loadBudgets() {
     this.isLoading = true;
-    forkJoin({
-      categories: this.categoryService.getCategories(),
-      availableCategories: this.budgetsService.getAvailableCategories(),
-      budgets: this.budgetsService.getBudgets(),
-    }).subscribe(({ categories, availableCategories, budgets }) => {
-      this.isLoading = false;
-      this.categories = categories.categories;
-      this.availableCategories = availableCategories;
+    console.log('Loading budgets');
+    this.budgetsService.getBudgets().subscribe((budgets) => {
       this.budgets = budgets.budgets;
       this.totalBudgetedAmount = budgets.totalBudgetedAmount;
-      this._Budgets.set(this.budgets);
-      this.resetNewBudget();
-      this.preparePieChartData();
-      this.prepareBarChartData();
+      this.categoryService.getCategories().subscribe((categories) => {
+        this.categories = categories;
+        this.budgets.map((b) => {
+          const category = this.categories.find(
+            (c) => c._id === b.category._id
+          );
+          if (category) {
+            b.userSpentAmount = category.userSpentAmount! * b.exchangeRate!;
+          }
+        });
+        this._Budgets.set(this.budgets);
+        this.availableCategories = this.categories.filter(
+          (c) => !this.budgets.find((b) => b.category._id === c._id)
+        );
+        this.isLoading = false;
+        this.resetNewBudget();
+        this.preparePieChartData();
+        this.prepareBarChartData();
+      });
     });
   }
 
@@ -141,7 +151,6 @@ export class BudgetListComponent {
       const year = month < 0 ? currentYear - 1 : currentYear;
       return { month, year };
     });
-    console.log(last6Months);
     this.barChartLabels = last6Months.map(
       ({ month, year }) => `${month + 1}/${year}`
     );
@@ -155,8 +164,7 @@ export class BudgetListComponent {
           new Date(budget.resetDate) <= endDate
       );
       return monthBudgets.reduce(
-        (sum, budget) =>
-          sum + budget.userSpentAmount + budget.partnerSpentAmount,
+        (sum, budget) => sum + budget.userSpentAmount!,
         0
       );
     });
@@ -212,7 +220,6 @@ export class BudgetListComponent {
       amountAvailable: 0,
       currency: Currency.RON,
       userSpentAmount: 0,
-      partnerSpentAmount: 0,
       resetDate: formatDate(new Date(), 'yyyy-MM-dd', 'en-US'),
     };
   }
@@ -349,7 +356,7 @@ export class BudgetListComponent {
 
   constructor(
     private budgetsService: BudgetsService,
-    private categoryService: CategoryService
+    private categoryService: CategoriesService
   ) {
     effect(() => this._budgetsFilter.set(this._debouncedFilter() ?? ''), {
       allowSignalWrites: true,

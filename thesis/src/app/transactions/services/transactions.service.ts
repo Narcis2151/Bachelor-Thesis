@@ -2,9 +2,9 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-import Currency from '../../../shared/account-currency';
-import Category from '../categories/category-list/category.model';
-import CashTransaction from './cash-transactions-list/cash-transaction.model';
+import Currency from '../../../../shared/account-currency';
+import Category from '../../categories/components/category-list/category.model';
+import CashTransaction from '../components/transactions-list/transaction.model';
 
 export interface CreateCashTransactionDto {
   _id?: string;
@@ -31,21 +31,15 @@ export interface FetchCategoryAmountsDto {
 @Injectable({
   providedIn: 'root',
 })
-export class CashTransactionService {
+export class TransactionsService {
   private apiUrl = 'http://localhost:3000/transactions';
 
   constructor(private http: HttpClient) {}
 
   // Fetch all cash transactions
-  getTransactions(
-    page?: number,
-    limit?: number,
-    categoryId?: string
-  ): Observable<CashTransaction[]> {
+  getTransactions(categoryId?: string): Observable<CashTransaction[]> {
     return this.http.get<CashTransaction[]>(this.apiUrl, {
       params: {
-        page: page !== undefined ? page.toString() : [],
-        limit: limit !== undefined ? limit.toString() : [],
         categoryId: categoryId !== undefined ? categoryId : [],
       },
     });

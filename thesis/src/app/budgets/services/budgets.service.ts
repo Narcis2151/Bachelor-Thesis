@@ -2,9 +2,9 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-import Currency from '../../../shared/account-currency';
-import Budget from './budget-list/budget.model';
-import Category from '../categories/category-list/category.model';
+import Currency from '../../../../shared/account-currency';
+import Budget from '../components/budget-list/budget.model';
+import Category from '../../categories/components/category-list/category.model';
 
 export interface CreateBudgetDto {
   _id?: string;
@@ -28,13 +28,8 @@ export class BudgetsService {
   constructor(private http: HttpClient) {}
 
   // Fetch all cash transactions
-  getBudgets(page?: number, limit?: number): Observable<BudgetsResponse> {
-    return this.http.get<BudgetsResponse>(this.apiUrl, {
-      params: {
-        page: page !== undefined ? page.toString() : [],
-        limit: limit !== undefined ? limit.toString() : [],
-      },
-    });
+  getBudgets(): Observable<BudgetsResponse> {
+    return this.http.get<BudgetsResponse>(this.apiUrl);
   }
 
   getAvailableCategories(): Observable<Category[]> {
