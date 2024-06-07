@@ -176,3 +176,145 @@
     </div>
   </div>
 </div>
+
+<hlm-dialog #categoryDialog>
+  <hlm-dialog-content class="sm:max-w-[425px]" *brnDialogContent="let ctx">
+    <hlm-dialog-header>
+      <h3 hlmDialogTitle>Select Categories</h3>
+      <p hlmDialogDescription>
+        Please select the categories you want to include.
+      </p>
+    </hlm-dialog-header>
+
+    <div class="pt-4 pb-2">
+      <label hlmLabel>Select Categories</label>
+      <div class="grid grid-cols-1 gap-2">
+        <ng-container *ngFor="let category of categories">
+          <label>
+            <input
+              type="checkbox"
+              class="checkbox"
+              [(ngModel)]="category.isSelected"
+              (change)="updateSelectedCategories(category)"
+            />
+            {{ category.name }}
+          </label>
+        </ng-container>
+      </div>
+    </div>
+
+    <span *ngIf="selectedCategoriesError" class="label-text text-error">{{
+      selectedCategoriesError
+    }}</span>
+
+    <hlm-dialog-footer>
+      <button
+        hlmBtn
+        variant="ghost"
+        (click)="ctx.close(); registerError = null"
+      >
+        Cancel
+      </button>
+      <button
+        hlmBtn
+        [disabled]="!selectedCategories.length"
+        (click)="openAccountDialog(ctx)"
+        class="text-white hover:text-gray-400"
+      >
+        Next
+      </button>
+    </hlm-dialog-footer>
+  </hlm-dialog-content>
+</hlm-dialog>
+
+<hlm-dialog #accountDialog>
+  <hlm-dialog-content class="sm:max-w-[425px]" *brnDialogContent="let ctx">
+    <hlm-dialog-header>
+      <h3 hlmDialogTitle>Complete Registration</h3>
+      <p hlmDialogDescription>
+        Please complete the following steps to finish your registration.
+      </p>
+    </hlm-dialog-header>
+
+    <div class="items-center grid grid-cols-4 gap-4">
+      <label hlmLabel for="totalBudgetedAmount" class="text-right col-span-1">Total Budgeted Amount</label>
+      <input
+        hlmInput
+        id="totalBudgetedAmount"
+        type="number"
+        [(ngModel)]="totalBudgetedAmount"
+        placeholder="Enter total budgeted amount"
+        required
+        class="col-span-3"
+      />
+    </div>
+
+    <div class="items-center grid grid-cols-4 gap-4">
+      <label hlmLabel for="cashAccountName" class="text-right col-span-1">Cash Account Name</label>
+      <input
+        hlmInput
+        id="cashAccountName"
+        [(ngModel)]="cashAccountName"
+        placeholder="Enter account name"
+        required
+        class="col-span-3"
+      />
+    </div>
+
+    <div class="items-center grid grid-cols-4 gap-4">
+      <label hlmLabel for="currency" class="text-right col-span-1">Currency</label>
+      <brn-select
+        id="currency"
+        required
+        [(ngModel)]="cashAccountCurrency"
+        class="col-span-3"
+      >
+        <hlm-select-trigger class="w-full">
+          <hlm-select-value />
+        </hlm-select-trigger>
+        <hlm-select-content>
+          <hlm-option *ngFor="let currency of currencies" [value]="currency">
+            {{ currency }}
+          </hlm-option>
+        </hlm-select-content>
+      </brn-select>
+    </div>
+
+    <div class="items-center grid grid-cols-4 gap-4">
+      <label hlmLabel for="cashAccountBalance" class="text-right col-span-1">Initial Balance</label>
+      <input
+        hlmInput
+        id="cashAccountBalance"
+        type="number"
+        [(ngModel)]="cashAccountBalance"
+        placeholder="Enter initial balance"
+        required
+        class="col-span-3"
+      />
+    </div>
+
+    <span *ngIf="registerError" class="label-text text-error">{{
+      registerError
+    }}</span>
+
+    <hlm-dialog-footer>
+      <button
+        hlmBtn
+        variant="ghost"
+        (click)="ctx.close(); registerError = null"
+      >
+        Cancel
+      </button>
+      <button
+        hlmBtn
+        [disabled]="!totalBudgetedAmount || !cashAccountName || !cashAccountCurrency || !cashAccountBalance"
+        (click)="completeRegistration(ctx)"
+        class="text-white hover:text-gray-400"
+      >
+        Complete Registration
+      </button>
+    </hlm-dialog-footer>
+  </hlm-dialog-content>
+</hlm-dialog>
+
+

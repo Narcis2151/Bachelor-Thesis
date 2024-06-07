@@ -2381,6 +2381,13 @@
   dependencies:
     tslib "^2.3.0"
 
+"@spartan-ng/ui-sheet-brain@0.0.1-alpha.343":
+  version "0.0.1-alpha.343"
+  resolved "https://registry.yarnpkg.com/@spartan-ng/ui-sheet-brain/-/ui-sheet-brain-0.0.1-alpha.343.tgz#1fbefb794d4d4a77f7e8c627c10cb227732a20ec"
+  integrity sha512-nZ80Wz0PGKkGhaQgk4TfcR0v+teTGSVvr2M+56JDptOwrjZLgoYbR30/rHp8LIMRxStCZgxAP7P5Ip3/KdUmnA==
+  dependencies:
+    tslib "^2.3.0"
+
 "@spartan-ng/ui-table-brain@0.0.1-alpha.343":
   version "0.0.1-alpha.343"
   resolved "https://registry.yarnpkg.com/@spartan-ng/ui-table-brain/-/ui-table-brain-0.0.1-alpha.343.tgz#11fd06a08c98fbb6d523289ed647029553d17594"

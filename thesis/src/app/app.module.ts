@@ -9,12 +9,26 @@ import { AuthComponent } from './auth/auth.component';
 
 import { LoadingSpinnerComponent } from './common/loading-spinner/loading-spinner.component';
 import { NavigationComponent } from './navigation/navigation.component';
-import { CategoryListComponent } from './categories/category-list/category-list.component';
-import { CategoryNavigationComponent } from './categories/category-navigation/category-navigation.component';
+import { CategoryListComponent } from './categories/components/category-list/category-list.component';
+import { CategoryNavigationComponent } from './categories/components/category-navigation/category-navigation.component';
 import { CategoriesPageComponent } from './categories/pages/categories-page/categories-page.component';
-import { HlmButtonDirective } from '@spartan-ng/ui-button-helm';
 
+import { HlmButtonDirective } from '@spartan-ng/ui-button-helm';
 import { HlmBadgeDirective } from '@spartan-ng/ui-badge-helm';
+
+import {
+  BrnSheetContentDirective,
+  BrnSheetTriggerDirective,
+} from '@spartan-ng/ui-sheet-brain';
+import {
+  HlmSheetComponent,
+  HlmSheetContentComponent,
+  HlmSheetDescriptionDirective,
+  HlmSheetFooterComponent,
+  HlmSheetHeaderComponent,
+  HlmSheetTitleDirective,
+} from '@spartan-ng/ui-sheet-helm';
+
 import { HlmCaptionComponent } from '../../components/libs/ui/ui-table-helm/src/lib/hlm-caption.component';
 import { HlmTableComponent } from '../../components/libs/ui/ui-table-helm/src/lib/hlm-table.component';
 import { HlmTdComponent } from '../../components/libs/ui/ui-table-helm/src/lib/hlm-td.component';
@@ -90,6 +104,9 @@ import {
   lucideUsers,
   lucideAlertCircle,
   lucideArrowLeftRight,
+  lucideX,
+  lucideEye,
+  lucideCheck,
 } from '@ng-icons/lucide';
 import { HlmSeparatorDirective } from '@spartan-ng/ui-separator-helm';
 import { BrnSeparatorComponent } from '@spartan-ng/ui-separator-brain';
@@ -121,12 +138,12 @@ import { HlmHoverCardContentComponent } from '@spartan-ng/ui-hovercard-helm';
 
 import { CalendarModule } from 'primeng/calendar';
 
-import { CashAccountListComponent } from './accounts/cash-account-list/cash-account-list.component';
+import { AccountListComponent } from './accounts/components/account-list/account-list.component';
 import { AccountsPageComponent } from './accounts/pages/accounts-page/accounts-page.component';
 import { DecimalPipe, TitleCasePipe } from '@angular/common';
-import { CashTransactionsListComponent } from './transactions/cash-transactions-list/cash-transactions-list.component';
+import { TransactionsListComponent } from './transactions/components/transactions-list/transactions-list.component';
 import { TransactionsPageComponent } from './transactions/pages/transactions-page/transactions-page.component';
-import { BudgetListComponent } from './budgets/budget-list/budget-list.component';
+import { BudgetListComponent } from './budgets/components/budget-list/budget-list.component';
 import { BudgetsPageComponent } from './budgets/pages/budgets-page/budgets-page.component';
 import { JwtInterceptor } from './jwt.interceptor';
 import {
@@ -135,7 +152,9 @@ import {
   BaseChartDirective,
 } from 'ng2-charts';
 import { DashboardPageComponent } from './dashboard/pages/dashboard-page/dashboard-page.component';
-import { DashboardComponent } from './dashboard/dashboard/dashboard.component';
+import { DashboardComponent } from './dashboard/components/dashboard/dashboard.component';
+import { NordigenCallbackComponent } from './accounts/components/nordigen-callback/nordigen-callback.component';
+import { NotitificationsListComponent } from './navigation/notifications/notifications-list/notitifications-list.component';
 
 @NgModule({
   declarations: [
@@ -146,14 +165,16 @@ import { DashboardComponent } from './dashboard/dashboard/dashboard.component';
     CategoryListComponent,
     CategoryNavigationComponent,
     CategoriesPageComponent,
-    CashAccountListComponent,
+    AccountListComponent,
     AccountsPageComponent,
-    CashTransactionsListComponent,
+    TransactionsListComponent,
     TransactionsPageComponent,
     BudgetListComponent,
     BudgetsPageComponent,
     DashboardPageComponent,
     DashboardComponent,
+    NordigenCallbackComponent,
+    NotitificationsListComponent,
   ],
   imports: [
     BaseChartDirective,
@@ -231,6 +252,14 @@ import { DashboardComponent } from './dashboard/dashboard/dashboard.component';
     HlmCheckboxComponent,
     BrnSelectModule,
     HlmSelectModule,
+    HlmSheetComponent,
+    HlmSheetContentComponent,
+    HlmSheetDescriptionDirective,
+    HlmSheetFooterComponent,
+    HlmSheetHeaderComponent,
+    HlmSheetTitleDirective,
+    BrnSheetContentDirective,
+    BrnSheetTriggerDirective,
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
@@ -254,6 +283,9 @@ import { DashboardComponent } from './dashboard/dashboard/dashboard.component';
       lucideUsers,
       lucideAlertCircle,
       lucideArrowLeftRight,
+      lucideX,
+      lucideEye,
+      lucideCheck
     }),
     provideCharts(withDefaultRegisterables()),
   ],

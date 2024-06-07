@@ -35,6 +35,7 @@
     "@spartan-ng/ui-progress-brain": "0.0.1-alpha.343",
     "@spartan-ng/ui-select-brain": "0.0.1-alpha.343",
     "@spartan-ng/ui-separator-brain": "0.0.1-alpha.343",
+    "@spartan-ng/ui-sheet-brain": "0.0.1-alpha.343",
     "@spartan-ng/ui-table-brain": "0.0.1-alpha.343",
     "@spartan-ng/ui-tabs-brain": "0.0.1-alpha.343",
     "@spartan-ng/ui-toggle-brain": "0.0.1-alpha.343",
