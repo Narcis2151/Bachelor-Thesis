@@ -7,7 +7,7 @@ import { CategoriesService } from '../../../categories/services/categories.servi
 import { TransactionsService } from '../../../transactions/services/transactions.service';
 import Budget from '../../../budgets/components/budget-list/budget.model';
 import Category from '../../../categories/components/category-list/category.model';
-import CashTransaction from '../../../transactions/components/transactions-list/transaction.model';
+import CashTransaction from '../../../transactions/models/transaction.model';
 
 @Component({
   selector: 'app-dashboard',

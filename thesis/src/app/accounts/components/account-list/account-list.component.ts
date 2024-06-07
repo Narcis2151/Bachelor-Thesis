@@ -315,11 +315,7 @@ export class AccountListComponent {
       return accounts.slice(0, this._pageSize());
     }
     return [...accounts]
-      .sort(
-        (p1, p2) =>
-          (sort === 'ASC' ? 1 : -1) *
-          p1.name.localeCompare(p2.name, undefined, { sensitivity: 'base' })
-      )
+      .sort((p1, p2) => (sort === 'ASC' ? 1 : -1) * p1.balance - p2.balance)
       .slice(0, this._pageSize());
   });
 

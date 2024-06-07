@@ -92,7 +92,7 @@ export class BudgetListComponent implements OnInit {
         });
         this._Budgets.set(this.budgets);
         this.availableCategories = this.categories.filter(
-          (c) => !this.budgets.find((b) => b.category._id === c._id)
+          (c) => !this.budgets.find((b) => b.category._id === c._id) && c.type === 'expense'
         );
         this.isLoading = false;
         this.resetNewBudget();
@@ -151,7 +151,7 @@ export class BudgetListComponent implements OnInit {
       return { month, year };
     });
     this.barChartLabels = last6Months.map(
-      ({ month, year }) => `${month + 1}/${year}`
+      ({ month, year }) => `${month}/${year}`
     );
 
     const spentAmounts = last6Months.map(({ month, year }) => {
@@ -245,7 +245,7 @@ export class BudgetListComponent implements OnInit {
           if (index !== -1) {
             this.budgets[index] = budget;
             this._Budgets.set([...this.budgets]);
-            ctx.any();
+            ctx.close();
             this.budgetError = null;
             this.preparePieChartData();
           }

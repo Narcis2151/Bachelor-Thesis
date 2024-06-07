@@ -16,6 +16,7 @@
         <button
           hlmBtn
           brnDialogTrigger
+          [disabled]="!availableCategories.length"
           [brnDialogTriggerFor]="newDialog"
           class="justify-center rounded-sm text-white hover:text-gray-400"
         >

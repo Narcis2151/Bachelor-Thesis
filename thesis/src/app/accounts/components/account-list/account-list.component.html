@@ -62,18 +62,7 @@
           name="name"
           class="w-5/12 md:w-6/12 justify-start text-start"
         >
-          <hlm-th *brnHeaderDef truncate>
-            <button
-              hlmBtn
-              class="p-0"
-              size="sm"
-              variant="ghost"
-              (click)="handleNameSortChange()"
-            >
-              Account Name
-              <hlm-icon class="ml-2" size="sm" name="lucideArrowUpDown" />
-            </button>
-          </hlm-th>
+          <hlm-th *brnHeaderDef truncate> Account Name </hlm-th>
 
           <hlm-td *brnCellDef="let element" class="flex items-center gap-2">
             <ng-container *ngIf="element.isEditing; else viewMode">
@@ -111,7 +100,18 @@
         </brn-column-def>
 
         <brn-column-def name="balance" class="w-2/12 justify-start text-start">
-          <hlm-th *brnHeaderDef>Balance</hlm-th>
+          <hlm-th *brnHeaderDef>
+            <button
+              hlmBtn
+              class="p-0"
+              size="sm"
+              variant="ghost"
+              (click)="handleNameSortChange()"
+            >
+              Balance
+              <hlm-icon class="ml-2" size="sm" name="lucideArrowUpDown" />
+            </button>
+          </hlm-th>
           <hlm-td
             class="text-start font-medium tabular-nums"
             *brnCellDef="let element"

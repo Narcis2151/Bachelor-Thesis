@@ -4,7 +4,6 @@ import {
   computed,
   effect,
   signal,
-  ChangeDetectorRef,
 } from '@angular/core';
 import { formatDate } from '@angular/common';
 import { ChartOptions, ChartType } from 'chart.js';
@@ -18,7 +17,7 @@ import {
 import Category from '../../../categories/components/category-list/category.model';
 import Currency from '../../../../../shared/account-currency';
 import CashAccount from '../../../accounts/models/account.model';
-import Transaction from './transaction.model';
+import Transaction from '../../models/transaction.model';
 import { CategoriesService } from '../../../categories/services/categories.service';
 import { AccountsService } from '../../../accounts/services/accounts.service';
 import { TransactionsService } from '../../services/transactions.service';
@@ -197,13 +196,13 @@ export class TransactionsListComponent {
       },
       { labels: [], data: [] }
     );
-    this.lineChartLabels = lineChartData.labels;
+    this.lineChartLabels = lineChartData.labels.reverse();
     this.lineChartData = [
       {
-        data: lineChartData.data,
+        data: lineChartData.data.reverse(),
         label: 'Transactions',
       },
-    ];
+    ].reverse();
   }
 
   protected updateTransactionCategory(category?: Category) {
@@ -235,7 +234,6 @@ export class TransactionsListComponent {
   protected addTransaction(ctx: any) {
     this.transactionsService.addCashTransaction(this.newTransaction).subscribe({
       next: (transaction) => {
-        this.prepareLineChartData();
         this.cashTransactions.push(transaction);
         this.resetNewTransaction();
         this._CashTransactions.set([
@@ -243,6 +241,7 @@ export class TransactionsListComponent {
             String(b.postingDate).localeCompare(String(a.postingDate))
           ),
         ]);
+        this.prepareLineChartData();
         ctx.close();
         this.transactionError = null;
         this.categoriesService.getCategories().subscribe((categories) => {
@@ -293,7 +292,6 @@ export class TransactionsListComponent {
         .updateTransaction(this.selectedCashTransaction)
         .subscribe({
           next: (transaction) => {
-            this.prepareLineChartData();
             const index = this.cashTransactions.findIndex(
               (t) => t._id === transaction._id
             );
@@ -305,6 +303,7 @@ export class TransactionsListComponent {
                 ),
               ]);
             }
+            this.prepareLineChartData();
             ctx.close();
             this.transactionError = null;
             this.categoriesService.getCategories().subscribe((categories) => {
@@ -336,7 +335,6 @@ export class TransactionsListComponent {
           this.selectedCashTransaction.cashBank
         )
         .subscribe(() => {
-          this.prepareLineChartData();
           this.cashTransactions = this.cashTransactions.filter(
             (t) => t._id !== this.selectedCashTransaction!._id
           );
@@ -345,6 +343,7 @@ export class TransactionsListComponent {
               String(b.postingDate).localeCompare(String(a.postingDate))
             ),
           ]);
+          this.prepareLineChartData();
           this.categoriesService.getCategories().subscribe((categories) => {
             this.categories = categories;
             setTimeout(() => {
