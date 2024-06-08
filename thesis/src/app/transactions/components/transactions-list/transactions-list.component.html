@@ -6,8 +6,8 @@
 </div>
 
 <ng-template #CashTransactionsTemplate>
-  <div class="flex flex-col h-full md:grid md:grid-cols-3 md:gap-4 w-full">
-    <div class="md:col-span-2 flex flex-col h-full">
+  <div class="flex flex-col h-full md:grid lg:grid-cols-3 lg:gap-4 w-full">
+    <div class="lg:col-span-2 flex flex-col h-full">
       <div class="flex flex-col justify-between gap-4 sm:flex-row">
         <input
           hlmInput
@@ -101,7 +101,7 @@
 
         <brn-column-def
           name="postingDate"
-          class="max-sm:hidden max-md:block max-md:w-2/12 max-xl:hidden xl:w-2/12 justify-center text-center"
+          class="w-3/12 sm:w-3/12 md:w-2/12 lg:w-3/12 xl:w-2/12 justify-center text-center"
         >
           <hlm-th *brnHeaderDef truncate>
             <button
@@ -122,7 +122,7 @@
 
         <brn-column-def
           name="beneficiary"
-          class="w-5/12 sm:w-3/12 xl:w-2/12 justify-start text-start"
+          class="max-sm:hidden max-xl:hidden xl:w-2/12 justify-start text-start"
         >
           <hlm-th *brnHeaderDef truncate>Beneficiary</hlm-th>
           <hlm-td *brnCellDef="let element" truncate>
@@ -134,15 +134,18 @@
           </hlm-td>
         </brn-column-def>
 
-        <brn-column-def name="details" class="max-lg:hidden lg:w-2/12">
+        <brn-column-def name="details" class="max-xl:hidden xl:w-2/12">
           <hlm-th *brnHeaderDef>Details</hlm-th>
           <hlm-td *brnCellDef="let element">
             {{ element.details | titlecase }}
           </hlm-td>
         </brn-column-def>
 
-        <brn-column-def name="account" class="w-2/12 md:w-3/12 lg:w-2/12">
-          <hlm-th *brnHeaderDef class="text-start">Account</hlm-th>
+        <brn-column-def
+          name="account"
+          class="w-2/12 md:w-2/12 lg:w-2/12 xl:w-1/12"
+        >
+          <hlm-th *brnHeaderDef class="text-start" truncate>Account</hlm-th>
           <hlm-td *brnCellDef="let element">
             <span class="flex align-middle">
               <brn-hover-card>
@@ -163,9 +166,22 @@
           </hlm-td>
         </brn-column-def>
 
+        <brn-column-def name="isPartner" class="w-2/12 lg:w-2/12 xl:w-1/12">
+          <hlm-th *brnHeaderDef class="text-start" truncate>Partner's</hlm-th>
+          <hlm-td *brnCellDef="let element">
+            <span class="flex align-middle">
+              <hlm-icon
+                class="ml-0 pl-0 justify-self-center"
+                size="lg"
+                [name]="element.isPartner ? 'lucideUsers' : 'lucideUser'"
+              />
+            </span>
+          </hlm-td>
+        </brn-column-def>
+
         <brn-column-def
           name="amount"
-          class="w-2/12 md:w-3/12 lg:w-2/12 justify-start text-start"
+          class="w-2/12 md:w-3/12 lg:w-2/12 xl:w-2/12 justify-start text-start"
         >
           <hlm-th *brnHeaderDef>Amount</hlm-th>
           <hlm-td
@@ -456,7 +472,13 @@
     }}</span>
 
     <hlm-dialog-footer>
-      <button hlmBtn variant="ghost" (click)="ctx.close(); transactionError = null">Cancel</button>
+      <button
+        hlmBtn
+        variant="ghost"
+        (click)="ctx.close(); transactionError = null"
+      >
+        Cancel
+      </button>
       <button
         hlmBtn
         class="text-white hover:text-gray-400"
@@ -573,7 +595,13 @@
     }}</span>
 
     <hlm-dialog-footer>
-      <button hlmBtn variant="ghost" (click)="ctx.close(); transactionError = null">Cancel</button>
+      <button
+        hlmBtn
+        variant="ghost"
+        (click)="ctx.close(); transactionError = null"
+      >
+        Cancel
+      </button>
       <button
         hlmBtn
         class="text-white hover:text-gray-400"
