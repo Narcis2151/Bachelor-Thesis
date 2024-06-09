@@ -109,7 +109,6 @@ export class TransactionsListComponent {
       this.newTransactionCategories.push({
         name: 'Transfer',
         icon: 'lucideArrowLeftRight',
-        type: 'income',
       });
 
       this.cashAccounts = accounts;
@@ -150,14 +149,14 @@ export class TransactionsListComponent {
 
   preparePieChartData() {
     const expenseCategories = this.categories.filter(
-      (c) => c.type === 'expense' && c.userSpentAmount! > 0
+      (c) => c.type === 'expense'
     );
     this.pieChartLabelsExpenses = expenseCategories.map((c) => c.name);
     const expenseTotals = expenseCategories.reduce<Record<string, number>>(
       (trn, category) => {
-        if (category.userSpentAmount! > 0) {
-          trn[category.name] = category.userSpentAmount!;
-        }
+        trn[category.name] = this.cashTransactions
+          .filter((t) => t.category && t.category._id === category._id)
+          .reduce((total, t) => total + (t.amountEquivalent ?? 0), 0);
         return trn;
       },
       {}
@@ -165,21 +164,22 @@ export class TransactionsListComponent {
 
     this.pieChartDataExpenses = [
       {
-        data: this.pieChartLabelsExpenses.map(
-          (label) => expenseTotals[label] ?? 0
-        ),
+        data: this.pieChartLabelsExpenses
+          .filter((label) => expenseTotals[label] !== 0)
+          .map((label) => expenseTotals[label] ?? 0),
       },
     ];
-
-    const incomeCategories = this.categories.filter(
-      (c) => c.type === 'income' && c.userReceivedAmount! > 0
+    this.pieChartLabelsExpenses = this.pieChartLabelsExpenses.filter(
+      (label) => expenseTotals[label] !== 0
     );
+
+    const incomeCategories = this.categories.filter((c) => c.type === 'income');
     this.pieChartLabelsIncome = incomeCategories.map((c) => c.name);
     const incomeTotals = incomeCategories.reduce<Record<string, number>>(
       (trn, category) => {
-        if (category.userReceivedAmount! > 0) {
-          trn[category.name] = category.userReceivedAmount!;
-        }
+        trn[category.name] = this.cashTransactions
+          .filter((t) => t.category && t.category._id === category._id)
+          .reduce((total, t) => total + (t.amountEquivalent ?? 0), 0);
         return trn;
       },
       {}
@@ -187,11 +187,14 @@ export class TransactionsListComponent {
 
     this.pieChartDataIncome = [
       {
-        data: this.pieChartLabelsIncome.map(
-          (label) => incomeTotals[label] ?? 0
-        ),
+        data: this.pieChartLabelsIncome
+          .filter((label) => incomeTotals[label] !== 0)
+          .map((label) => incomeTotals[label] ?? 0),
       },
     ];
+    this.pieChartLabelsIncome = this.pieChartLabelsIncome.filter(
+      (label) => incomeTotals[label] !== 0
+    );
   }
 
   prepareLineChartData() {
