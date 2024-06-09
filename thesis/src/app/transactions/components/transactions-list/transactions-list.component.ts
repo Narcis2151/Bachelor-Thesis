@@ -402,6 +402,7 @@ export class TransactionsListComponent {
     currency: { visible: false, label: 'Currency' },
     account: { visible: true, label: 'Account' },
     isPartner: { visible: true, label: 'Shared' },
+    cashBank: { visible: false },
     isTransfer: { visible: false },
     type: { visible: false },
   });

@@ -7,7 +7,8 @@ import { CategoriesService } from '../../../categories/services/categories.servi
 import { TransactionsService } from '../../../transactions/services/transactions.service';
 import Budget from '../../../budgets/models/budget.model';
 import Category from '../../../categories/components/category-list/category.model';
-import CashTransaction from '../../../transactions/models/transaction.model';
+import Transaction from '../../../transactions/models/transaction.model';
+import { PartnershipsService } from '../../../categories/services/partnerships.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -20,8 +21,9 @@ export class DashboardComponent {
   budgets: Budget[] = [];
   tableBudgets: Budget[] = [];
   categories: Category[] = [];
-  tableCashTransactions: CashTransaction[] = [];
-  cashTransactions: CashTransaction[] = [];
+  tableTransactions: Transaction[] = [];
+  transactions: Transaction[] = [];
+  partnerTransactions: Transaction[] = [];
 
   pieChartOptionsExpenses: ChartOptions = {
     responsive: false,
@@ -58,18 +60,35 @@ export class DashboardComponent {
   loadData() {
     this.isLoading = true;
     forkJoin({
+      partnership: this.partnershipsService.findPartnership(),
       categories: this.categoriesService.getCategories(),
       transactions: this.transactionsService.getTransactions(),
       budgets: this.budgetsService.getBudgets(),
-    }).subscribe(({ categories, transactions, budgets }) => {
-      this.isLoading = false;
+    }).subscribe(({ partnership, categories, transactions, budgets }) => {
       this.categories = categories;
       this.budgets = budgets.budgets.filter((b) => b.active);
-      this.cashTransactions = transactions;
-      this.tableCashTransactions = transactions.slice(0, 5);
-      this.tableBudgets = this.budgets.slice(0, 5);
+      this.transactions = transactions;
+      this.tableBudgets = this.budgets
+        .sort((a, b) => b.amountAvailable - a.amountAvailable)
+        .slice(0, 5);
       this.totalBudgetedAmount = budgets.totalBudgetedAmount;
       this.preparePieChartDataBudgets();
+      if (partnership.partnershipStatus === 'confirmed') {
+        this.transactionsService
+          .getPartnerTransactions()
+          .subscribe((partnerTransactions) => {
+            this.isLoading = false;
+            console.log('partner transactions', partnerTransactions);
+            this.partnerTransactions = partnerTransactions;
+            this.transactions = this.transactions.concat(
+              this.partnerTransactions
+            );
+          });
+      }
+      this.tableTransactions = this.transactions
+        .sort((a, b) => String(b.postingDate).localeCompare(String(a.postingDate)))
+        .slice(0, 5);
+      this.isLoading = false;
       this.preparePieChartDataTransactions();
     });
   }
@@ -81,7 +100,7 @@ export class DashboardComponent {
     this.pieChartLabelsExpenses = expenseCategories.map((c) => c.name);
     const expenseTotals = expenseCategories.reduce<Record<string, number>>(
       (trn, category) => {
-        trn[category.name] = this.cashTransactions
+        trn[category.name] = this.transactions
           .filter((t) => t.category && t.category._id === category._id)
           .reduce((total, t) => total + (t.amountEquivalent ?? 0), 0);
         return trn;
@@ -141,6 +160,7 @@ export class DashboardComponent {
   }
 
   constructor(
+    private partnershipsService: PartnershipsService,
     private transactionsService: TransactionsService,
     private budgetsService: BudgetsService,
     private categoriesService: CategoriesService

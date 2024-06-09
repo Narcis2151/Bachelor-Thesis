@@ -209,8 +209,12 @@
             <ng-template #menu>
               <hlm-menu>
                 <hlm-menu-label>Actions</hlm-menu-label>
-                <hlm-menu-separator />
-                <hlm-menu-group>
+                <hlm-menu-separator
+                  *ngIf="!element.isPartner && element.cashBank == 'cash'"
+                />
+                <hlm-menu-group
+                  *ngIf="!element.isPartner && element.cashBank == 'cash'"
+                >
                   <button
                     brnDialogTrigger
                     [brnDialogTriggerFor]="editDialog"
