@@ -4,6 +4,7 @@ import Category from '../../categories/components/category-list/category.model';
 
 type Transaction = {
   _id?: string;
+  isPartner?: boolean;
   type: 'expense' | 'income';
   beneficiary: string;
   details: string;

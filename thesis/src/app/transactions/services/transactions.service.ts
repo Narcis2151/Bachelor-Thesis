@@ -45,6 +45,14 @@ export class TransactionsService {
     });
   }
 
+  getPartnerTransactions(categoryId?: string): Observable<CashTransaction[]> {
+    return this.http.get<CashTransaction[]>(`${this.apiUrl}/partner`, {
+      params: {
+        categoryId: categoryId !== undefined ? categoryId : [],
+      },
+    });
+  }
+
   // Add a new cash transaction
   addCashTransaction(
     cashTransaction: CashTransaction

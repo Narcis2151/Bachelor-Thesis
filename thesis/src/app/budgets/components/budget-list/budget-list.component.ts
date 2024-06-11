@@ -14,7 +14,7 @@ import {
   useBrnColumnManager,
 } from '@spartan-ng/ui-table-brain';
 
-import Budget from './budget.model';
+import Budget from '../../models/budget.model';
 import Currency from '../../../../../shared/account-currency';
 import Category from '../../../categories/components/category-list/category.model';
 import { BudgetsService } from '../../services/budgets.service';
@@ -30,6 +30,7 @@ export class BudgetListComponent implements OnInit {
   protected isLoading = false;
   protected totalBudgetedAmount = 0;
   protected budgets: Budget[] = [];
+  protected allBudgets: Budget[] = [];
   protected selectedBudget!: Budget;
   protected budgetError: string | null = null;
   protected newBudget!: Budget;
@@ -77,43 +78,37 @@ export class BudgetListComponent implements OnInit {
 
   protected loadBudgets() {
     this.isLoading = true;
-    this.budgetsService.getBudgets().subscribe((budgets) => {
-      this.budgets = budgets.budgets;
-      this.totalBudgetedAmount = budgets.totalBudgetedAmount;
-      this.categoryService.getCategories().subscribe((categories) => {
-        this.categories = categories;
-        this.budgets.map((b) => {
-          const category = this.categories.find(
-            (c) => c._id === b.category._id
-          );
-          if (category) {
-            b.userSpentAmount = category.userSpentAmount! * b.exchangeRate!;
-          }
-        });
-        this._Budgets.set(this.budgets);
-        this.availableCategories = this.categories.filter(
-          (c) => !this.budgets.find((b) => b.category._id === c._id) && c.type === 'expense'
-        );
-        this.isLoading = false;
-        this.resetNewBudget();
-        this.preparePieChartData();
-        this.prepareBarChartData();
-      });
+    forkJoin([
+      this.budgetsService.getBudgets(),
+      this.categoryService.getCategories(),
+    ]).subscribe(([budgetsResponse, categories]) => {
+      this.budgets = budgetsResponse.budgets.filter((b) => b.active);
+      this.allBudgets = budgetsResponse.budgets;
+      this.totalBudgetedAmount = budgetsResponse.totalBudgetedAmount;
+      this.categories = categories;
+      this._Budgets.set(this.budgets);
+      this.availableCategories = this.categories.filter(
+        (c) =>
+          !this.budgets.find((b) => b.category._id === c._id) &&
+          c.type === 'expense'
+      );
+      this.isLoading = false;
+      this.resetNewBudget();
+      this.preparePieChartData();
+      this.prepareBarChartData();
     });
   }
 
   protected preparePieChartData() {
-    const activeBudgets = this.budgets.filter((b) => b.active);
     const budgetedCategories = this.categories.filter((c) =>
-      activeBudgets.find((b) => b.category._id === c._id)
+      this.budgets.find((b) => b.category._id === c._id)
     );
     this.pieChartLabels = budgetedCategories.map((c) => c.name);
     this.pieChartLabels.push('Unbudgeted');
-    console.log(activeBudgets);
 
-    const budgetedTotals = activeBudgets.reduce<Record<string, number>>(
+    const budgetedTotals = this.budgets.reduce<Record<string, number>>(
       (bgt, budget) => {
-        const budgetedAmount = budget.amountAvailableEquivalent ?? 0;
+        const budgetedAmount = budget.amountAvailable / budget.exchangeRate!;
         if (budgetedAmount > 0) {
           if (bgt[budget.category.name]) {
             bgt[budget.category.name] += budgetedAmount;
@@ -157,13 +152,13 @@ export class BudgetListComponent implements OnInit {
     const spentAmounts = last6Months.map(({ month, year }) => {
       const startDate = new Date(year, month, 1);
       const endDate = new Date(year, month + 1, 0);
-      const monthBudgets = this.budgets.filter(
+      const monthBudgets = this.allBudgets.filter(
         (budget) =>
           new Date(budget.resetDate) >= startDate &&
           new Date(budget.resetDate) <= endDate
       );
       return monthBudgets.reduce(
-        (sum, budget) => sum + budget.userSpentAmount!,
+        (sum, budget) => sum + budget.userSpentAmount! / budget.exchangeRate!,
         0
       );
     });

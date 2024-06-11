@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import Currency from '../../../../shared/account-currency';
-import Budget from '../components/budget-list/budget.model';
+import Budget from '../models/budget.model';
 import Category from '../../categories/components/category-list/category.model';
 
 export interface CreateBudgetDto {
