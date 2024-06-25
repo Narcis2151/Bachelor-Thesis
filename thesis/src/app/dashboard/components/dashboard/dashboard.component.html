@@ -20,7 +20,7 @@
           <hlm-th class="w-4/12 sm:w-3/12 justify-start text-start"
             >Amount</hlm-th
           >
-          <hlm-th class="max-sm:hidden w-2/12 text-start">Account</hlm-th>
+          <hlm-th class="max-sm:hidden w-2/12 text-center">Account</hlm-th>
         </hlm-trow>
         @for (cashTransaction of tableTransactions; track cashTransaction._id) {
         <hlm-trow>
@@ -58,20 +58,29 @@
             >{{ cashTransaction.amount | number : "1.2-2" }}
             {{ cashTransaction.currency }}</hlm-td
           >
-          <hlm-td class="max-sm:hidden w-2/12">
-            <span class="flex align-middle">
+          <hlm-td class="max-sm:hidden w-2/12 ">
+            <span class="flex align-middle justify-center">
               <brn-hover-card>
-                <hlm-icon
-                  class="ml-0 pl-0"
-                  size="lg"
-                  name="lucideWallet"
-                  brnHoverCardTrigger
-                />
+                <div class="w-full h-full justify-center text-center">
+                  <img
+                    *ngIf="cashTransaction.account.bankLogo"
+                    [src]="cashTransaction.account.bankLogo"
+                    class="w-12 h-12"
+                  />
+                  <hlm-icon
+                    *ngIf="!cashTransaction.account.bankLogo"
+                    class="ml-0 pl-0"
+                    size="lg"
+                    name="lucideWallet"
+                  />
+                </div>
                 <hlm-hover-card-content *brnHoverCardContent class="w-80">
                   <h3 class="text-md">
                     Accounts Name: {{ cashTransaction.account.name }}
                   </h3>
-                  <p class="text-md">{{"Account Type: " + cashTransaction.account.cashBank}}</p>
+                  <p class="text-md">
+                    {{ "Account Type: " + cashTransaction.account.cashBank }}
+                  </p>
                 </hlm-hover-card-content>
               </brn-hover-card>
             </span>

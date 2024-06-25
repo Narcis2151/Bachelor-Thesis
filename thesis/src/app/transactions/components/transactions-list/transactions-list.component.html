@@ -7,7 +7,7 @@
 
 <ng-template #CashTransactionsTemplate>
   <div class="flex flex-col h-full md:grid lg:grid-cols-3 lg:gap-4 w-full">
-    <div class="lg:col-span-2 flex flex-col h-full">
+    <div class="lg:col-span-2 flex flex-col h-full w-full">
       <div class="flex flex-col justify-between gap-4 sm:flex-row">
         <input
           hlmInput
@@ -28,7 +28,7 @@
 
       <brn-table
         hlm
-        class="w-full border-border mt-4 h-[335px] flex-grow overflow-auto"
+        class="w-full border-border mt-4 h-[430px] flex-grow"
         [dataSource]="_filteredSortedPaginatedCashTransactions()"
         [displayedColumns]="_allDisplayedColumns()"
         [trackBy]="_trackBy"
@@ -136,7 +136,7 @@
 
         <brn-column-def name="details" class="max-xl:hidden xl:w-2/12">
           <hlm-th *brnHeaderDef>Details</hlm-th>
-          <hlm-td *brnCellDef="let element">
+          <hlm-td *brnCellDef="let element" class="collapse">
             {{ element.details | titlecase }}
           </hlm-td>
         </brn-column-def>
@@ -146,15 +146,22 @@
           class="w-2/12 md:w-2/12 lg:w-2/12 xl:w-1/12"
         >
           <hlm-th *brnHeaderDef class="text-start" truncate>Account</hlm-th>
-          <hlm-td *brnCellDef="let element">
+          <hlm-td *brnCellDef="let element" class="justify-start">
             <span class="flex align-middle">
               <brn-hover-card>
-                <hlm-icon
-                  class="ml-0 pl-0"
-                  size="lg"
-                  name="lucideWallet"
-                  brnHoverCardTrigger
-                />
+                <div class="w-full h-full justify-center text-center">
+                  <img
+                    *ngIf="element.account.bankLogo"
+                    [src]="element.account.bankLogo"
+                    class="w-12 h-12"
+                  />
+                  <hlm-icon
+                    *ngIf="!element.account.bankLogo"
+                    class="ml-0 pl-0"
+                    size="lg"
+                    name="lucideWallet"
+                  />
+                </div>
                 <hlm-hover-card-content *brnHoverCardContent class="w-80">
                   <h3 class="text-md">
                     Accounts Name: {{ element.account.name }}
@@ -296,9 +303,9 @@
         </div>
       </div>
 
-      <div class="w-full border-border mt-4 overflow-auto">
+      <div class="w-full border-border mt-4">
         <canvas
-          class="w-full min-h-72 overflow-auto"
+          class="w-full min-h-72"
           baseChart
           [type]="lineChartType"
           [datasets]="lineChartData"
@@ -309,7 +316,7 @@
         ></canvas>
       </div>
     </div>
-    <div class="hidden md:flex flex-col justify-between gap-4 md:col-span-1">
+    <div class="hidden lg:flex flex-col justify-between gap-4 lg:col-span-1">
       <div class="w-full h-6/12">
         <canvas
           baseChart
@@ -359,7 +366,7 @@
                 [name]="
                   newTransaction.category
                     ? newTransaction.category.icon
-                    : 'lucideWallet'
+                    : 'lucideAlertCircle'
                 "
               />
               {{

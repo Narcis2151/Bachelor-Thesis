@@ -101,11 +101,9 @@ export class AccountListComponent {
   }
 
   checkRequisitionStatus(requisitionId: string) {
-    setTimeout(() => {
-      this.loadingDialog.open();
-    }, 0);
     this.nordigenService.getRequisition(requisitionId).subscribe({
       next: (requisition) => {
+        this.loadingDialog.open();
         if (requisition.status === 'LN') {
           console.log(requisition._id!);
           this.importInitialData(requisition._id!);

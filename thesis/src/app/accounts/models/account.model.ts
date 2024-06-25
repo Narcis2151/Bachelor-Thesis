@@ -6,7 +6,7 @@ type Account = {
   name: string;
   balance: number;
   currency: Currency;
-  logo?: string;
+  bankLogo?: string;
   balanceUpdatedAt?: Date;
   balanceEquivalent?: number;
   isEditing?: boolean;

@@ -111,7 +111,7 @@ export class TransactionsListComponent {
         icon: 'lucideArrowLeftRight',
       });
 
-      this.cashAccounts = accounts;
+      this.cashAccounts = accounts.filter((a) => a.cashBank === 'cash');
       this.cashTransactions = transactions;
 
       if (partnership.partnershipStatus === 'confirmed') {
@@ -119,7 +119,6 @@ export class TransactionsListComponent {
           .getPartnerTransactions()
           .subscribe((partnerTransactions) => {
             this.isLoading = false;
-            console.log('partner transactions', partnerTransactions);
             this.partnerTransactions = partnerTransactions;
             this.cashTransactions = this.cashTransactions.concat(
               this.partnerTransactions
@@ -155,7 +154,12 @@ export class TransactionsListComponent {
     const expenseTotals = expenseCategories.reduce<Record<string, number>>(
       (trn, category) => {
         trn[category.name] = this.cashTransactions
-          .filter((t) => t.category && t.category._id === category._id)
+          .filter(
+            (t) =>
+              t.category &&
+              t.category._id === category._id &&
+              t.type === 'expense'
+          )
           .reduce((total, t) => total + (t.amountEquivalent ?? 0), 0);
         return trn;
       },
@@ -178,7 +182,12 @@ export class TransactionsListComponent {
     const incomeTotals = incomeCategories.reduce<Record<string, number>>(
       (trn, category) => {
         trn[category.name] = this.cashTransactions
-          .filter((t) => t.category && t.category._id === category._id)
+          .filter(
+            (t) =>
+              t.category &&
+              t.category._id === category._id &&
+              t.type === 'income'
+          )
           .reduce((total, t) => total + (t.amountEquivalent ?? 0), 0);
         return trn;
       },
