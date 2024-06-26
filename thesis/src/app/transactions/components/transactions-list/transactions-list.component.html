@@ -134,7 +134,7 @@
           </hlm-td>
         </brn-column-def>
 
-        <brn-column-def name="details" class="max-xl:hidden xl:w-2/12">
+        <brn-column-def name="details" class="max-md:hidden md:w-3/12 lg:w-2/12 xl:w-3/12">
           <hlm-th *brnHeaderDef>Details</hlm-th>
           <hlm-td *brnCellDef="let element" class="collapse">
             {{ element.details | titlecase }}
@@ -173,22 +173,9 @@
           </hlm-td>
         </brn-column-def>
 
-        <brn-column-def name="isPartner" class="w-2/12 lg:w-2/12 xl:w-1/12">
-          <hlm-th *brnHeaderDef class="text-start" truncate>Partner's</hlm-th>
-          <hlm-td *brnCellDef="let element">
-            <span class="flex align-middle">
-              <hlm-icon
-                class="ml-0 pl-0 justify-self-center"
-                size="lg"
-                [name]="element.isPartner ? 'lucideUsers' : 'lucideUser'"
-              />
-            </span>
-          </hlm-td>
-        </brn-column-def>
-
         <brn-column-def
           name="amount"
-          class="w-2/12 md:w-3/12 lg:w-2/12 xl:w-2/12 justify-start text-start"
+          class="w-3/12 md:w-2/12 lg:w-2/12 xl:w-2/12 justify-start text-start"
         >
           <hlm-th *brnHeaderDef>Amount</hlm-th>
           <hlm-td

@@ -21,7 +21,6 @@ import Transaction from '../../models/transaction.model';
 import { CategoriesService } from '../../../categories/services/categories.service';
 import { AccountsService } from '../../../accounts/services/accounts.service';
 import { TransactionsService } from '../../services/transactions.service';
-import { PartnershipsService } from '../../../categories/services/partnerships.service';
 
 @Component({
   selector: 'app-transactions-list',
@@ -99,50 +98,27 @@ export class TransactionsListComponent {
   loadCashTransactions() {
     this.isLoading = true;
     forkJoin({
-      partnership: this.partnershipsService.findPartnership(),
       categories: this.categoriesService.getCategories(),
       accounts: this.accountsService.getAccounts(),
       transactions: this.transactionsService.getTransactions(),
-    }).subscribe(({ partnership, categories, accounts, transactions }) => {
+    }).subscribe(({categories, accounts, transactions }) => {
       this.categories = categories;
       this.newTransactionCategories = this.categories;
       this.newTransactionCategories.push({
         name: 'Transfer',
         icon: 'lucideArrowLeftRight',
       });
-
       this.cashAccounts = accounts.filter((a) => a.cashBank === 'cash');
       this.cashTransactions = transactions;
-
-      if (partnership.partnershipStatus === 'confirmed') {
-        this.transactionsService
-          .getPartnerTransactions()
-          .subscribe((partnerTransactions) => {
-            this.isLoading = false;
-            this.partnerTransactions = partnerTransactions;
-            this.cashTransactions = this.cashTransactions.concat(
-              this.partnerTransactions
-            );
-            this._CashTransactions.set(
-              this.cashTransactions.sort((a, b) =>
-                String(b.postingDate).localeCompare(String(a.postingDate))
-              )
-            );
-            this.resetNewTransaction();
-            this.preparePieChartData();
-            this.prepareLineChartData();
-          });
-      } else {
-        this.isLoading = false;
-        this._CashTransactions.set(
-          transactions.sort((a, b) =>
-            String(b.postingDate).localeCompare(String(a.postingDate))
-          )
-        );
-        this.resetNewTransaction();
-        this.preparePieChartData();
-        this.prepareLineChartData();
-      }
+      this.isLoading = false;
+      this._CashTransactions.set(
+        transactions.sort((a, b) =>
+          String(b.postingDate).localeCompare(String(a.postingDate))
+        )
+      );
+      this.resetNewTransaction();
+      this.preparePieChartData();
+      this.prepareLineChartData();
     });
   }
 
@@ -410,7 +386,6 @@ export class TransactionsListComponent {
     amount: { visible: true, label: 'Amount' },
     currency: { visible: false, label: 'Currency' },
     account: { visible: true, label: 'Account' },
-    isPartner: { visible: true, label: 'Shared' },
     cashBank: { visible: false },
     isTransfer: { visible: false },
     type: { visible: false },
@@ -469,7 +444,6 @@ export class TransactionsListComponent {
     private transactionsService: TransactionsService,
     private categoriesService: CategoriesService,
     private accountsService: AccountsService,
-    private partnershipsService: PartnershipsService
   ) {
     effect(() => this._transactionsFilter.set(this._debouncedFilter() ?? ''), {
       allowSignalWrites: true,
