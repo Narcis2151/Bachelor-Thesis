@@ -29,11 +29,11 @@ import {
   HlmSheetTitleDirective,
 } from '@spartan-ng/ui-sheet-helm';
 
-import { HlmCaptionComponent } from '../../components/libs/ui/ui-table-helm/src/lib/hlm-caption.component';
-import { HlmTableComponent } from '../../components/libs/ui/ui-table-helm/src/lib/hlm-table.component';
-import { HlmTdComponent } from '../../components/libs/ui/ui-table-helm/src/lib/hlm-td.component';
-import { HlmThComponent } from '../../components/libs/ui/ui-table-helm/src/lib/hlm-th.component';
-import { HlmTrowComponent } from '../../components/libs/ui/ui-table-helm/src/lib/hlm-trow.component';
+import { HlmCaptionComponent } from '../../components/ui-table-helm/src/lib/hlm-caption.component';
+import { HlmTableComponent } from '../../components/ui-table-helm/src/lib/hlm-table.component';
+import { HlmTdComponent } from '../../components/ui-table-helm/src/lib/hlm-td.component';
+import { HlmThComponent } from '../../components/ui-table-helm/src/lib/hlm-th.component';
+import { HlmTrowComponent } from '../../components/ui-table-helm/src/lib/hlm-trow.component';
 import {
   HlmCardContentDirective,
   HlmCardDescriptionDirective,
@@ -118,7 +118,7 @@ import {
 import { BrnMenuTriggerDirective } from '@spartan-ng/ui-menu-brain';
 import { HlmMenuModule } from '@spartan-ng/ui-menu-helm';
 import { BrnTableModule } from '@spartan-ng/ui-table-brain';
-import { HlmTableModule } from '@spartan-ng/ui-table-helm';
+import { HlmTableModule } from '../../components/ui-table-helm/src';
 import { BrnSelectModule } from '@spartan-ng/ui-select-brain';
 import { HlmSelectModule } from '@spartan-ng/ui-select-helm';
 import {

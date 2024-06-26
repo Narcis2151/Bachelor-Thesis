@@ -6,7 +6,7 @@ import {
   effect,
   signal,
 } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { debounceTime } from 'rxjs';
 import { ChartOptions, ChartType } from 'chart.js';
@@ -91,7 +91,9 @@ export class AccountListComponent {
       )
       .subscribe({
         next: (requisition) => {
+          ctx.close();
           window.location.href = requisition.link;
+          this.connectError = null;
         },
         error: (err) => {
           console.error('Failed to create requisition', err);
@@ -105,7 +107,6 @@ export class AccountListComponent {
       next: (requisition) => {
         this.loadingDialog.open();
         if (requisition.status === 'LN') {
-          console.log(requisition._id!);
           this.importInitialData(requisition._id!);
         } else {
           this.loadingDialog.close({});
@@ -124,6 +125,9 @@ export class AccountListComponent {
     this.nordigenService.importData(requisitionId).subscribe({
       next: () => {
         this.loadingDialog.close({});
+        this.loadAccounts();
+        this.loadInstitutions();
+        this.router.navigate(['/accounts']);
       },
       error: (err) => {
         console.error('Failed to import data', err);
@@ -136,7 +140,6 @@ export class AccountListComponent {
   loadAccounts() {
     this.isLoading = true;
     this.accountsService.getAccounts().subscribe((accounts) => {
-      console.log('accounts', accounts);
       this.accounts = accounts;
       this.cashAccounts = accounts.filter((a) => a.cashBank === 'cash');
       this._Accounts.set(accounts);
@@ -322,6 +325,7 @@ export class AccountListComponent {
   readonly _totalElements = computed(() => this._filteredAccounts().length);
 
   constructor(
+    private router: Router,
     private accountsService: AccountsService,
     private nordigenService: NordigenService,
     private route: ActivatedRoute

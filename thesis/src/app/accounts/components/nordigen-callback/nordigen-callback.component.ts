@@ -23,6 +23,7 @@ export class NordigenCallbackComponent implements OnInit {
     this.route.queryParams.subscribe((params) => {
       const requisitionId = params['ref'];
       if (requisitionId) {
+        this.isLoading = false;
         this.router.navigate(['/accounts'], {
           queryParams: { requisition_id: requisitionId },
         });
