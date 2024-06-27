@@ -295,6 +295,7 @@ export class BudgetListComponent implements OnInit {
     progress: { visible: true, label: 'progress' },
     amountAvailable: { visible: true, label: 'amountAvailable' },
     userSpentAmount: { visible: false, label: 'amountSpent' },
+    partnerSpentAmount: { visible: false, label: 'partnerSpentAmount' },
     isShared: { visible: true, label: 'isShared' },
     currency: { visible: false },
   });

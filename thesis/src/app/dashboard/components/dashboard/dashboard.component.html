@@ -58,7 +58,7 @@
             >{{ cashTransaction.amount | number : "1.2-2" }}
             {{ cashTransaction.currency }}</hlm-td
           >
-          <hlm-td class="max-sm:hidden w-2/12 ">
+          <hlm-td class="max-sm:hidden w-2/12">
             <span class="flex align-middle justify-center">
               <brn-hover-card>
                 <div class="w-full h-full justify-center text-center">
@@ -144,7 +144,9 @@
                   class="bg-primary h-6 rounded-full text-white text-xs flex items-start justify-start"
                   [ngStyle]="{
                     width:
-                      (budget.userSpentAmount! / budget.amountAvailable) * 100 +
+                      ((budget.userSpentAmount! + budget.partnerSpentAmount!) /
+                        budget.amountAvailable) *
+                        100 +
                       '%'
                   }"
                 ></div>
@@ -152,11 +154,15 @@
               <div
                 class="absolute h-full justify-start inset-0 bg-gray-100 text-center text-gray-700 rounded-badge p-0 opacity-0 group-hover:opacity-100 transition-opacity w-full sm:w-auto sm:max-w-sm text-xs whitespace-normal"
               >
-                Spent: {{ budget.userSpentAmount | number : "1.2-2" }}
+                Personal Spent:
+                {{ budget.userSpentAmount || 0 | number : "1.2-2" }}
+                {{ budget.currency }}, Partner Spent:
+                {{ budget.partnerSpentAmount || 0 | number : "1.2-2" }}
                 {{ budget.currency }}, Remaining:
                 {{
-                  budget.amountAvailable - budget.userSpentAmount!
-                    | number : "1.2-2"
+                  budget.amountAvailable! -
+                    budget.userSpentAmount! -
+                    budget.partnerSpentAmount! | number : "1.2-2"
                 }}
                 {{ budget.currency }}
               </div>

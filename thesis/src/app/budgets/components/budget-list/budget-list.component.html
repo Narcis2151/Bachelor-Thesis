@@ -88,7 +88,8 @@
                   class="bg-primary h-6 rounded-full text-white text-xs flex items-start justify-start"
                   [ngStyle]="{
                     width:
-                      (element.userSpentAmount / element.amountAvailable) *
+                      ((element.userSpentAmount + element.partnerSpentAmount) /
+                        element.amountAvailable) *
                         100 +
                       '%'
                   }"
@@ -97,11 +98,15 @@
               <div
                 class="absolute h-full justify-start inset-0 bg-gray-100 text-center text-gray-700 rounded-badge p-0 opacity-0 group-hover:opacity-100 transition-opacity w-full sm:w-auto sm:max-w-sm text-xs whitespace-normal"
               >
-                Spent: {{ element.userSpentAmount | number : "1.2-2" }}
+                Personal Spent:
+                {{ element.userSpentAmount || 0 | number : "1.2-2" }}
+                {{ element.currency }}, Partner Spent:
+                {{ element.partnerSpentAmount || 0 | number : "1.2-2" }}
                 {{ element.currency }}, Remaining:
                 {{
-                  element.amountAvailable - element.userSpentAmount
-                    | number : "1.2-2"
+                  element.amountAvailable -
+                    element.userSpentAmount -
+                    element.partnerSpentAmount | number : "1.2-2"
                 }}
                 {{ element.currency }}
               </div>
