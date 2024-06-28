@@ -1,10 +1,13 @@
-<div class="flex w-full h-full" *ngIf="isLoading; else BudgetsList">
+<div
+  class="flex justify-center align-middle w-full h-full"
+  *ngIf="isLoading; else BudgetsList"
+>
   <hlm-spinner class="justify-center align-middle"></hlm-spinner>
 </div>
 
 <ng-template #BudgetsList>
-  <div class="flex flex-col h-full md:grid md:grid-cols-3 md:gap-4 w-full">
-    <div class="md:col-span-2 flex flex-col h-full">
+  <div class="flex flex-col h-full md:grid lg:grid-cols-3 lg:gap-4 w-full">
+    <div class="lg:col-span-2 flex flex-col h-full w-full overflow-auto">
       <div class="flex flex-col justify-between gap-4 sm:flex-row">
         <input
           hlmInput
@@ -33,7 +36,7 @@
       >
         <brn-column-def
           name="category"
-          class="w-3/12 sm:w-2/12 xl:w-1/12 justify-center"
+          class="w-3/12 sm:w-2/12 md:w-1/12 lg:w-2/12 xl:w-1/12 justify-center"
         >
           <hlm-th *brnHeaderDef class="text-center">Category</hlm-th>
           <hlm-td *brnCellDef="let element" class="justify-center text-center">
@@ -47,9 +50,9 @@
 
         <brn-column-def
           name="resetDate"
-          class="max-sm:hidden max-md:block max-md:w-2/12 max-xl:hidden xl:w-2/12 justify-center text-center"
+          class="w-2/12 hidden md:flex lg:hidden xl:flex justify-center text-center"
         >
-          <hlm-th *brnHeaderDef>
+          <hlm-th *brnHeaderDef truncate>
             <button
               hlmBtn
               class="p-0"
@@ -57,8 +60,8 @@
               variant="ghost"
               (click)="handleDateSortChange()"
             >
-              Reset Date
-              <hlm-icon class="ml-2" size="sm" name="lucideArrowUpDown" />
+              Date
+              <hlm-icon class="ml-3" size="sm" name="lucideArrowUpDown" />
             </button>
           </hlm-th>
           <hlm-td *brnCellDef="let element">
@@ -68,7 +71,7 @@
 
         <brn-column-def
           name="progress"
-          class="max-sm:w-5/12 sm:w-3/12 md:w-4/12 lg:w-5/12 justify-start text-start"
+          class="w-5/12 justify-start text-start"
         >
           <hlm-th *brnHeaderDef>Spent</hlm-th>
           <hlm-td
@@ -116,7 +119,7 @@
 
         <brn-column-def
           name="amountAvailable"
-          class="w-3/12 sm:w-2/12 md:w-3/12 lg:w-2/12 justify-start text-start"
+          class="w-3/12 sm:w-2/12 justify-start text-start"
         >
           <hlm-th *brnHeaderDef truncate>Available</hlm-th>
           <hlm-td
@@ -130,7 +133,7 @@
 
         <brn-column-def
           name="isShared"
-          class="max-sm:hidden sm:w-2/12 xl:w-1/12 justify-center"
+          class="max-sm:hidden sm:w-2/12 md:w-1/12 lg:w-2/12 xl:w-1/12 justify-center"
         >
           <hlm-th *brnHeaderDef>Shared</hlm-th>
           <hlm-td class="text-center" *brnCellDef="let element">
@@ -210,7 +213,7 @@
       >
         <div class="mt-2 flex sm:mt-0">
           <brn-select
-            class="inline-block"
+            class="inline-flex"
             placeholder="{{ _availablePageSizes[0] }}"
             [(ngModel)]="_pageSize"
           >
@@ -263,7 +266,7 @@
       </div>
     </div>
 
-    <div class="hidden md:flex flex-col justify-between gap-4 md:col-span-1">
+    <div class="hidden lg:flex flex-col justify-between gap-4 md:col-span-1">
       <div class="w-full h-6/12">
         <canvas
           baseChart
@@ -333,6 +336,13 @@
         <input
           type="number"
           hlmInput
+          #amountAvailable="ngModel"
+          required
+          [ngClass]="{
+            'border-error-500':
+              (!newBudget.amountAvailable || newBudget.amountAvailable <= 0) &&
+              amountAvailable.touched
+          }"
           id="amount"
           [(ngModel)]="newBudget.amountAvailable"
           class="col-span-3"
@@ -367,6 +377,14 @@
         Cancel
       </button>
       <button
+        [disabled]="
+          !newBudget.category ||
+          !newBudget.startDate ||
+          !newBudget.amountAvailable ||
+          !newBudget.currency ||
+          newBudget.amountAvailable <= 0 ||
+          !amountAvailable.valid
+        "
         hlmBtn
         class="text-white hover:text-gray-400"
         (click)="addBudget(ctx)"
@@ -402,6 +420,14 @@
       <input
         type="number"
         hlmInput
+        required
+        #amountAvailable="ngModel"
+        [ngClass]="{
+          'border-error-500':
+            (!selectedBudget.amountAvailable ||
+              selectedBudget.amountAvailable <= 0) &&
+            amountAvailable.touched
+        }"
         id="amount"
         [(ngModel)]="selectedBudget.amountAvailable"
         class="col-span-3"
@@ -435,6 +461,13 @@
         Cancel
       </button>
       <button
+        [disabled]="
+          !selectedBudget.startDate ||
+          !selectedBudget.amountAvailable ||
+          !selectedBudget.currency ||
+          selectedBudget.amountAvailable <= 0 ||
+          !amountAvailable.valid
+        "
         hlmBtn
         class="text-white hover:text-gray-400"
         (click)="saveBudget(ctx)"

@@ -279,7 +279,7 @@ export class TransactionsListComponent {
 
   private resetNewTransaction() {
     this.newTransaction = {
-      category: undefined,
+      category: this.categories[0],
       isTransfer: true,
       postingDate: formatDate(new Date(), 'yyyy-MM-dd', 'en-US'),
       beneficiary: '',
@@ -381,7 +381,6 @@ export class TransactionsListComponent {
   readonly _brnColumnManager = useBrnColumnManager({
     category: { visible: true, label: 'Category' },
     postingDate: { visible: true, label: 'Posting Date' },
-    beneficiary: { visible: true, label: 'Beneficiary' },
     details: { visible: true, label: 'Details' },
     amount: { visible: true, label: 'Amount' },
     currency: { visible: false, label: 'Currency' },

@@ -1,5 +1,5 @@
 <div
-  class="flex w-full h-full"
+  class="flex justify-center align-middle w-full h-full"
   *ngIf="isLoading; else CashTransactionsTemplate"
 >
   <hlm-spinner class="justify-center align-middle"></hlm-spinner>
@@ -7,7 +7,7 @@
 
 <ng-template #CashTransactionsTemplate>
   <div class="flex flex-col h-full md:grid lg:grid-cols-3 lg:gap-4 w-full">
-    <div class="lg:col-span-2 flex flex-col h-full w-full">
+    <div class="lg:col-span-2 flex flex-col h-full w-full overflow-auto">
       <div class="flex flex-col justify-between gap-4 sm:flex-row">
         <input
           hlmInput
@@ -33,7 +33,10 @@
         [displayedColumns]="_allDisplayedColumns()"
         [trackBy]="_trackBy"
       >
-        <brn-column-def name="category" class="w-2/12 xl:w-1/12 justify-center">
+        <brn-column-def
+          name="category"
+          class="w-3/12 sm:w-2/12 md:w-1/12 lg:w-2/12 xl:w-1/12 justify-center"
+        >
           <hlm-th *brnHeaderDef class="text-center">Category</hlm-th>
           <hlm-td
             *brnCellDef="let element"
@@ -101,7 +104,7 @@
 
         <brn-column-def
           name="postingDate"
-          class="w-3/12 sm:w-3/12 md:w-2/12 lg:w-3/12 xl:w-2/12 justify-center text-center"
+          class="w-2/12 hidden md:flex lg:hidden xl:flex justify-center text-center"
         >
           <hlm-th *brnHeaderDef truncate>
             <button
@@ -120,21 +123,7 @@
           </hlm-td>
         </brn-column-def>
 
-        <brn-column-def
-          name="beneficiary"
-          class="max-sm:hidden max-xl:hidden xl:w-2/12 justify-start text-start"
-        >
-          <hlm-th *brnHeaderDef truncate>Beneficiary</hlm-th>
-          <hlm-td *brnCellDef="let element" truncate>
-            {{
-              element.beneficiary
-                ? element.beneficiary
-                : ("Unknown Beneficiary" | titlecase)
-            }}
-          </hlm-td>
-        </brn-column-def>
-
-        <brn-column-def name="details" class="max-md:hidden md:w-3/12 lg:w-2/12 xl:w-3/12">
+        <brn-column-def name="details" class="w-5/12 justify-start text-start">
           <hlm-th *brnHeaderDef>Details</hlm-th>
           <hlm-td *brnCellDef="let element" class="collapse">
             {{ element.details | titlecase }}
@@ -142,40 +131,8 @@
         </brn-column-def>
 
         <brn-column-def
-          name="account"
-          class="w-2/12 md:w-2/12 lg:w-2/12 xl:w-1/12"
-        >
-          <hlm-th *brnHeaderDef class="text-start" truncate>Account</hlm-th>
-          <hlm-td *brnCellDef="let element" class="justify-start">
-            <span class="flex align-middle">
-              <brn-hover-card>
-                <div class="w-full h-full justify-center text-center">
-                  <img
-                    *ngIf="element.account.bankLogo"
-                    [src]="element.account.bankLogo"
-                    class="w-12 h-12"
-                  />
-                  <hlm-icon
-                    *ngIf="!element.account.bankLogo"
-                    class="ml-0 pl-0"
-                    size="lg"
-                    name="lucideWallet"
-                  />
-                </div>
-                <hlm-hover-card-content *brnHoverCardContent class="w-80">
-                  <h3 class="text-md">
-                    Accounts Name: {{ element.account.name }}
-                  </h3>
-                  <p class="text-md">Account Type: Cash</p>
-                </hlm-hover-card-content>
-              </brn-hover-card>
-            </span>
-          </hlm-td>
-        </brn-column-def>
-
-        <brn-column-def
           name="amount"
-          class="w-3/12 md:w-2/12 lg:w-2/12 xl:w-2/12 justify-start text-start"
+          class="w-3/12 sm:w-2/12 justify-start text-start"
         >
           <hlm-th *brnHeaderDef>Amount</hlm-th>
           <hlm-td
@@ -184,6 +141,30 @@
             [ngClass]="element.type === 'income' ? 'text-green-400' : ''"
           >
             {{ element.amount | number : "1.2-2" }} {{ element.currency }}
+          </hlm-td>
+        </brn-column-def>
+
+        <brn-column-def
+          name="account"
+          class="max-sm:hidden sm:w-2/12 md:w-1/12 lg:w-2/12 xl:w-1/12 justify-center"
+        >
+          <hlm-th *brnHeaderDef class="text-center">Account</hlm-th>
+          <hlm-td *brnCellDef="let element" class="justify-center text-center">
+            <div
+              class="w-full h-full flex justify-center text-center align-middle"
+            >
+              <img
+                *ngIf="element.account.bankLogo"
+                [src]="element.account.bankLogo"
+                class="w-12 h-12"
+              />
+              <hlm-icon
+                *ngIf="!element.account.bankLogo"
+                class="ml-0 pl-0"
+                size="lg"
+                name="lucideWallet"
+              />
+            </div>
           </hlm-td>
         </brn-column-def>
 
@@ -251,7 +232,7 @@
       >
         <div class="mt-2 flex sm:mt-0">
           <brn-select
-            class="inline-block"
+            class="inline-flex"
             placeholder="{{ _availablePageSizes[0] }}"
             [(ngModel)]="_pageSize"
           >
@@ -391,20 +372,15 @@
       </div>
 
       <div class="items-center grid grid-cols-4 gap-4">
-        <label hlmLabel for="beneficiary" class="text-right">Beneficiary</label>
-        <input
-          hlmInput
-          id="beneficiary"
-          [(ngModel)]="newTransaction.beneficiary"
-          class="col-span-3"
-        />
-      </div>
-
-      <div class="items-center grid grid-cols-4 gap-4">
         <label hlmLabel for="details" class="text-right">Details</label>
         <input
           hlmInput
           id="details"
+          #details="ngModel"
+          required
+          [ngClass]="{
+            'border-error-500': !newTransaction.details && details.touched
+          }"
           [(ngModel)]="newTransaction.details"
           class="col-span-3"
         />
@@ -415,6 +391,11 @@
         <input
           type="number"
           hlmInput
+          #amount="ngModel"
+          required
+          [ngClass]="{
+            'border-error-500': !newTransaction.amount && amount.touched
+          }"
           id="amount"
           [(ngModel)]="newTransaction.amount"
           class="col-span-3"
@@ -479,6 +460,14 @@
       </button>
       <button
         hlmBtn
+        [disabled]="
+          !newTransaction.details ||
+          !newTransaction.amount ||
+          !newTransaction.account ||
+          !newTransaction.type ||
+          !newTransaction.postingDate ||
+          !newTransaction.category
+        "
         class="text-white hover:text-gray-400"
         (click)="addTransaction(ctx)"
       >
@@ -510,20 +499,16 @@
 
     <div class="py-4 grid gap-4">
       <div class="items-center grid grid-cols-4 gap-4">
-        <label hlmLabel for="beneficiary" class="text-right">Beneficiary</label>
-        <input
-          hlmInput
-          id="beneficiary"
-          [(ngModel)]="selectedCashTransaction.beneficiary"
-          class="col-span-3"
-        />
-      </div>
-
-      <div class="items-center grid grid-cols-4 gap-4">
         <label hlmLabel for="details" class="text-right">Details</label>
         <input
           hlmInput
           id="details"
+          #details="ngModel"
+          required
+          [ngClass]="{
+            'border-error-500':
+              !selectedCashTransaction.details && details.touched
+          }"
           [(ngModel)]="selectedCashTransaction.details"
           class="col-span-3"
         />
@@ -534,6 +519,12 @@
         <input
           type="number"
           hlmInput
+          #amount="ngModel"
+          required
+          [ngClass]="{
+            'border-error-500':
+              !selectedCashTransaction.amount && amount.touched
+          }"
           id="amount"
           [(ngModel)]="selectedCashTransaction.amount"
           class="col-span-3"
@@ -602,6 +593,13 @@
       </button>
       <button
         hlmBtn
+        [disabled]="
+          !selectedCashTransaction.details ||
+          !selectedCashTransaction.amount ||
+          !selectedCashTransaction.account ||
+          !selectedCashTransaction.type ||
+          !selectedCashTransaction.postingDate
+        "
         class="text-white hover:text-gray-400"
         (click)="saveTransaction(ctx)"
       >

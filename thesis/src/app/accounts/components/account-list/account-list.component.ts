@@ -60,6 +60,7 @@ export class AccountListComponent {
   @ViewChild('loadingDialog') loadingDialog!: HlmDialogComponent;
 
   ngOnInit() {
+    this.isLoading = true;
     this.loadAccounts();
     this.loadInstitutions();
     this.route.queryParams.subscribe((params) => {
@@ -138,14 +139,13 @@ export class AccountListComponent {
   }
 
   loadAccounts() {
-    this.isLoading = true;
     this.accountsService.getAccounts().subscribe((accounts) => {
       this.accounts = accounts;
       this.cashAccounts = accounts.filter((a) => a.cashBank === 'cash');
       this._Accounts.set(accounts);
+      this.isLoading = false;
       this.prepareChartData();
     });
-    this.isLoading = false;
   }
 
   addCashAccount(ctx: any) {
