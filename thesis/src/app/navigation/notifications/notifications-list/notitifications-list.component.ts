@@ -10,6 +10,7 @@ import { NotificationsService } from '../notifications.service';
 })
 export class NotitificationsListComponent implements OnInit {
   notifications: Notification[] = [];
+  unreadNotifications: Notification[] = [];
 
   constructor(private notificationsService: NotificationsService) {}
 
@@ -22,6 +23,7 @@ export class NotitificationsListComponent implements OnInit {
     this.notificationsService.getNotifications().subscribe({
       next: (notifications: Notification[]) => {
         this.notifications = notifications;
+        this.unreadNotifications = notifications.filter((n) => !n.isRead);
       },
       error: (error) => {
         console.error(error);
@@ -33,6 +35,7 @@ export class NotitificationsListComponent implements OnInit {
     this.notificationsService.markAsRead(notification).subscribe({
       next: () => {
         notification.isRead = true;
+        this.unreadNotifications = this.notifications.filter((n) => !n.isRead);
       },
       error: (error) => {
         console.error(error);
@@ -46,6 +49,7 @@ export class NotitificationsListComponent implements OnInit {
         this.notifications = this.notifications.filter(
           (n) => n._id !== notification._id
         );
+        this.unreadNotifications = this.notifications.filter((n) => !n.isRead);
       },
       error: (error) => {
         console.error(error);
@@ -57,6 +61,7 @@ export class NotitificationsListComponent implements OnInit {
     this.notificationsService.markAllAsRead().subscribe({
       next: () => {
         this.notifications.forEach((n) => (n.isRead = true));
+        this.unreadNotifications = [];
       },
       error: (error) => {
         console.error(error);

@@ -5,10 +5,11 @@ import { ChartOptions, ChartType } from 'chart.js';
 import { BudgetsService } from '../../../budgets/services/budgets.service';
 import { CategoriesService } from '../../../categories/services/categories.service';
 import { TransactionsService } from '../../../transactions/services/transactions.service';
+import { PartnershipsService } from '../../../categories/services/partnerships.service';
+
 import Budget from '../../../budgets/models/budget.model';
 import Category from '../../../categories/components/category-list/category.model';
 import Transaction from '../../../transactions/models/transaction.model';
-import { PartnershipsService } from '../../../categories/services/partnerships.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -69,7 +70,7 @@ export class DashboardComponent {
       this.budgets = budgets.budgets.filter((b) => b.active);
       this.transactions = transactions;
       this.tableBudgets = this.budgets
-        .sort((a, b) => b.amountAvailable - a.amountAvailable)
+        .sort((a, b) => String(a.resetDate).localeCompare(String(b.resetDate)))
         .slice(0, 5);
       this.totalBudgetedAmount = budgets.totalBudgetedAmount;
       this.preparePieChartDataBudgets();
@@ -86,7 +87,9 @@ export class DashboardComponent {
           });
       }
       this.tableTransactions = this.transactions
-        .sort((a, b) => String(b.postingDate).localeCompare(String(a.postingDate)))
+        .sort((a, b) =>
+          String(b.postingDate).localeCompare(String(a.postingDate))
+        )
         .slice(0, 5);
       this.isLoading = false;
       this.preparePieChartDataTransactions();
@@ -98,10 +101,18 @@ export class DashboardComponent {
       (c) => c.type === 'expense'
     );
     this.pieChartLabelsExpenses = expenseCategories.map((c) => c.name);
+    const threeMonthsAgo = new Date(
+      new Date().setMonth(new Date().getMonth() - 3)
+    );
     const expenseTotals = expenseCategories.reduce<Record<string, number>>(
       (trn, category) => {
         trn[category.name] = this.transactions
-          .filter((t) => t.category && t.category._id === category._id)
+          .filter(
+            (t) =>
+              t.category &&
+              t.category._id === category._id &&
+              t.postingDate >= threeMonthsAgo.toISOString()
+          )
           .reduce((total, t) => total + (t.amountEquivalent ?? 0), 0);
         return trn;
       },
