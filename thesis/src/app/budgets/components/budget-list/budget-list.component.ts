@@ -174,7 +174,7 @@ export class BudgetListComponent implements OnInit {
         (budget) => budget.startDate >= startDate && budget.startDate <= endDate
       );
       return monthBudgets.reduce(
-        (sum, budget) => sum + budget.userSpentAmount! / budget.exchangeRate!,
+        (sum, budget) => sum + (budget.userSpentAmount! + budget.partnerSpentAmount!) / budget.exchangeRate!,
         0
       );
     });
