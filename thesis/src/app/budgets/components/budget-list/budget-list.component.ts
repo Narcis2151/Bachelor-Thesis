@@ -86,7 +86,11 @@ export class BudgetListComponent implements OnInit {
       this.allBudgets = budgetsResponse.budgets;
       this.totalBudgetedAmount = budgetsResponse.totalBudgetedAmount;
       this.categories = categories;
-      this._Budgets.set(this.budgets);
+      this._Budgets.set(
+        this.budgets.sort((a, b) =>
+          String(a.resetDate).localeCompare(String(b.resetDate))
+        )
+      );
       this.availableCategories = this.categories.filter(
         (c) =>
           !this.budgets.find((b) => b.category._id === c._id) &&
@@ -140,25 +144,37 @@ export class BudgetListComponent implements OnInit {
     const today = new Date();
     const currentMonth = today.getMonth();
     const currentYear = today.getFullYear();
-    const last6Months = Array.from({ length: 6 }, (_, i) => {
-      const month = currentMonth - i + 1;
+
+    const last3Months = Array.from({ length: 3 }, (_, i) => {
+      const month = currentMonth - i - 1;
       const year = month < 0 ? currentYear - 1 : currentYear;
-      return { month, year };
-    });
-    this.barChartLabels = last6Months.map(
-      ({ month, year }) => `${month}/${year}`
+      return { month: (month + 12) % 12, year };
+    }).reverse(); // Reverse to get chronological order
+
+    this.barChartLabels = last3Months.map(
+      ({ month, year }) => `${month + 1}/${year}`
     );
 
-    const spentAmounts = last6Months.map(({ month, year }) => {
-      const startDate = new Date(year, month, 1);
-      const endDate = new Date(year, month + 1, 0);
+    const budgetedAmounts = last3Months.map(({ month, year }) => {
+      const startDate = new Date(year, month, 1).toISOString();
+      const endDate = new Date(year, month + 1, 0).toISOString();
       const monthBudgets = this.allBudgets.filter(
-        (budget) =>
-          new Date(budget.resetDate) >= startDate &&
-          new Date(budget.resetDate) <= endDate
+        (budget) => budget.startDate >= startDate && budget.startDate <= endDate
       );
       return monthBudgets.reduce(
-        (sum, budget) => sum + budget.userSpentAmount! / budget.exchangeRate!,
+        (sum, budget) => sum + budget.amountAvailable / budget.exchangeRate!,
+        0
+      );
+    });
+
+    const spentAmounts = last3Months.map(({ month, year }) => {
+      const startDate = new Date(year, month, 1).toISOString();
+      const endDate = new Date(year, month + 1, 0).toISOString();
+      const monthBudgets = this.allBudgets.filter(
+        (budget) => budget.startDate >= startDate && budget.startDate <= endDate
+      );
+      return monthBudgets.reduce(
+        (sum, budget) => sum + (budget.userSpentAmount! + budget.partnerSpentAmount!) / budget.exchangeRate!,
         0
       );
     });
@@ -166,12 +182,34 @@ export class BudgetListComponent implements OnInit {
     this.barChartData = [
       {
         data: spentAmounts,
-        label: 'Spent amount',
+        label: 'Spent Amount',
+        backgroundColor: 'rgba(255, 0, 0, 0.5)', // light red
+        stack: 'Stack 0',
+      },
+      {
+        data: budgetedAmounts.map(
+          (total, index) => total - spentAmounts[index]
+        ),
+        label: 'Remaining Amount',
+        backgroundColor: 'rgba(0, 123, 255, 0.5)', // light blue
+        stack: 'Stack 0',
       },
     ];
 
     this.barChartLabels.reverse();
-    this.barChartData[0].data.reverse();
+    this.barChartData.forEach((dataset) => dataset.data.reverse());
+
+    this.barChartOptions = {
+      ...this.barChartOptions,
+      scales: {
+        x: {
+          stacked: true,
+        },
+        y: {
+          stacked: true,
+        },
+      },
+    };
   }
 
   protected getAvailableCategories() {
@@ -189,11 +227,13 @@ export class BudgetListComponent implements OnInit {
             String(a.resetDate).localeCompare(String(b.resetDate))
           ),
         ]);
+        this.allBudgets.push(budget);
         this.budgetError = null;
         ctx.close();
         this.resetNewBudget();
         this.getAvailableCategories();
         this.preparePieChartData();
+        this.prepareBarChartData();
       },
       error: (error) => {
         console.log(error);
@@ -239,10 +279,21 @@ export class BudgetListComponent implements OnInit {
           const index = this.budgets.findIndex((t) => t._id === budget._id);
           if (index !== -1) {
             this.budgets[index] = budget;
-            this._Budgets.set([...this.budgets]);
+            this._Budgets.set(
+              [...this.budgets].sort((a, b) =>
+                String(a.resetDate).localeCompare(String(b.resetDate))
+              )
+            );
             ctx.close();
             this.budgetError = null;
             this.preparePieChartData();
+          }
+          const allBudgetsIndex = this.allBudgets.findIndex(
+            (t) => t._id === budget._id
+          );
+          if (allBudgetsIndex !== -1) {
+            this.allBudgets[allBudgetsIndex] = budget;
+            this.prepareBarChartData();
           }
         },
         error: (error) => {
@@ -274,6 +325,14 @@ export class BudgetListComponent implements OnInit {
                 String(a.resetDate).localeCompare(String(b.resetDate))
               ),
             ]);
+            this.preparePieChartData();
+          }
+          const allBudgetsIndex = this.allBudgets.findIndex(
+            (t) => t._id === this.selectedBudget._id
+          );
+          if (allBudgetsIndex !== -1) {
+            this.allBudgets.splice(allBudgetsIndex, 1);
+            this.prepareBarChartData();
           }
         });
       this.getAvailableCategories();
@@ -295,6 +354,7 @@ export class BudgetListComponent implements OnInit {
     progress: { visible: true, label: 'progress' },
     amountAvailable: { visible: true, label: 'amountAvailable' },
     userSpentAmount: { visible: false, label: 'amountSpent' },
+    partnerSpentAmount: { visible: false, label: 'partnerSpentAmount' },
     isShared: { visible: true, label: 'isShared' },
     currency: { visible: false },
   });

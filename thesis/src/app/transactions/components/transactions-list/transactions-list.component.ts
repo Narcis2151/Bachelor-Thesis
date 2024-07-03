@@ -101,7 +101,7 @@ export class TransactionsListComponent {
       categories: this.categoriesService.getCategories(),
       accounts: this.accountsService.getAccounts(),
       transactions: this.transactionsService.getTransactions(),
-    }).subscribe(({categories, accounts, transactions }) => {
+    }).subscribe(({ categories, accounts, transactions }) => {
       this.categories = categories;
       this.newTransactionCategories = this.categories;
       this.newTransactionCategories.push({
@@ -127,6 +127,7 @@ export class TransactionsListComponent {
       (c) => c.type === 'expense'
     );
     this.pieChartLabelsExpenses = expenseCategories.map((c) => c.name);
+    const threeMonthsAgo = new Date(new Date().setMonth(new Date().getMonth() - 3));
     const expenseTotals = expenseCategories.reduce<Record<string, number>>(
       (trn, category) => {
         trn[category.name] = this.cashTransactions
@@ -134,6 +135,7 @@ export class TransactionsListComponent {
             (t) =>
               t.category &&
               t.category._id === category._id &&
+              t.postingDate >= threeMonthsAgo.toISOString() &&
               t.type === 'expense'
           )
           .reduce((total, t) => total + (t.amountEquivalent ?? 0), 0);
@@ -162,6 +164,7 @@ export class TransactionsListComponent {
             (t) =>
               t.category &&
               t.category._id === category._id &&
+              t.postingDate >= threeMonthsAgo.toISOString() &&
               t.type === 'income'
           )
           .reduce((total, t) => total + (t.amountEquivalent ?? 0), 0);
@@ -183,8 +186,9 @@ export class TransactionsListComponent {
   }
 
   prepareLineChartData() {
+    const threeMonthsAgo = new Date(new Date().setMonth(new Date().getMonth() - 3));
     const expenseTransactions = this.cashTransactions
-      .filter((t) => t.type === 'expense' && t.postingDate)
+      .filter((t) => t.type === 'expense' && t.postingDate && t.postingDate >= threeMonthsAgo.toISOString())
       .sort((a, b) =>
         String(b.postingDate).localeCompare(String(a.postingDate))
       );
@@ -279,7 +283,7 @@ export class TransactionsListComponent {
 
   private resetNewTransaction() {
     this.newTransaction = {
-      category: undefined,
+      category: this.categories[0],
       isTransfer: true,
       postingDate: formatDate(new Date(), 'yyyy-MM-dd', 'en-US'),
       beneficiary: '',
@@ -381,7 +385,6 @@ export class TransactionsListComponent {
   readonly _brnColumnManager = useBrnColumnManager({
     category: { visible: true, label: 'Category' },
     postingDate: { visible: true, label: 'Posting Date' },
-    beneficiary: { visible: true, label: 'Beneficiary' },
     details: { visible: true, label: 'Details' },
     amount: { visible: true, label: 'Amount' },
     currency: { visible: false, label: 'Currency' },
@@ -443,7 +446,7 @@ export class TransactionsListComponent {
   constructor(
     private transactionsService: TransactionsService,
     private categoriesService: CategoriesService,
-    private accountsService: AccountsService,
+    private accountsService: AccountsService
   ) {
     effect(() => this._transactionsFilter.set(this._debouncedFilter() ?? ''), {
       allowSignalWrites: true,

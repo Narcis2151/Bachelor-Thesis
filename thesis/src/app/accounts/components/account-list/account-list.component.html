@@ -1,4 +1,6 @@
-<hlm-spinner *ngIf="isLoading; else AccountsTemplate" />
+<div class="flex justify-center align-middle w-full h-full" *ngIf="isLoading; else AccountsTemplate">
+  <hlm-spinner class="justify-center align-middle"></hlm-spinner>
+</div>
 
 <ng-template #AccountsTemplate>
   <div class="flex flex-col md:flex-row justify-between gap-4">

@@ -1,30 +1,37 @@
-<div class="flex w-full h-full" *ngIf="isLoading; else DashBoardTemplate">
+<div
+  class="flex justify-center align-middle w-full h-full"
+  *ngIf="isLoading; else DashBoardTemplate"
+>
   <hlm-spinner class="justify-center align-middle"></hlm-spinner>
 </div>
 
 <ng-template #DashBoardTemplate>
-  <div class="flex flex-col h-full md:grid md:grid-cols-3 md:gap-4 w-full">
-    <div class="md:col-span-2 flex flex-col h-full">
+  <div class="flex flex-col h-full md:grid lg:grid-cols-3 lg:gap-4 w-full">
+    <div class="lg:col-span-2 flex flex-col h-full">
       <hlm-table class="w-full border-border mt-4 flex-grow overflow-visible">
         <hlm-trow>
-          <hlm-th class="w-3/12 md:w-2/12 justify-center text-center"
+          <hlm-th
+            class="w-3/12 sm:w-2/12 md:w-1/12 lg:w-2/12 xl:w-1/12 justify-center text-center"
             >Category</hlm-th
           >
-          <hlm-th class="max-md:hidden w-2/12 justify-center text-center"
+          <hlm-th
+            class="w-2/12 hidden md:flex lg:hidden xl:flex justify-center text-center"
             >Posting Date</hlm-th
           >
-          <hlm-th class="w-6/12 sm:w-4/12 md:w-4/12 lg:w-2/12"
-            >Beneficiary</hlm-th
-          >
-          <hlm-th class="max-lg:hidden lg:w-2/12">Details</hlm-th>
-          <hlm-th class="w-4/12 sm:w-3/12 justify-start text-start"
+          <hlm-th class="w-6/12 justify-start text-start">Details</hlm-th>
+          <hlm-th class="w-3/12 sm:w-2/12 justify-start text-start"
             >Amount</hlm-th
           >
-          <hlm-th class="max-sm:hidden w-2/12 text-center">Account</hlm-th>
+          <hlm-th
+            class="max-sm:hidden sm:w-2/12 md:w-1/12 lg:w-2/12 xl:w-1/12 justify-center"
+            >Account</hlm-th
+          >
         </hlm-trow>
         @for (cashTransaction of tableTransactions; track cashTransaction._id) {
         <hlm-trow>
-          <hlm-td class="w-3/12 md:w-2/12 justify-center text-center">
+          <hlm-td
+            class="w-3/12 sm:w-2/12 md:w-1/12 lg:w-2/12 xl:w-1/12 justify-center text-center"
+          >
             <div
               class="w-full h-full flex justify-center text-center align-middle"
             >
@@ -41,49 +48,42 @@
               />
             </div>
           </hlm-td>
-          <hlm-td class="max-md:hidden w-2/12 justify-center text-center">
+
+          <hlm-td
+            class="w-2/12 hidden md:flex lg:hidden xl:flex justify-center text-center"
+          >
             {{ cashTransaction.postingDate | date }}
           </hlm-td>
-          <hlm-td class="w-6/12 sm:w-4/12 md:w-4/12 lg:w-2/12">{{
-            cashTransaction.beneficiary | titlecase
-          }}</hlm-td>
-          <hlm-td class="max-lg:hidden lg:w-2/12">{{
-            cashTransaction.details
-          }}</hlm-td>
+
+          <hlm-td class="w-6/12 justify-start text-start"
+            >{{ cashTransaction.details }}
+          </hlm-td>
+
           <hlm-td
-            class="w-4/12 sm:w-3/12 justify-start text-start font-medium tabular-nums"
+            class="w-3/12 sm:w-2/12 justify-start text-start font-medium tabular-nums"
             [ngClass]="
               cashTransaction.type === 'income' ? 'text-green-400' : ''
             "
             >{{ cashTransaction.amount | number : "1.2-2" }}
-            {{ cashTransaction.currency }}</hlm-td
+            {{ cashTransaction.currency }}
+          </hlm-td>
+
+          <hlm-td
+            class="max-sm:hidden sm:w-2/12 md:w-1/12 lg:w-2/12 xl:w-1/12 justify-center text-center"
           >
-          <hlm-td class="max-sm:hidden w-2/12 ">
-            <span class="flex align-middle justify-center">
-              <brn-hover-card>
-                <div class="w-full h-full justify-center text-center">
-                  <img
-                    *ngIf="cashTransaction.account.bankLogo"
-                    [src]="cashTransaction.account.bankLogo"
-                    class="w-12 h-12"
-                  />
-                  <hlm-icon
-                    *ngIf="!cashTransaction.account.bankLogo"
-                    class="ml-0 pl-0"
-                    size="lg"
-                    name="lucideWallet"
-                  />
-                </div>
-                <hlm-hover-card-content *brnHoverCardContent class="w-80">
-                  <h3 class="text-md">
-                    Accounts Name: {{ cashTransaction.account.name }}
-                  </h3>
-                  <p class="text-md">
-                    {{ "Account Type: " + cashTransaction.account.cashBank }}
-                  </p>
-                </hlm-hover-card-content>
-              </brn-hover-card>
-            </span>
+            <div class="w-full h-full flex justify-center text-center align-middle">
+              <img
+                *ngIf="cashTransaction.account.bankLogo"
+                [src]="cashTransaction.account.bankLogo"
+                class="w-12 h-12"
+              />
+              <hlm-icon
+                *ngIf="!cashTransaction.account.bankLogo"
+                class="ml-0 pl-0"
+                size="lg"
+                name="lucideWallet"
+              />
+            </div>
           </hlm-td>
         </hlm-trow>
         }
@@ -100,36 +100,43 @@
 
       <hlm-table class="w-full border-border mt-8 flex-grow overflow-visible">
         <hlm-trow>
-          <hlm-th class="w-3/12 md:w-2/12 justify-center text-center"
+          <hlm-th
+            class="w-3/12 sm:w-2/12 md:w-1/12 lg:w-2/12 xl:w-1/12 justify-center text-center"
             >Category</hlm-th
           >
-          <hlm-th class="max-md:hidden w-2/12 justify-center text-center"
+          <hlm-th
+            class="w-2/12 hidden md:flex lg:hidden xl:flex justify-center text-center"
             >Reset Date</hlm-th
           >
-          <hlm-th class="w-6/12 sm:w-4/12 justify-start text-start"
-            >Spent</hlm-th
-          >
-          <hlm-th class="w-4/12 sm:w-3/12 justify-start text-start"
+          <hlm-th class="w-6/12 justify-start text-start">Spent</hlm-th>
+          <hlm-th class="w-3/12 sm:w-2/12 justify-start text-start"
             >Available</hlm-th
           >
-          <hlm-th class="max-sm:hidden w-1/12 justify-center text-center"
+          <hlm-th
+            class="max-sm:hidden sm:w-2/12 md:w-1/12 lg:w-2/12 xl:w-1/12 justify-center text-center"
             >Shared</hlm-th
           >
         </hlm-trow>
         @for (budget of tableBudgets; track budget._id) {
         <hlm-trow>
-          <hlm-td class="w-3/12 md:w-2/12 justify-center text-center">
+          <hlm-td
+            class="w-3/12 sm:w-2/12 md:w-1/12 lg:w-2/12 xl:w-1/12 justify-center text-center"
+          >
             <div
               class="w-full h-full flex justify-center text-center align-middle"
             >
               <hlm-icon class="ml-2" size="lg" [name]="budget.category.icon" />
             </div>
           </hlm-td>
-          <hlm-td class="max-md:hidden w-2/12 justify-center text-center">
+
+          <hlm-td
+            class="w-2/12 hidden md:flex lg:hidden xl:flex justify-center text-center"
+          >
             {{ budget.resetDate | date }}
           </hlm-td>
+
           <hlm-td
-            class="w-6/12 sm:w-4/12 justify-start text-start font-medium tabular-nums h-full px-4"
+            class="w-6/12 justify-start text-start font-medium tabular-nums h-full px-4"
           >
             <div
               class="relative flex text-start justify-start w-full h-full overflow-visible group"
@@ -144,7 +151,9 @@
                   class="bg-primary h-6 rounded-full text-white text-xs flex items-start justify-start"
                   [ngStyle]="{
                     width:
-                      (budget.userSpentAmount! / budget.amountAvailable) * 100 +
+                      ((budget.userSpentAmount! + budget.partnerSpentAmount!) /
+                        budget.amountAvailable) *
+                        100 +
                       '%'
                   }"
                 ></div>
@@ -152,23 +161,29 @@
               <div
                 class="absolute h-full justify-start inset-0 bg-gray-100 text-center text-gray-700 rounded-badge p-0 opacity-0 group-hover:opacity-100 transition-opacity w-full sm:w-auto sm:max-w-sm text-xs whitespace-normal"
               >
-                Spent: {{ budget.userSpentAmount | number : "1.2-2" }}
+                Personal Spent:
+                {{ budget.userSpentAmount || 0 | number : "1.2-2" }}
+                {{ budget.currency }}, Partner Spent:
+                {{ budget.partnerSpentAmount || 0 | number : "1.2-2" }}
                 {{ budget.currency }}, Remaining:
                 {{
-                  budget.amountAvailable - budget.userSpentAmount!
-                    | number : "1.2-2"
+                  budget.amountAvailable! -
+                    budget.userSpentAmount! -
+                    budget.partnerSpentAmount! | number : "1.2-2"
                 }}
                 {{ budget.currency }}
               </div>
             </div>
           </hlm-td>
+
           <hlm-td
-            class="w-4/12 sm:w-3/12 justify-start text-start font-medium tabular-nums"
+            class="w-3/12 sm:w-2/12 justify-start font-medium tabular-nums"
             >{{ budget.amountAvailable | number : "1.2-2" }}
             {{ budget.currency }}
           </hlm-td>
+
           <hlm-td
-            class="max-sm:hidden w-1/12 justify-center text-center font-medium tabular-nums"
+            class="max-sm:hidden sm:w-2/12 md:w-1/12 lg:w-2/12 xl:w-1/12 justify-center text-center font-medium tabular-nums"
           >
             <div class="w-full h-full text-center">
               <hlm-icon
@@ -192,7 +207,7 @@
       </hlm-table>
     </div>
 
-    <div class="hidden md:flex flex-col justify-between gap-4 md:col-span-1">
+    <div class="hidden lg:flex flex-col justify-between gap-4 lg:col-span-1">
       <div class="w-full mt-4 h-6/12">
         <canvas
           baseChart

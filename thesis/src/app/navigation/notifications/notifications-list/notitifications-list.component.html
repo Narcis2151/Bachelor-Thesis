@@ -18,14 +18,14 @@
       <span class="badge badge-xs badge-primary indicator-item"></span>
     </div>
   </button>
-  <hlm-sheet-content *brnSheetContent="let ctx">
+  <hlm-sheet-content *brnSheetContent="let ctx" class="overflow-scroll">
     <hlm-sheet-header>
       <h3 hlmSheetTitle>Notifications</h3>
       <p hlmSheetDescription>
-        {{ "You have " + notifications.length + " unread notifications" }}
+        {{ "You have " + unreadNotifications.length + " unread notifications" }}
       </p>
     </hlm-sheet-header>
-    <div class="py-4 grid gap-4">
+    <div class="py-4 grid gap-4 overflow-scroll">
       <div>
         @for (notification of notifications; track notification._id) {
         <div
