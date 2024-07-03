@@ -146,7 +146,7 @@ export class BudgetListComponent implements OnInit {
     const currentYear = today.getFullYear();
 
     const last3Months = Array.from({ length: 3 }, (_, i) => {
-      const month = currentMonth - i;
+      const month = currentMonth - i - 1;
       const year = month < 0 ? currentYear - 1 : currentYear;
       return { month: (month + 12) % 12, year };
     }).reverse(); // Reverse to get chronological order
