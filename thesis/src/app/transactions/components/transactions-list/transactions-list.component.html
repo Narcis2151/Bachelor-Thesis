@@ -1,0 +1,632 @@
+<div
+  class="flex justify-center align-middle w-full h-full"
+  *ngIf="isLoading; else CashTransactionsTemplate"
+>
+  <hlm-spinner class="justify-center align-middle"></hlm-spinner>
+</div>
+
+<ng-template #CashTransactionsTemplate>
+  <div class="flex flex-col h-full md:grid lg:grid-cols-3 lg:gap-4 w-full">
+    <div class="lg:col-span-2 flex flex-col h-full w-full overflow-auto">
+      <div class="flex flex-col justify-between gap-4 sm:flex-row">
+        <input
+          hlmInput
+          class="w-full md:w-80"
+          placeholder="Filter transactions..."
+          [ngModel]="_transactionsFilter()"
+          (ngModelChange)="_rawFilterInput.set($event)"
+        />
+        <button
+          hlmBtn
+          brnDialogTrigger
+          [brnDialogTriggerFor]="newTransactionDialog"
+          class="justify-center rounded-sm text-white hover:text-gray-400"
+        >
+          New
+        </button>
+      </div>
+
+      <brn-table
+        hlm
+        class="w-full border-border mt-4 h-[430px] flex-grow overflow-scroll"
+        [dataSource]="_filteredSortedPaginatedCashTransactions()"
+        [displayedColumns]="_allDisplayedColumns()"
+        [trackBy]="_trackBy"
+      >
+        <brn-column-def
+          name="category"
+          class="w-3/12 sm:w-2/12 md:w-1/12 lg:w-2/12 xl:w-1/12 justify-center"
+        >
+          <hlm-th *brnHeaderDef class="text-center">Category</hlm-th>
+          <hlm-td
+            *brnCellDef="let element"
+            [brnMenuTriggerFor]="menu"
+            (click)="selectTransaction(element)"
+            class="justify-center text-center"
+          >
+            <div
+              class="w-full h-full flex justify-center text-center align-middle"
+            >
+              <hlm-icon
+                class="ml-2"
+                size="lg"
+                [name]="
+                  element.category
+                    ? element.category.icon
+                    : element.isTransfer
+                    ? 'lucideArrowLeftRight'
+                    : 'lucideAlertCircle'
+                "
+              />
+            </div>
+
+            <ng-template #menu>
+              <hlm-menu class="w-56">
+                <hlm-menu-label>Category</hlm-menu-label>
+                <hlm-menu-group>
+                  <button
+                    hlmMenuItemRadio
+                    [checked]="element.isTransfer"
+                    (triggered)="updateTransactionCategory()"
+                  >
+                    <hlm-menu-item-radio />
+                    <span class="flex align-middle">
+                      <hlm-icon
+                        class="mr-2"
+                        size="sm"
+                        name="lucideArrowLeftRight"
+                      />
+                      Transfer
+                    </span>
+                  </button>
+                  <hlm-menu-separator />
+                  @for (category of categories; track category) {
+                  <button
+                    hlmMenuItemRadio
+                    [checked]="
+                      element.category &&
+                      category.name === element.category.name
+                    "
+                    (triggered)="updateTransactionCategory(category)"
+                  >
+                    <hlm-menu-item-radio />
+                    <span class="flex align-middle">
+                      <hlm-icon class="mr-2" size="sm" [name]="category.icon" />
+                      {{ category.name }}
+                    </span>
+                  </button>
+                  }
+                </hlm-menu-group>
+              </hlm-menu>
+            </ng-template>
+          </hlm-td>
+        </brn-column-def>
+
+        <brn-column-def
+          name="postingDate"
+          class="w-2/12 hidden md:flex lg:hidden xl:flex justify-center text-center"
+        >
+          <hlm-th *brnHeaderDef truncate>
+            <button
+              hlmBtn
+              class="p-0"
+              size="sm"
+              variant="ghost"
+              (click)="handleDateSortChange()"
+            >
+              Date
+              <hlm-icon class="ml-3" size="sm" name="lucideArrowUpDown" />
+            </button>
+          </hlm-th>
+          <hlm-td *brnCellDef="let element">
+            {{ element.postingDate | date }}
+          </hlm-td>
+        </brn-column-def>
+
+        <brn-column-def name="details" class="w-5/12 justify-start text-start">
+          <hlm-th *brnHeaderDef>Details</hlm-th>
+          <hlm-td *brnCellDef="let element" class="collapse">
+            {{ element.details | titlecase }}
+          </hlm-td>
+        </brn-column-def>
+
+        <brn-column-def
+          name="amount"
+          class="w-3/12 sm:w-2/12 justify-start text-start"
+        >
+          <hlm-th *brnHeaderDef>Amount</hlm-th>
+          <hlm-td
+            class="text-start font-medium tabular-nums"
+            *brnCellDef="let element"
+            [ngClass]="element.type === 'income' ? 'text-green-400' : ''"
+          >
+            {{ element.amount | number : "1.2-2" }} {{ element.currency }}
+          </hlm-td>
+        </brn-column-def>
+
+        <brn-column-def
+          name="account"
+          class="max-sm:hidden sm:w-2/12 md:w-1/12 lg:w-2/12 xl:w-1/12 justify-center"
+        >
+          <hlm-th *brnHeaderDef class="text-center">Account</hlm-th>
+          <hlm-td *brnCellDef="let element" class="justify-center text-center">
+            <div
+              class="w-full h-full flex justify-center text-center align-middle"
+            >
+              <img
+                *ngIf="element.account.bankLogo"
+                [src]="element.account.bankLogo"
+                class="w-12 h-12"
+              />
+              <hlm-icon
+                *ngIf="!element.account.bankLogo"
+                class="ml-0 pl-0"
+                size="lg"
+                name="lucideWallet"
+              />
+            </div>
+          </hlm-td>
+        </brn-column-def>
+
+        <brn-column-def name="actions" class="w-1/12 justify-center">
+          <hlm-th *brnHeaderDef></hlm-th>
+          <hlm-td *brnCellDef="let element">
+            <button
+              hlmBtn
+              variant="ghost"
+              class="h-6 w-6 p-0.5"
+              align="end"
+              [brnMenuTriggerFor]="menu"
+            >
+              <hlm-icon class="h-4 w-4" name="lucideMoreHorizontal" />
+            </button>
+
+            <ng-template #menu>
+              <hlm-menu>
+                <hlm-menu-label>Actions</hlm-menu-label>
+                <hlm-menu-separator
+                  *ngIf="!element.isPartner && element.cashBank == 'cash'"
+                />
+                <hlm-menu-group
+                  *ngIf="!element.isPartner && element.cashBank == 'cash'"
+                >
+                  <button
+                    brnDialogTrigger
+                    [brnDialogTriggerFor]="editDialog"
+                    (click)="selectTransaction(element)"
+                  >
+                    Edit
+                  </button>
+                </hlm-menu-group>
+                <hlm-menu-separator />
+                <hlm-menu-group>
+                  <button
+                    brnDialogTrigger
+                    [brnDialogTriggerFor]="deleteDialog"
+                    (click)="selectTransaction(element)"
+                  >
+                    Delete
+                  </button>
+                </hlm-menu-group>
+              </hlm-menu>
+            </ng-template>
+          </hlm-td>
+        </brn-column-def>
+
+        <div
+          class="text-muted-foreground flex items-center justify-center p-20"
+          brnNoDataRow
+        >
+          No data
+        </div>
+      </brn-table>
+
+      <div
+        class="mt-4 flex flex-col justify-between sm:flex-row sm:items-center"
+        *brnPaginator="
+          let ctx;
+          totalElements: _totalElements();
+          pageSize: _pageSize();
+          onStateChange: _onStateChange
+        "
+      >
+        <div class="mt-2 flex sm:mt-0">
+          <brn-select
+            class="inline-flex"
+            placeholder="{{ _availablePageSizes[0] }}"
+            [(ngModel)]="_pageSize"
+          >
+            <hlm-select-trigger class="w-15 mr-1 inline-flex h-9">
+              <hlm-select-value />
+            </hlm-select-trigger>
+            <hlm-select-content>
+              @for (size of _availablePageSizes; track size) {
+              <hlm-option [value]="size">
+                {{ size === 10000 ? "All" : size }}
+              </hlm-option>
+              }
+            </hlm-select-content>
+          </brn-select>
+
+          <div class="flex space-x-1">
+            <button
+              size="sm"
+              variant="outline"
+              hlmBtn
+              [disabled]="!ctx.decrementable()"
+              (click)="ctx.decrement()"
+            >
+              Previous
+            </button>
+            <button
+              size="sm"
+              variant="outline"
+              hlmBtn
+              [disabled]="!ctx.incrementable()"
+              (click)="ctx.increment()"
+            >
+              Next
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="w-full border-border mt-4">
+        <canvas
+          class="w-full min-h-72"
+          baseChart
+          [type]="lineChartType"
+          [datasets]="lineChartData"
+          [labels]="lineChartLabels"
+          [plugins]="lineChartPlugins"
+          [legend]="lineChartLegend"
+          [options]="lineChartOptions"
+        ></canvas>
+      </div>
+    </div>
+    <div class="hidden lg:flex flex-col justify-between gap-4 lg:col-span-1">
+      <div class="w-full h-6/12">
+        <canvas
+          baseChart
+          [type]="pieChartType"
+          [datasets]="pieChartDataExpenses"
+          [labels]="pieChartLabelsExpenses"
+          [plugins]="pieChartPlugins"
+          [legend]="pieChartLegend"
+          [options]="pieChartOptionsExpenses"
+        ></canvas>
+      </div>
+      <div class="w-full h-6/12">
+        <canvas
+          baseChart
+          [type]="pieChartType"
+          [datasets]="pieChartDataIncome"
+          [labels]="pieChartLabelsIncome"
+          [plugins]="pieChartPlugins"
+          [legend]="pieChartLegend"
+          [options]="pieChartOptionsIncome"
+        ></canvas>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<hlm-dialog #newTransactionDialog>
+  <hlm-dialog-content class="sm:max-w-[425px]" *brnDialogContent="let ctx">
+    <hlm-dialog-header>
+      <h3 hlmDialogTitle>New Cash Transaction</h3>
+      <p hlmDialogDescription>Add the details for the new cash transaction.</p>
+    </hlm-dialog-header>
+
+    <div class="py-4 grid gap-4">
+      <div class="items-center grid grid-cols-4 gap-4">
+        <label hlmLabel for="category" class="text-right">Category</label>
+        <brn-select
+          id="category"
+          [(ngModel)]="newTransaction.category"
+          class="col-span-3"
+        >
+          <hlm-select-trigger class="w-full">
+            <span class="flex align-middle">
+              <hlm-icon
+                class="mr-2"
+                size="sm"
+                [name]="
+                  newTransaction.category
+                    ? newTransaction.category.icon
+                    : 'lucideAlertCircle'
+                "
+              />
+              {{
+                newTransaction.category
+                  ? newTransaction.category.name
+                  : "Select a category"
+              }}
+            </span>
+          </hlm-select-trigger>
+          <hlm-select-content>
+            <hlm-option
+              *ngFor="let category of newTransactionCategories"
+              [value]="category"
+            >
+              <span class="flex align-middle">
+                <hlm-icon class="mr-2" size="sm" [name]="category.icon" />
+                {{ category.name }}
+              </span>
+            </hlm-option>
+          </hlm-select-content>
+        </brn-select>
+      </div>
+
+      <div class="items-center grid grid-cols-4 gap-4">
+        <label hlmLabel for="postingDate" class="text-right"
+          >Posting Date</label
+        >
+        <input
+          type="date"
+          hlmInput
+          id="postingDate"
+          [(ngModel)]="newTransaction.postingDate"
+          class="col-span-3"
+        />
+      </div>
+
+      <div class="items-center grid grid-cols-4 gap-4">
+        <label hlmLabel for="details" class="text-right">Details</label>
+        <input
+          hlmInput
+          id="details"
+          #details="ngModel"
+          required
+          [ngClass]="{
+            'border-error-500': !newTransaction.details && details.touched
+          }"
+          [(ngModel)]="newTransaction.details"
+          class="col-span-3"
+        />
+      </div>
+
+      <div class="items-center grid grid-cols-4 gap-4">
+        <label hlmLabel for="amount" class="text-right">Amount</label>
+        <input
+          type="number"
+          hlmInput
+          #amount="ngModel"
+          required
+          [ngClass]="{
+            'border-error-500': !newTransaction.amount && amount.touched
+          }"
+          id="amount"
+          [(ngModel)]="newTransaction.amount"
+          class="col-span-3"
+        />
+      </div>
+
+      <div class="items-center grid grid-cols-4 gap-4">
+        <label hlmLabel for="account" class="text-right">Account</label>
+        <brn-select
+          id="account"
+          [(ngModel)]="newTransaction.account"
+          class="col-span-3"
+        >
+          <hlm-select-trigger class="w-full">
+            <span class="flex align-middle">
+              <hlm-icon class="mr-2" size="sm" name="lucideWallet" />
+              {{ newTransaction.account.name }}
+            </span>
+          </hlm-select-trigger>
+          <hlm-select-content>
+            @for (account of cashAccounts; track account) {
+            <hlm-option [value]="account">
+              <span class="flex align-middle">
+                <hlm-icon class="mr-2" size="sm" name="lucideWallet" />
+                {{ account.name }}
+              </span>
+            </hlm-option>
+            }
+          </hlm-select-content>
+        </brn-select>
+      </div>
+
+      <div class="items-center grid grid-cols-4 gap-4">
+        <label hlmLabel for="type" class="text-right">Type</label>
+        <brn-select
+          id="type"
+          [(ngModel)]="newTransaction.type"
+          class="col-span-3"
+        >
+          <hlm-select-trigger class="w-full">
+            <hlm-select-value />
+          </hlm-select-trigger>
+          <hlm-select-content>
+            <hlm-option value="expense">Expense</hlm-option>
+            <hlm-option value="income">Income</hlm-option>
+          </hlm-select-content>
+        </brn-select>
+      </div>
+    </div>
+
+    <span *ngIf="transactionError" class="label-text text-error">{{
+      transactionError
+    }}</span>
+
+    <hlm-dialog-footer>
+      <button
+        hlmBtn
+        variant="ghost"
+        (click)="ctx.close(); transactionError = null"
+      >
+        Cancel
+      </button>
+      <button
+        hlmBtn
+        [disabled]="
+          !newTransaction.details ||
+          !newTransaction.amount ||
+          !newTransaction.account ||
+          !newTransaction.type ||
+          !newTransaction.postingDate ||
+          !newTransaction.category
+        "
+        class="text-white hover:text-gray-400"
+        (click)="addTransaction(ctx)"
+      >
+        Save
+      </button>
+    </hlm-dialog-footer>
+  </hlm-dialog-content>
+</hlm-dialog>
+
+<hlm-dialog #editDialog>
+  <hlm-dialog-content class="sm:max-w-[425px]" *brnDialogContent="let ctx">
+    <hlm-dialog-header>
+      <h3 hlmDialogTitle>Edit Transaction</h3>
+      <p hlmDialogDescription>
+        Modify the transaction details and click save to apply changes.
+      </p>
+    </hlm-dialog-header>
+
+    <div class="items-center grid grid-cols-4 gap-4">
+      <label hlmLabel for="postingDate" class="text-right">Posting Date</label>
+      <input
+        type="date"
+        hlmInput
+        id="postingDate"
+        [(ngModel)]="selectedCashTransaction.postingDate"
+        class="col-span-3"
+      />
+    </div>
+
+    <div class="py-4 grid gap-4">
+      <div class="items-center grid grid-cols-4 gap-4">
+        <label hlmLabel for="details" class="text-right">Details</label>
+        <input
+          hlmInput
+          id="details"
+          #details="ngModel"
+          required
+          [ngClass]="{
+            'border-error-500':
+              !selectedCashTransaction.details && details.touched
+          }"
+          [(ngModel)]="selectedCashTransaction.details"
+          class="col-span-3"
+        />
+      </div>
+
+      <div class="items-center grid grid-cols-4 gap-4">
+        <label hlmLabel for="amount" class="text-right">Amount</label>
+        <input
+          type="number"
+          hlmInput
+          #amount="ngModel"
+          required
+          [ngClass]="{
+            'border-error-500':
+              !selectedCashTransaction.amount && amount.touched
+          }"
+          id="amount"
+          [(ngModel)]="selectedCashTransaction.amount"
+          class="col-span-3"
+        />
+      </div>
+
+      <div class="items-center grid grid-cols-4 gap-4">
+        <label hlmLabel for="account" class="text-right">Account</label>
+        <brn-select
+          id="account"
+          [(ngModel)]="selectedCashTransaction.account"
+          class="col-span-3"
+        >
+          <hlm-select-trigger class="w-full">
+            <span class="flex align-middle">
+              <hlm-icon
+                class="mr-2 align-middle"
+                size="sm"
+                name="lucideWallet"
+              />
+              {{ selectedCashTransaction.account.name }}
+            </span>
+          </hlm-select-trigger>
+          <hlm-select-content>
+            @for (account of cashAccounts; track account) {
+            <hlm-option [value]="account">
+              <span class="flex align-middle">
+                <hlm-icon class="mr-2" size="sm" name="lucideWallet" />
+                {{ account.name }}
+              </span>
+            </hlm-option>
+            }
+          </hlm-select-content>
+        </brn-select>
+      </div>
+
+      <div class="items-center grid grid-cols-4 gap-4">
+        <label hlmLabel for="type" class="text-right">Type</label>
+        <brn-select
+          id="type"
+          [(ngModel)]="selectedCashTransaction.type"
+          class="col-span-3"
+        >
+          <hlm-select-trigger class="w-full">
+            <hlm-select-value />
+          </hlm-select-trigger>
+          <hlm-select-content>
+            <hlm-option value="income">Income</hlm-option>
+            <hlm-option value="expense">Expense</hlm-option>
+          </hlm-select-content>
+        </brn-select>
+      </div>
+    </div>
+
+    <span *ngIf="transactionError" class="label-text text-error">{{
+      transactionError
+    }}</span>
+
+    <hlm-dialog-footer>
+      <button
+        hlmBtn
+        variant="ghost"
+        (click)="ctx.close(); transactionError = null"
+      >
+        Cancel
+      </button>
+      <button
+        hlmBtn
+        [disabled]="
+          !selectedCashTransaction.details ||
+          !selectedCashTransaction.amount ||
+          !selectedCashTransaction.account ||
+          !selectedCashTransaction.type ||
+          !selectedCashTransaction.postingDate
+        "
+        class="text-white hover:text-gray-400"
+        (click)="saveTransaction(ctx)"
+      >
+        Save changes
+      </button>
+    </hlm-dialog-footer>
+  </hlm-dialog-content>
+</hlm-dialog>
+
+<hlm-dialog #deleteDialog>
+  <hlm-dialog-content *brnAlertDialogContent="let ctx">
+    <hlm-dialog-header>
+      <h3 hlmAlertDialogTitle>Are you absolutely sure?</h3>
+      <p hlmAlertDialogDescription>
+        This action cannot be undone. This will permanently delete your
+        transaction.
+      </p>
+    </hlm-dialog-header>
+    <hlm-dialog-footer>
+      <button hlmBtn variant="ghost" (click)="ctx.close()">Cancel</button>
+      <button
+        hlmBtn
+        variant="destructive"
+        (click)="deleteTransaction(); ctx.close()"
+      >
+        Delete transaction
+      </button>
+    </hlm-dialog-footer>
+  </hlm-dialog-content>
+</hlm-dialog>

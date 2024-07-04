@@ -1601,6 +1601,32 @@
   resolved "https://registry.npmjs.org/@eslint/js/-/js-8.57.0.tgz"
   integrity sha512-Ys+3g2TaW7gADOJzPt83SJtCDhMjndcDMFVQ/Tj9iA1BfJzFKD9mAUXT3OenpuPHbI6P/myECxRJrofUsDx/5g==
 
+"@fortawesome/angular-fontawesome@0.14":
+  version "0.14.1"
+  resolved "https://registry.yarnpkg.com/@fortawesome/angular-fontawesome/-/angular-fontawesome-0.14.1.tgz#9b711b2f4e8df3ec18e29a0abc720a96fa029b78"
+  integrity sha512-Yb5HLiEOAxjSLEcaOM51CKIrzdfvoDafXVJERm9vufxfZkVZPZJgrZRgqwLVpejgq4/Ez6TqHZ6SqmJwdtRF6g==
+  dependencies:
+    tslib "^2.6.2"
+
+"@fortawesome/fontawesome-common-types@6.5.2":
+  version "6.5.2"
+  resolved "https://registry.yarnpkg.com/@fortawesome/fontawesome-common-types/-/fontawesome-common-types-6.5.2.tgz#eaf2f5699f73cef198454ebc0c414e3688898179"
+  integrity sha512-gBxPg3aVO6J0kpfHNILc+NMhXnqHumFxOmjYCFfOiLZfwhnnfhtsdA2hfJlDnj+8PjAs6kKQPenOTKj3Rf7zHw==
+
+"@fortawesome/fontawesome-svg-core@^6.5.2":
+  version "6.5.2"
+  resolved "https://registry.yarnpkg.com/@fortawesome/fontawesome-svg-core/-/fontawesome-svg-core-6.5.2.tgz#4b42de71e196039b0d5ccf88559b8044e3296c21"
+  integrity sha512-5CdaCBGl8Rh9ohNdxeeTMxIj8oc3KNBgIeLMvJosBMdslK/UnEB8rzyDRrbKdL1kDweqBPo4GT9wvnakHWucZw==
+  dependencies:
+    "@fortawesome/fontawesome-common-types" "6.5.2"
+
+"@fortawesome/free-solid-svg-icons@^6.5.2":
+  version "6.5.2"
+  resolved "https://registry.yarnpkg.com/@fortawesome/free-solid-svg-icons/-/free-solid-svg-icons-6.5.2.tgz#9b40b077b27400a5e9fcbf2d15b986c7be69e9ca"
+  integrity sha512-QWFZYXFE7O1Gr1dTIp+D6UcFUF0qElOnZptpi7PBUMylJh+vFmIedVe1Ir6RM1t2tEQLLSV1k7bR4o92M+uqlw==
+  dependencies:
+    "@fortawesome/fontawesome-common-types" "6.5.2"
+
 "@humanwhocodes/config-array@^0.11.14":
   version "0.11.14"
   resolved "https://registry.npmjs.org/@humanwhocodes/config-array/-/config-array-0.11.14.tgz"
@@ -1714,6 +1740,11 @@
   dependencies:
     "@jridgewell/resolve-uri" "^3.1.0"
     "@jridgewell/sourcemap-codec" "^1.4.14"
+
+"@kurkle/color@^0.3.0":
+  version "0.3.2"
+  resolved "https://registry.yarnpkg.com/@kurkle/color/-/color-0.3.2.tgz#5acd38242e8bde4f9986e7913c8fdf49d3aa199f"
+  integrity sha512-fuscdXJ9G1qb7W8VdHi+IwRqij3lBkosAm4ydQtEmbY58OzHXqQhvlxqEkoz0yssNVn38bcpRWgA9PP+OGoisw==
 
 "@leichtgewicht/ip-codec@^2.0.1":
   version "2.0.5"
@@ -2280,10 +2311,101 @@
   dependencies:
     tslib "^2.3.0"
 
-"@spartan-ng/ui-core@^0.0.1-alpha.343":
+"@spartan-ng/ui-alertdialog-brain@0.0.1-alpha.343":
   version "0.0.1-alpha.343"
-  resolved "https://registry.npmjs.org/@spartan-ng/ui-core/-/ui-core-0.0.1-alpha.343.tgz"
-  integrity sha512-THXj0hHQlsVZbfy/gLS3hVanrmejZI2dNLDK2hclHwI9Q+4NT+gPmMq0B1dFB2qC1p76pGM4aI6WvfwuGyy49g==
+  resolved "https://registry.yarnpkg.com/@spartan-ng/ui-alertdialog-brain/-/ui-alertdialog-brain-0.0.1-alpha.343.tgz#67bb5cdada940900c8e29a91239ab1361f9ce143"
+  integrity sha512-++dtp6V7jPkDxd++lkJ3T/IrMn06qst8qRH9dBc1B2IgIrJWHRzERxSahR9wSSx1BUP9OnvnGg0wQuFcwunTNQ==
+  dependencies:
+    tslib "^2.3.0"
+
+"@spartan-ng/ui-checkbox-brain@0.0.1-alpha.343":
+  version "0.0.1-alpha.343"
+  resolved "https://registry.yarnpkg.com/@spartan-ng/ui-checkbox-brain/-/ui-checkbox-brain-0.0.1-alpha.343.tgz#87859158f6fdf64f0a5ba6c2c5ce6e027dd1a9e6"
+  integrity sha512-Nnvk4QQhDwEiSUtY7ZzAQyeFxnrhvQ3JkvIiwLUmQMPupR0B0YMkbhqKFZFmprEJv5jZfRO0qMPHOxAGA/1rgQ==
+  dependencies:
+    tslib "^2.3.0"
+
+"@spartan-ng/ui-core@^0.0.1-alpha.344":
+  version "0.0.1-alpha.344"
+  resolved "https://registry.yarnpkg.com/@spartan-ng/ui-core/-/ui-core-0.0.1-alpha.344.tgz#d00374fe1b40e8bc552937abdd93c0c5e583b90a"
+  integrity sha512-1HMtDo9aCXSeBhbsgPB4mcOIhzG2DBSTA5GWLn5dKB6bM6ilKGO6XyyypAGlH36zReki3EHdLXjIBGuCuXdzIw==
+  dependencies:
+    tslib "^2.3.0"
+
+"@spartan-ng/ui-dialog-brain@0.0.1-alpha.343":
+  version "0.0.1-alpha.343"
+  resolved "https://registry.yarnpkg.com/@spartan-ng/ui-dialog-brain/-/ui-dialog-brain-0.0.1-alpha.343.tgz#a6792d14f91da67233d54c5c5067affb5d037607"
+  integrity sha512-waEGYqM3N00GRtLFyJp1jjQtsI936cBz2Yz34rYekbolUwVaqPnnMVSDIsKTvLUN5fTrGX/7n6bmwfnKrzcuxQ==
+  dependencies:
+    tslib "^2.3.0"
+
+"@spartan-ng/ui-hovercard-brain@0.0.1-alpha.343":
+  version "0.0.1-alpha.343"
+  resolved "https://registry.yarnpkg.com/@spartan-ng/ui-hovercard-brain/-/ui-hovercard-brain-0.0.1-alpha.343.tgz#bba1028f19b790618a2f809d43d3b9141daecd7f"
+  integrity sha512-K/UiM3fwDy1k45UfVlRVgoPiawXCYPe/iYbhLkCJeDisZ1yjOeT2Zn7vHwVwpNTA5ELf++Ks/w+NF8Gp0hC7fA==
+  dependencies:
+    tslib "^2.3.0"
+
+"@spartan-ng/ui-label-brain@0.0.1-alpha.343":
+  version "0.0.1-alpha.343"
+  resolved "https://registry.yarnpkg.com/@spartan-ng/ui-label-brain/-/ui-label-brain-0.0.1-alpha.343.tgz#382850a37238c16aa609cd5824151ab10198efc9"
+  integrity sha512-oA8ss5DBeWUPJRO+xmuS6sbxnhK6m3VVPNxCPGb4520LIGcVyKMxUybuVtnBWJ8Ct57068EvQbPRh89zv9CeLQ==
+  dependencies:
+    tslib "^2.3.0"
+
+"@spartan-ng/ui-menu-brain@0.0.1-alpha.343":
+  version "0.0.1-alpha.343"
+  resolved "https://registry.yarnpkg.com/@spartan-ng/ui-menu-brain/-/ui-menu-brain-0.0.1-alpha.343.tgz#ceea09fe8b8f6a44f9ed76523012570bdae01007"
+  integrity sha512-/Ehhz97ZjERp5izQxtmPz8e+P90cbglO11QyIjf0ZVlKHBiMQdesIF/I7phicUjk/fE3iYkh333QnR4tqnFotg==
+  dependencies:
+    tslib "^2.3.0"
+
+"@spartan-ng/ui-progress-brain@0.0.1-alpha.343":
+  version "0.0.1-alpha.343"
+  resolved "https://registry.yarnpkg.com/@spartan-ng/ui-progress-brain/-/ui-progress-brain-0.0.1-alpha.343.tgz#7cbc3bc0a8c9da6f737eb51b4756d1d2ddd5d8cb"
+  integrity sha512-Z6xoeBqpD2LjAgMi+mhkxoQQG1cEyiUP+9eYHVpuzzClNE/hneqAg/weq6kq3unhls2DIPnsEjY35TY4KSptwQ==
+  dependencies:
+    tslib "^2.3.0"
+
+"@spartan-ng/ui-select-brain@0.0.1-alpha.343":
+  version "0.0.1-alpha.343"
+  resolved "https://registry.yarnpkg.com/@spartan-ng/ui-select-brain/-/ui-select-brain-0.0.1-alpha.343.tgz#eafde4f95be2542b4a2de7e02670dd6ea6251095"
+  integrity sha512-14Dp/Ox14dGA8Ax4orxR7d4DOMzsnGU66SMwD+ChD+yFFws0wmF5DyWdVdk79NvviMI6BN7Ns7zBYKYjfUSOcg==
+  dependencies:
+    tslib "^2.3.0"
+
+"@spartan-ng/ui-separator-brain@0.0.1-alpha.343":
+  version "0.0.1-alpha.343"
+  resolved "https://registry.yarnpkg.com/@spartan-ng/ui-separator-brain/-/ui-separator-brain-0.0.1-alpha.343.tgz#088f9b5fd42c0b8aa8a872a41ed2fc79d1d4b1fa"
+  integrity sha512-BjK5Q7XCu+dyZQcygabkSVS7yuivDy6J4Sq8Gjutd+cEZDwo9kUu9rFVmSIDNFWWyz0TsWl2Il1EhUJsvRbeNg==
+  dependencies:
+    tslib "^2.3.0"
+
+"@spartan-ng/ui-sheet-brain@0.0.1-alpha.343":
+  version "0.0.1-alpha.343"
+  resolved "https://registry.yarnpkg.com/@spartan-ng/ui-sheet-brain/-/ui-sheet-brain-0.0.1-alpha.343.tgz#1fbefb794d4d4a77f7e8c627c10cb227732a20ec"
+  integrity sha512-nZ80Wz0PGKkGhaQgk4TfcR0v+teTGSVvr2M+56JDptOwrjZLgoYbR30/rHp8LIMRxStCZgxAP7P5Ip3/KdUmnA==
+  dependencies:
+    tslib "^2.3.0"
+
+"@spartan-ng/ui-table-brain@0.0.1-alpha.343":
+  version "0.0.1-alpha.343"
+  resolved "https://registry.yarnpkg.com/@spartan-ng/ui-table-brain/-/ui-table-brain-0.0.1-alpha.343.tgz#11fd06a08c98fbb6d523289ed647029553d17594"
+  integrity sha512-7KNUUsJaz+diCrGBZbCE5FB+ctXkItPoSCTscjdVLCGQUuoqkkVT9IyJ2bcysLZFrPirHBj2o5IVT7H9Xvo79g==
+  dependencies:
+    tslib "^2.3.0"
+
+"@spartan-ng/ui-tabs-brain@0.0.1-alpha.343":
+  version "0.0.1-alpha.343"
+  resolved "https://registry.yarnpkg.com/@spartan-ng/ui-tabs-brain/-/ui-tabs-brain-0.0.1-alpha.343.tgz#c34a8e5de355b9c5cdb15cd00f1a835715e2f378"
+  integrity sha512-oez09MM8CJrSo4U65ORGCZ2xu51/HiAJqoplNV9aoDntmhukIhTCNYLV7eFNZewv9UpcdpCyy4HKg9JQmHlFMA==
+  dependencies:
+    tslib "^2.3.0"
+
+"@spartan-ng/ui-toggle-brain@0.0.1-alpha.343":
+  version "0.0.1-alpha.343"
+  resolved "https://registry.yarnpkg.com/@spartan-ng/ui-toggle-brain/-/ui-toggle-brain-0.0.1-alpha.343.tgz#d0d9630439cb1d387fcb1542cc9666f1f0fef795"
+  integrity sha512-2JMT//NLqHRLpjAi0GJkxd8DLvdG5yOHaIY1KAkdmkuyTeDCKafAIWzwmihNA66j7/pWBFg5AKJxOZFLd0fuUg==
   dependencies:
     tslib "^2.3.0"
 
@@ -3310,6 +3432,13 @@ chardet@^0.7.0:
   version "0.7.0"
   resolved "https://registry.npmjs.org/chardet/-/chardet-0.7.0.tgz"
   integrity sha512-mT8iDcrh03qDGRRmoA2hmBJnxpllMR+0/0qlzjqZES6NdiWDcZkCNAk4rPFZ9Q85r27unkiNNg8ZOiwZXBHwcA==
+
+chart.js@^4.4.2:
+  version "4.4.2"
+  resolved "https://registry.yarnpkg.com/chart.js/-/chart.js-4.4.2.tgz#95962fa6430828ed325a480cc2d5f2b4e385ac31"
+  integrity sha512-6GD7iKwFpP5kbSD4MeRRRlTnQvxfQREy36uEtm1hzHzcOqwWx0YEHuspuoNlslu+nciLIB7fjjsHkUv/FzFcOg==
+  dependencies:
+    "@kurkle/color" "^0.3.0"
 
 "chokidar@>=3.0.0 <4.0.0", chokidar@^3.0.0, chokidar@^3.5.1, chokidar@^3.5.3:
   version "3.6.0"
@@ -5746,6 +5875,11 @@ locate-path@^7.1.0:
   dependencies:
     p-locate "^6.0.0"
 
+lodash-es@^4.17.15:
+  version "4.17.21"
+  resolved "https://registry.yarnpkg.com/lodash-es/-/lodash-es-4.17.21.tgz#43e626c46e6591b7750beb2b50117390c609e3ee"
+  integrity sha512-mKnC+QJ9pWVzv+C4/U3rRsHapFfHvQFoFB92e52xeyGMcX6/OlIl78je1u8vePzYZSkkogMPJ2yjxxsb89cxyw==
+
 lodash.debounce@^4.0.8:
   version "4.0.8"
   resolved "https://registry.npmjs.org/lodash.debounce/-/lodash.debounce-4.0.8.tgz"
@@ -6148,6 +6282,14 @@ neo-async@^2.6.2:
   version "2.6.2"
   resolved "https://registry.npmjs.org/neo-async/-/neo-async-2.6.2.tgz"
   integrity sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw==
+
+ng2-charts@^6.0.1:
+  version "6.0.1"
+  resolved "https://registry.yarnpkg.com/ng2-charts/-/ng2-charts-6.0.1.tgz#7fc01f4aa7f10b9e6d3e85c1f02b796fcb3ef180"
+  integrity sha512-pO7evbvHqjiKB7zqE12tCKWQI9gmQ8DVOEaWBBLlxJabc4fLGk7o9t4jC4+Q9pJiQrTtQkugm0dIPQ4PFHUaWA==
+  dependencies:
+    lodash-es "^4.17.15"
+    tslib "^2.3.0"
 
 nice-napi@^1.0.2:
   version "1.0.2"
@@ -7043,6 +7185,13 @@ pretty-format@^29.7.0:
     ansi-styles "^5.0.0"
     react-is "^18.0.0"
 
+primeng@^17.14.1:
+  version "17.14.1"
+  resolved "https://registry.yarnpkg.com/primeng/-/primeng-17.14.1.tgz#3153a83ad9b79604e45bb340a356b96fbc48922a"
+  integrity sha512-hjJzjiNZR0+zCEbvLidXYzJriwgxj4vTBMTmmw9JP5b17mO3Ruhv7h4ofEThpnc1LyE0W91f8jC+Q/Kg2Xuqrw==
+  dependencies:
+    tslib "^2.3.0"
+
 proc-log@^3.0.0:
   version "3.0.0"
   resolved "https://registry.npmjs.org/proc-log/-/proc-log-3.0.0.tgz"
@@ -7356,9 +7505,9 @@ run-parallel@^1.1.9:
   dependencies:
     queue-microtask "^1.2.2"
 
-rxjs@7.8.1, rxjs@^7.8.0, rxjs@^7.8.1, rxjs@~7.8.0:
+rxjs@7.8.1, rxjs@^7.8.0, rxjs@^7.8.1:
   version "7.8.1"
-  resolved "https://registry.npmjs.org/rxjs/-/rxjs-7.8.1.tgz"
+  resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-7.8.1.tgz#6f6f3d99ea8044291efd92e7c7fcf562c4057543"
   integrity sha512-AA3TVj+0A2iuIoQkWEK/tqFjBq2j+6PO6Y0zJcvzLAFhEFIO3HL0vls9hWLncZbAAbK0mar7oZ4V079I/qPMxg==
   dependencies:
     tslib "^2.1.0"
@@ -8207,7 +8356,7 @@ tsconfig-paths@^4.0.0, tsconfig-paths@^4.1.2:
     minimist "^1.2.6"
     strip-bom "^3.0.0"
 
-tslib@2.6.2, tslib@^2.1.0, tslib@^2.2.0, tslib@^2.3.0, tslib@^2.4.0:
+tslib@2.6.2, tslib@^2.1.0, tslib@^2.2.0, tslib@^2.3.0, tslib@^2.4.0, tslib@^2.6.2:
   version "2.6.2"
   resolved "https://registry.npmjs.org/tslib/-/tslib-2.6.2.tgz"
   integrity sha512-AEYxH93jGFPn/a2iVAwW87VuUIkR1FVUKB77NwMF7nBTDkDrrT/Hpt/IrCJ0QXhW27jTBDcf5ZY7w6RiqTMw2Q==

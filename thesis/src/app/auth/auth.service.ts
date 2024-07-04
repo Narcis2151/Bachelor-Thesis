@@ -1,44 +1,47 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-
-interface AuthResponseData {
-  userId: string;
-  email: string;
-  accessToken: string;
-  refreshToken: string;
-  expiresIn: string;
-}
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  constructor(private http: HttpClient) {}
+  private loginUrl = 'http://localhost:3000/auth/login';
+  private registerUrl = 'http://localhost:3000/auth/check-registration';
+  private completeRegistrationUrl =
+    'http://localhost:3000/auth/complete-registration';
 
-  signup(
+  constructor(private http: HttpClient, private router: Router) {}
+
+  handleOAuthCallback() {
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get('token');
+    if (token) {
+      localStorage.setItem('token', token);
+      this.router.navigate(['/dashboard']);
+    }
+  }
+
+  login(email: string, password: string): Observable<any> {
+    return this.http.post(this.loginUrl, { email, password });
+  }
+
+  register(
     username: string,
     email: string,
     password: string,
     confirmPassword: string
-  ) {
-    return this.http.post<AuthResponseData>(
-      'http://localhost:3000/api/user/signup',
-      {
-        username: username,
-        email: email,
-        password: password,
-        confirmPassword: confirmPassword,
-      }
-    );
+  ): Observable<any> {
+    return this.http.post(this.registerUrl, {
+      username,
+      email,
+      password,
+      confirmPassword,
+    });
   }
 
-  login(email: string, password: string) {
-    return this.http.post<AuthResponseData>(
-      'http://localhost:3000/api/user/login',
-      {
-        email: email,
-        password: password,
-      }
-    );
+  completeRegistration(userCompletionData: any): Observable<any> {
+    return this.http.post(this.completeRegistrationUrl, userCompletionData);
   }
 }
